@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Cursor/Claude editor tooling — not website source
+    ".cursor/**",
+    ".claude/**",
   ]),
 ]);
 
