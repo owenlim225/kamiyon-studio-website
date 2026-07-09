@@ -9,7 +9,7 @@ type BadgeProps = {
 const variantClasses: Record<BadgeVariant, string> = {
   placeholder:
     "border border-[var(--border-default)] bg-[var(--bg-secondary)] text-[var(--text-muted)]",
-  info: "border border-sakura/30 bg-[var(--bg-accent)] text-sakura",
+  info: "border border-sakura/30 bg-[var(--bg-accent)] text-sakura-ink",
 };
 
 export function Badge({ children, variant = "placeholder", className = "" }: BadgeProps) {

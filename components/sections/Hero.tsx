@@ -22,7 +22,7 @@ export function Hero({ hero }: HeroProps) {
     <section className="overflow-hidden bg-[var(--bg-primary)] py-16 md:py-24">
       <Container className="grid items-center gap-10 lg:grid-cols-[3fr_2fr] lg:gap-16">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-sakura">
+          <p className="text-sm font-semibold uppercase tracking-wide text-sakura-ink">
             Kamiyon Studio
           </p>
           <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-[var(--text-primary)] md:text-5xl lg:text-[var(--font-size-hero)]">
@@ -41,7 +41,7 @@ export function Hero({ hero }: HeroProps) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura focus-visible:outline-offset-2"
+                  className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2"
                 >
                   {link.label}
                 </Link>

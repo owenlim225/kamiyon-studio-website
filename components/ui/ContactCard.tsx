@@ -35,7 +35,7 @@ export function ContactCard({ channel }: ContactCardProps) {
     <>
       <span
         aria-hidden="true"
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--bg-accent)] text-lg font-bold text-sakura"
+        className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--bg-accent)] text-lg font-bold text-sakura-ink"
       >
         {CHANNEL_GLYPHS[channel.type]}
       </span>

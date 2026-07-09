@@ -5,6 +5,7 @@ import { CaseStudy } from "@/components/sections/CaseStudy";
 import { caseStudiesFallback } from "@/lib/cms/fallbacks";
 import { getCaseStudies, getCaseStudyBySlug } from "@/lib/cms/queries";
 import { getBreadcrumbJsonLd } from "@/lib/seo/breadcrumb-jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type CaseStudyPageProps = {
   params: Promise<{ slug: string }>;
@@ -36,10 +37,13 @@ export async function generateMetadata({
     return {};
   }
 
-  return {
+  return buildPageMetadata({
     title: caseStudy.seo.title,
     description: caseStudy.seo.description,
-  };
+    path: `/portfolio/${caseStudy.slug.current}`,
+    ogImage: caseStudy.seo.ogImage ?? caseStudy.coverImage,
+    noIndex: caseStudy.seo.noIndex,
+  });
 }
 
 export default async function CaseStudyPage({ params }: CaseStudyPageProps) {

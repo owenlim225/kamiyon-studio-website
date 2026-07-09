@@ -16,7 +16,7 @@ export function AboutHero({ aboutPage }: AboutHeroProps) {
   return (
     <section className="bg-[var(--bg-primary)] py-16 md:py-24">
       <Container className="mx-auto max-w-[820px] text-center">
-        <p className="text-sm font-semibold uppercase tracking-wide text-sakura">
+        <p className="text-sm font-semibold uppercase tracking-wide text-sakura-ink">
           About Kamiyon Studio
         </p>
         <h1 className="mt-4 font-display text-4xl font-bold text-[var(--text-primary)] md:text-5xl">
@@ -34,7 +34,7 @@ export function AboutHero({ aboutPage }: AboutHeroProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura focus-visible:outline-offset-2"
+              className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2"
             >
               {link.label}
             </Link>

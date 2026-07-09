@@ -12,6 +12,7 @@ import {
   teamMembersFallback,
 } from "@/lib/cms/fallbacks";
 import { getAboutPage, getTeamMembers } from "@/lib/cms/queries";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 async function getAboutPageContent() {
   const [aboutPage, teamMembers] = await Promise.all([
@@ -28,10 +29,13 @@ async function getAboutPageContent() {
 export async function generateMetadata(): Promise<Metadata> {
   const { aboutPage } = await getAboutPageContent();
 
-  return {
+  return buildPageMetadata({
     title: aboutPage.seo.title,
     description: aboutPage.seo.description,
-  };
+    path: "/about",
+    ogImage: aboutPage.seo.ogImage,
+    noIndex: aboutPage.seo.noIndex,
+  });
 }
 
 export default async function AboutPage() {

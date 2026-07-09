@@ -20,7 +20,7 @@ export function ProjectCard({ caseStudy }: ProjectCardProps) {
         {coverImageUrl ? (
           <Image
             src={coverImageUrl}
-            alt={caseStudy.coverImage?.alt ?? ""}
+            alt={caseStudy.coverImage?.alt ?? caseStudy.title}
             fill
             className="object-cover"
           />
@@ -49,7 +49,7 @@ export function ProjectCard({ caseStudy }: ProjectCardProps) {
         <p className="mt-2 line-clamp-3 text-sm text-[var(--text-secondary)]">
           {caseStudy.challenge}
         </p>
-        <span className="mt-4 text-sm font-medium text-sakura transition-colors group-hover:opacity-80">
+        <span className="mt-4 text-sm font-medium text-sakura-ink transition-colors group-hover:opacity-80">
           View case study →
         </span>
       </div>

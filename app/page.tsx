@@ -12,6 +12,7 @@ import {
   resolveWithFallback,
 } from "@/lib/cms/fallbacks";
 import { getCaseStudies, getHomePage, getProducts } from "@/lib/cms/queries";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import type {
   HomeCtaBanner,
   HomeFeaturedWork,
@@ -37,10 +38,13 @@ async function getHomePageContent() {
 export async function generateMetadata(): Promise<Metadata> {
   const { home } = await getHomePageContent();
 
-  return {
+  return buildPageMetadata({
     title: home.seo.title,
     description: home.seo.description,
-  };
+    path: "/",
+    ogImage: home.seo.ogImage,
+    noIndex: home.seo.noIndex,
+  });
 }
 
 export default async function Home() {

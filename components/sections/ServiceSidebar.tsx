@@ -16,7 +16,7 @@ export function ServiceSidebar({ service }: ServiceSidebarProps) {
           <ul className="mt-3 space-y-2 text-sm text-[var(--text-primary)]">
             {service.outcomes.map((outcome) => (
               <li key={outcome} className="flex items-start gap-2">
-                <span aria-hidden="true" className="mt-0.5 text-sakura">
+                <span aria-hidden="true" className="mt-0.5 text-sakura-ink">
                   ✦
                 </span>
                 <span>{outcome}</span>

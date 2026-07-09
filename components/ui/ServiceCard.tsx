@@ -47,7 +47,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
         {service.title}
       </h3>
       <p className="mt-2 text-sm text-[var(--text-secondary)]">{service.summary}</p>
-      <span className="mt-4 text-sm font-medium text-sakura transition-colors group-hover:opacity-80">
+      <span className="mt-4 text-sm font-medium text-sakura-ink transition-colors group-hover:opacity-80">
         Learn more →
       </span>
     </Link>

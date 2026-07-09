@@ -22,7 +22,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {coverImageUrl ? (
           <Image
             src={coverImageUrl}
-            alt={coverMedia?.alt ?? ""}
+            alt={coverMedia?.alt ?? product.title}
             fill
             className="object-cover"
           />

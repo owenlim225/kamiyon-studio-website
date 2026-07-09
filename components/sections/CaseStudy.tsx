@@ -39,7 +39,7 @@ export function CaseStudy({ caseStudy }: CaseStudyProps) {
         {coverImageUrl ? (
           <Image
             src={coverImageUrl}
-            alt={caseStudy.coverImage?.alt ?? ""}
+            alt={caseStudy.coverImage?.alt ?? caseStudy.title}
             fill
             priority
             className="object-cover"

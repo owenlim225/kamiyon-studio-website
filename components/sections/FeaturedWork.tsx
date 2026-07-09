@@ -79,14 +79,14 @@ export function FeaturedWork({ featuredWork, products, caseStudies }: FeaturedWo
                     Coming soon
                   </Badge>
                 ) : null}
-                <p className="text-sm font-medium uppercase tracking-wide text-sakura">
+                <p className="text-sm font-medium uppercase tracking-wide text-sakura-ink">
                   {card.eyebrow}
                 </p>
                 <h3 className="mt-2 font-display text-lg font-semibold text-[var(--text-primary)]">
                   {card.title}
                 </h3>
                 <p className="mt-2 text-sm text-[var(--text-secondary)]">{card.description}</p>
-                <span className="mt-4 text-sm font-medium text-sakura transition-colors group-hover:opacity-80">
+                <span className="mt-4 text-sm font-medium text-sakura-ink transition-colors group-hover:opacity-80">
                   Learn more →
                 </span>
               </Link>

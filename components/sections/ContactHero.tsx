@@ -35,7 +35,7 @@ export function ContactHero({ contactPage }: ContactHeroProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura focus-visible:outline-offset-2"
+              className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2"
             >
               {link.label}
             </Link>

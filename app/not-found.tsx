@@ -1,12 +1,18 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+
+export const metadata: Metadata = {
+  title: "Page not found",
+  robots: { index: false, follow: false },
+};
 
 export default function NotFound() {
   return (
     <section className="bg-[var(--bg-primary)] py-20 md:py-28">
       <Container className="text-center">
-        <p className="text-sm font-medium uppercase tracking-wide text-sakura">
+        <p className="text-sm font-medium uppercase tracking-wide text-sakura-ink">
           404
         </p>
         <h1 className="mt-4 font-display text-4xl font-bold text-[var(--text-primary)] md:text-5xl">
@@ -22,7 +28,7 @@ export default function NotFound() {
           </Button>
           <Link
             href="/contact"
-            className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura focus-visible:outline-offset-2"
+            className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2"
           >
             Get in touch
           </Link>

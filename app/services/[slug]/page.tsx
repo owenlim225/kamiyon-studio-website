@@ -9,6 +9,7 @@ import {
   getServices,
 } from "@/lib/cms/queries";
 import { getBreadcrumbJsonLd } from "@/lib/seo/breadcrumb-jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type ServiceDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -46,10 +47,13 @@ export async function generateMetadata({
     return {};
   }
 
-  return {
+  return buildPageMetadata({
     title: service.seo.title,
     description: service.seo.description,
-  };
+    path: `/services/${service.slug.current}`,
+    ogImage: service.seo.ogImage,
+    noIndex: service.seo.noIndex,
+  });
 }
 
 export default async function ServiceDetailPage({ params }: ServiceDetailPageProps) {

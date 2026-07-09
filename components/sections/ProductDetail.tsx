@@ -67,7 +67,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 <ul className="mt-3 space-y-2 text-sm text-[var(--text-primary)]">
                   {product.goals.map((goal) => (
                     <li key={goal} className="flex items-start gap-2">
-                      <span aria-hidden="true" className="mt-0.5 text-sakura">
+                      <span aria-hidden="true" className="mt-0.5 text-sakura-ink">
                         ✦
                       </span>
                       <span>{goal}</span>

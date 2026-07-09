@@ -14,7 +14,7 @@ function chipClasses(isActive: boolean): string {
     "inline-flex min-h-11 items-center rounded-[var(--radius-pill)] border px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-offset-2";
 
   return isActive
-    ? `${base} border-sakura bg-sakura text-white`
+    ? `${base} border-sakura bg-sakura text-[var(--text-on-accent)]`
     : `${base} border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]`;
 }
 

@@ -23,7 +23,7 @@ export function ProductMedia({ media, trailerUrl }: ProductMediaProps) {
               key={item.asset?._key ?? `${url}-${index}`}
               className="relative aspect-[16/9] overflow-hidden rounded-[var(--radius-card)] shadow-[var(--shadow-sm)]"
             >
-              <Image src={url} alt={item.alt ?? ""} fill className="object-cover" />
+              <Image src={url} alt={item.alt ?? item.caption ?? ""} fill className="object-cover" />
             </div>
           ))}
         </div>

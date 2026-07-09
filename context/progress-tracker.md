@@ -75,11 +75,11 @@ Defined in `context/architecture.md`: siteSettings, homePage, aboutPage, teamMem
 
 ## Current Phase
 
-**Phase 8 — Products + Community** — complete. `/products`, `/products/[slug]` (3 canon IP titles), and `/community` are live on CMS + typed fallbacks. **Phase 9 (Polish) is next.**
+**Phase 9 — Polish** — complete. Per-route SEO/OG, WCAG AA contrast pass, responsive audit, and asset migration are all done. **Phase 10 (Verification) is next.**
 
 ## Current Goal
 
-Products and Community are live end-to-end on fallbacks. Next: Phase 9 — per-route SEO/OG, WCAG AA pass, responsive breakpoints, asset migration `docs/assets/` → `public/` per `context/website-plan/IMPLEMENTATION-PLAN.md` Phase 9.
+Polish pass is complete across all four Phase 9 workstreams. Next: Phase 10 — broader test infra, E2E smoke tests, and coverage thresholds per `context/website-plan/IMPLEMENTATION-PLAN.md` Phase 10.
 
 ## Completed
 
@@ -196,7 +196,7 @@ Per `context/website-plan/IMPLEMENTATION-PLAN.md` (each ≈ one PR / session):
 6. ~~**Phase 6 — About + Services**~~ ✅ complete
 7. ~~**Phase 7 — Trust + Contact**~~ ✅ complete
 8. ~~**Phase 8 — Products + Community**~~ ✅ complete
-9. **Phase 9 — Polish** — per-route SEO/OG, WCAG AA pass, responsive breakpoints, asset migration `docs/assets/` → `public/`
+9. ~~**Phase 9 — Polish**~~ ✅ complete
 10. **Phase 10 — Verification** — add test infra; E2E smoke all routes; `npm run build` + lint; 80%+ coverage on new `lib/` + section components
 
 ## Open Questions

@@ -8,6 +8,7 @@ import { Container } from "@/components/ui/Container";
 import { contactPageFallback, resolveWithFallback } from "@/lib/cms/fallbacks";
 import { getContactPage } from "@/lib/cms/queries";
 import { getFaqJsonLd } from "@/lib/seo/faq-jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 async function getContactContent() {
   const cmsContactPage = await getContactPage();
@@ -18,10 +19,13 @@ async function getContactContent() {
 export async function generateMetadata(): Promise<Metadata> {
   const contactPage = await getContactContent();
 
-  return {
+  return buildPageMetadata({
     title: contactPage.seo.title,
     description: contactPage.seo.description,
-  };
+    path: "/contact",
+    ogImage: contactPage.seo.ogImage,
+    noIndex: contactPage.seo.noIndex,
+  });
 }
 
 export default async function ContactPage() {

@@ -36,7 +36,7 @@ export function CommunityCard({ item }: CommunityCardProps) {
         {coverImageUrl ? (
           <Image
             src={coverImageUrl}
-            alt={item.coverImage?.alt ?? ""}
+            alt={item.coverImage?.alt ?? item.title}
             fill
             className="object-cover"
           />
@@ -76,7 +76,7 @@ export function CommunityCard({ item }: CommunityCardProps) {
             href={item.externalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 text-sm font-medium text-sakura transition-colors hover:opacity-80 focus-visible:outline-offset-2"
+            className="mt-4 text-sm font-medium text-sakura-ink transition-colors hover:opacity-80 focus-visible:outline-offset-2"
           >
             Learn more →
           </a>

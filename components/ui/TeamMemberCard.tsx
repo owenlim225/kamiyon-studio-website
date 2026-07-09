@@ -26,7 +26,7 @@ export function TeamMemberCard({ member }: TeamMemberCardProps) {
             className="flex h-full w-full items-center justify-center"
             aria-hidden="true"
           >
-            <span className="font-display text-3xl font-bold text-sakura">
+            <span className="font-display text-3xl font-bold text-sakura-ink">
               {getInitials(member.name)}
             </span>
           </div>

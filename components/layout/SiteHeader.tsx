@@ -33,7 +33,7 @@ export function SiteHeader() {
         <Logo />
 
         <div className="hidden items-center gap-6 lg:flex">
-          <MainNav items={PRIMARY_NAV_ITEMS} />
+          <MainNav items={PRIMARY_NAV_ITEMS} orientation="horizontal" />
           <Button href={CONTACT_CTA.href} variant="primary">
             {CONTACT_CTA.label}
           </Button>

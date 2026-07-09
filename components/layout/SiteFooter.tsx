@@ -31,7 +31,7 @@ export function SiteFooter() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="text-sm text-[var(--text-secondary)] transition-colors hover:text-sakura focus-visible:outline-offset-2"
+                      className="text-sm text-[var(--text-secondary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2"
                     >
                       {item.label}
                     </Link>
@@ -56,7 +56,7 @@ export function SiteFooter() {
                   ) : (
                     <a
                       href={link.href}
-                      className="text-sm text-[var(--text-secondary)] transition-colors hover:text-sakura focus-visible:outline-offset-2"
+                      className="text-sm text-[var(--text-secondary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2"
                       rel="noopener noreferrer"
                       target="_blank"
                     >

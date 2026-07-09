@@ -5,6 +5,7 @@ import { ProductDetail } from "@/components/sections/ProductDetail";
 import { productsFallback } from "@/lib/cms/fallbacks";
 import { getProductBySlug, getProducts } from "@/lib/cms/queries";
 import { getBreadcrumbJsonLd } from "@/lib/seo/breadcrumb-jsonld";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 
 type ProductDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -36,10 +37,13 @@ export async function generateMetadata({
     return {};
   }
 
-  return {
+  return buildPageMetadata({
     title: product.seo.title,
     description: product.seo.description,
-  };
+    path: `/products/${product.slug.current}`,
+    ogImage: product.seo.ogImage ?? product.media[0]?.asset,
+    noIndex: product.seo.noIndex,
+  });
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
