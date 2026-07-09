@@ -1,0 +1,57 @@
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
+import type { CaseStudy } from "@/lib/cms/types";
+
+type ProjectSidebarProps = {
+  caseStudy: CaseStudy;
+};
+
+function formatPublishedDate(publishedAt: string | undefined): string | null {
+  if (!publishedAt) {
+    return null;
+  }
+
+  const date = new Date(publishedAt);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
+}
+
+export function ProjectSidebar({ caseStudy }: ProjectSidebarProps) {
+  const publishedLabel = formatPublishedDate(caseStudy.publishedAt);
+
+  return (
+    <aside className="rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-sm)]">
+      <dl className="space-y-4 text-sm">
+        <div>
+          <dt className="font-medium text-[var(--text-muted)]">Client</dt>
+          <dd className="mt-1 text-[var(--text-primary)]">{caseStudy.clientName}</dd>
+        </div>
+        <div>
+          <dt className="font-medium text-[var(--text-muted)]">Industry</dt>
+          <dd className="mt-1">
+            <Link
+              href="/portfolio"
+              className="text-[var(--text-primary)] transition-colors hover:text-sakura focus-visible:outline-offset-2"
+            >
+              {caseStudy.industry}
+            </Link>
+          </dd>
+        </div>
+        {publishedLabel ? (
+          <div>
+            <dt className="font-medium text-[var(--text-muted)]">Published</dt>
+            <dd className="mt-1 text-[var(--text-primary)]">{publishedLabel}</dd>
+          </div>
+        ) : null}
+      </dl>
+
+      <Button href="/contact" variant="primary" className="mt-6 w-full">
+        Discuss a similar project
+      </Button>
+    </aside>
+  );
+}

@@ -75,11 +75,11 @@ Defined in `context/architecture.md`: siteSettings, homePage, aboutPage, teamMem
 
 ## Current Phase
 
-**Phase 3 — CMS Layer** — complete. Sanity dependencies, typed CMS client/queries/types, typed fallbacks, schema definitions, seed placeholder docs, and env documentation are in place. **Phase 4 (Homepage) is next.**
+**Phase 5 — Portfolio** — complete. `/portfolio` listing and `/portfolio/[slug]` case study detail are live on CMS + typed fallbacks. **Phase 6 (About + Services) is next.**
 
 ## Current Goal
 
-CMS plumbing is available but not yet rendered by pages. Next: build the homepage sections and wire `app/page.tsx` to CMS data with typed fallbacks.
+Portfolio is live end-to-end on fallbacks. Next: build `/about` (story/mission/vision/values/team) and `/services` + `/services/[slug]` per `context/website-plan/IMPLEMENTATION-PLAN.md` Phase 6.
 
 ## Completed
 
@@ -119,8 +119,27 @@ CMS plumbing is available but not yet rendered by pages. Next: build the homepag
   - [x] Added `lib/cms/queries.ts` with one `get*` function per singleton, collection, and slug route
   - [x] Added Sanity Studio config, CLI config, reusable object schemas, document schemas, and seed placeholder docs
   - [x] Added `.env.example` for `CMS_PROJECT_ID`, `CMS_DATASET`, and optional `CMS_API_TOKEN`
-  - [x] Added minimal Vitest setup for pure CMS fallback resolution logic
-  - [x] `npm run test` ✅ · `npm run lint` ✅ · `npm run build` ✅
+- [x] Added minimal Vitest setup for pure CMS fallback resolution logic
+- [x] `npm run test` ✅ · `npm run lint` ✅ · `npm run build` ✅
+- [x] **Phase 4 — Homepage**
+  - [x] `app/page.tsx` rewritten as an async Server Component: fetches `getHomePage()`, `getProducts()`, `getCaseStudies()` in parallel and resolves each via `resolveWithFallback` against `homePageFallback` / `productsFallback` / `caseStudiesFallback`
+  - [x] `generateMetadata()` sources title/description from `homePage.seo` (CMS or fallback)
+  - [x] Added `components/sections/{Hero,Mission,FeaturedWork,Highlights,ContactCTA}.tsx` — one per `HomePage.blocks` union member (`hero`, `mission`, `featuredWork`, `highlights`, `ctaBanner`); rendered in the canon Home layout order from `ui-context.md` (hero → mission band → featured grid → highlights → CTA banner)
+  - [x] `FeaturedWork` resolves `featuredProductSlugs` / `featuredCaseStudySlugs` against fetched `Product[]` / `CaseStudy[]` and links to `/products/[slug]` and `/portfolio/[slug]` (routes land in Phases 5 and 8); each card shows a "Coming soon" `Badge` when `isPlaceholder`/placeholder data is used; renders an honest empty state if no featured items resolve
+  - [x] Added `components/ui/Badge.tsx` (placeholder/info pill) — reused by `FeaturedWork`
+  - [x] Added `lib/cms/image.ts` — resolves a Sanity `CmsImage` to a servable URL via `@sanity/image-url` (new direct dependency), returns `null` when unconfigured so `Hero` can fall back to a branded placeholder panel instead of a broken `next/image` src
+  - [x] `Hero` includes a static secondary quick-link row (Services / Products / Contact) satisfying the canon "Secondary CTAs" requirement without new CMS fields
+  - [x] `npm run test` ✅ · `npm run lint` ✅ · `npm run build` ✅ (`/` prerendered as static content) · verified rendered HTML output shows all five sections + fallback content correctly
+- [x] **Phase 5 — Portfolio**
+  - [x] `app/portfolio/page.tsx` — static `generateMetadata`; fetches `getCaseStudies()` resolved against `caseStudiesFallback`; renders `PortfolioListing`
+  - [x] `app/portfolio/[slug]/page.tsx` — `generateStaticParams` from CMS-or-fallback slugs; `generateMetadata` from `caseStudy.seo`; resolves CMS-or-fallback-by-slug and calls `notFound()` when neither has the slug; renders a `BreadcrumbList` JSON-LD (Home → Portfolio → project, relative hrefs since no production domain is confirmed yet) + `CaseStudy`
+  - [x] Added `components/sections/{PortfolioListing,CaseStudy,ProjectGallery,ProjectSidebar,EmptyState}.tsx` and `components/ui/ProjectCard.tsx`
+  - [x] `CaseStudy` renders challenge/solution/impact/lessonsLearned as headed sections in a ~65/35 gallery+sidebar layout (desktop), per `website-plan/03-PORTFOLIO...` visual treatment, adapted to the canon `/portfolio/[slug]` IA (no `/portfolio/[category]` route)
+  - [x] `ProjectGallery` renders CMS gallery images via `getCmsImageUrl`, or an honest "Gallery coming soon." placeholder when empty
+  - [x] `ProjectSidebar` shows client/industry/published-date metadata + "Discuss a similar project" CTA → `/contact`; industry links back to `/portfolio` in lieu of a discipline filter/category route
+  - [x] `EmptyState` (new, reusable) shown on `/portfolio` if the case-study list is ever empty
+  - [x] Deliberately did **not** build `/portfolio/[category]` routes or a 6-discipline filter UI — see Architecture Decisions for rationale (canon override already recorded in Phase 0; `caseStudy.industry` is free text, not a fixed 6-value enum, so a filter chip UI isn't backed by the schema yet)
+  - [x] `npm run test` ✅ · `npm run lint` ✅ · `npm run build` ✅ (`/portfolio` static, `/portfolio/[slug]` SSG — `sample-client-project-placeholder` prerendered) · verified rendered HTML for both routes (listing card, breadcrumb JSON-LD, sections, sidebar, empty-gallery state)
 
 ## In Progress
 
@@ -133,8 +152,8 @@ Per `context/website-plan/IMPLEMENTATION-PLAN.md` (each ≈ one PR / session):
 1. ~~**Phase 1 — Design foundation**~~ ✅ complete
 2. ~~**Phase 2 — App shell**~~ ✅ complete
 3. ~~**Phase 3 — CMS layer**~~ ✅ complete
-4. **Phase 4 — Homepage** — hero, clients/partners, services summary, awards highlight, featured work, contact CTA (CMS-driven, fallbacks)
-5. **Phase 5 — Portfolio** — `/portfolio` listing + `/portfolio/[slug]` case study (challenge/solution/impact)
+4. ~~**Phase 4 — Homepage**~~ ✅ complete
+5. ~~**Phase 5 — Portfolio**~~ ✅ complete
 6. **Phase 6 — About + Services** — About (story/mission/vision/values/6-member team) + Services listing + `/services/[slug]`
 7. **Phase 7 — Trust + Contact** — Contact page, external links only (no form); FAQ from `docs/ai/faq.md`
 8. **Phase 8 — Products + Community** — 3 IP product pages + community feed placeholders (canon-only)
@@ -183,8 +202,58 @@ Per `context/website-plan/IMPLEMENTATION-PLAN.md` (each ≈ one PR / session):
 | Logo (Phase 2) | Text + sakura icon placeholder | Asset migration from `docs/assets/` deferred to Phase 9; no fake logo image |
 | CMS implementation (Phase 3) | Sanity via `next-sanity` + `sanity` | Adopted the defaulted Phase 0 recommendation; app falls back cleanly when `CMS_PROJECT_ID` / `CMS_DATASET` are unset |
 | Phase 3 testing scope | Minimal Vitest coverage for fallback resolution only | Added a pure TypeScript test harness without React/JSDOM/E2E; broader coverage remains Phase 10 scope |
+| Phase 4 Home section scope | 5 sections only: Hero, Mission, Featured Work, Highlights, Contact CTA — no Clients/Partners or Awards sections | `IMPLEMENTATION-PLAN.md`'s reconciliation matrix listed `website-plan/` Part 2 ideas (`ClientsPartners`, `AwardsHighlight`) as components to build, but `architecture.md`'s actual `homePage` CMS model (built in Phase 3) and `project-overview.md`'s canon Home feature list only define hero/mission/featuredWork/highlights/ctaBanner — canon has zero award or client/partner data, so adding those sections now would mean inventing placeholder content outside the approved schema |
+| Featured work slug resolution | `FeaturedWork` cross-references `homePage.featuredWork` slugs against fetched `Product[]`/`CaseStudy[]` at render time (not stored denormalized) | Keeps `homePage` CMS content decoupled from product/case-study content; matches the reference-array shape already defined in `architecture.md`'s `homeBlock.featuredWork` |
+| CMS image resolution | Added `lib/cms/image.ts` using `@sanity/image-url` (new direct dependency) | Sanity image refs (`{_ref}`) are not directly usable as a `next/image` `src`; a URL builder is required. Added as an explicit dependency (was previously only a transitive dep of `sanity`) rather than relying on hoisting |
+| Phase 5 Portfolio IA (confirmed in code) | `/portfolio` + `/portfolio/[slug]` only — no `/portfolio/[category]` route, no discipline filter chips | Re-confirms the Phase 0 canon override of `website-plan/03-PORTFOLIO...`'s 3-level category IA; `caseStudy.industry` is free text (not the spec's fixed 6-discipline enum), so a filter UI isn't backed by the existing schema — would need a Phase 3 schema change, out of Phase 5 scope |
+| Breadcrumb JSON-LD URLs | Relative hrefs (`/portfolio/[slug]`) instead of absolute URLs | Deployment target is still TBD (open question); mirrors the existing `organization-jsonld.ts` precedent of omitting a fabricated absolute site URL |
+| Case study detail 404 handling | `getCaseStudyContent(slug)` checks CMS first, then linearly searches `caseStudiesFallback` by slug, then calls `notFound()` | Keeps the same CMS-then-fallback resolution order as everywhere else, while still producing a real 404 for genuinely unknown slugs (required by the Phase 5 validation criterion) |
 
 ## Session Notes
+
+### 2026-07-09 — Phase 5 implementation session
+
+**Files added/changed:** `app/portfolio/page.tsx`, `app/portfolio/[slug]/page.tsx`, `components/sections/{PortfolioListing,CaseStudy,ProjectGallery,ProjectSidebar,EmptyState}.tsx`, `components/ui/ProjectCard.tsx`, `lib/seo/breadcrumb-jsonld.ts`, `context/progress-tracker.md`.
+
+**What was implemented:**
+- `app/portfolio/page.tsx`: static `generateMetadata` (page-level copy, not a company fact) + fetches `getCaseStudies()` resolved against `caseStudiesFallback`, renders `PortfolioListing`.
+- `app/portfolio/[slug]/page.tsx`: `generateStaticParams` reads slugs from CMS-or-fallback case studies; `generateMetadata` reads `caseStudy.seo`; `getCaseStudyContent(slug)` tries `getCaseStudyBySlug` first, then falls back to a slug lookup in `caseStudiesFallback`, then calls `notFound()` if neither resolves.
+- Added a `BreadcrumbList` JSON-LD script (Home → Portfolio → project title) via new `lib/seo/breadcrumb-jsonld.ts`, using relative hrefs since no production domain is confirmed yet (same discipline as `organization-jsonld.ts`).
+- `PortfolioListing`: page intro + responsive card grid via new `ui/ProjectCard`; falls back to the new reusable `EmptyState` component if the case-study list is ever empty.
+- `ProjectCard`: cover image (via `getCmsImageUrl`, sakura emoji placeholder otherwise), industry tag, title, challenge excerpt, "Placeholder" badge when `isPlaceholder`.
+- `CaseStudy` (detail): full-width cover hero, then a `~65/35` two-column layout — challenge/solution/impact/lessonsLearned as headed sections plus `ProjectGallery` in the main column, `ProjectSidebar` (client/industry/published date + "Discuss a similar project" CTA) in the aside — adapting `website-plan/03-PORTFOLIO...`'s hero+gallery+sidebar visual treatment to the canon `/portfolio/[slug]` IA (no category level).
+- `ProjectGallery` renders resolved CMS gallery images in a responsive grid, or an honest "Gallery coming soon." placeholder when the gallery array is empty (true today for the one fallback case study).
+- Deliberately did **not** build `/portfolio/[category]` routes or interactive discipline filter chips — see Architecture Decisions.
+
+**Verification:** `npm run test` ✅ (5/5, unchanged) · `npm run lint` ✅ · `npm run build` ✅ — `/portfolio` prerendered as static content, `/portfolio/[slug]` prerendered via SSG with `sample-client-project-placeholder` as the only static param (matches the single fallback case study). Read the generated static HTML for both routes directly to confirm the listing card, breadcrumb JSON-LD, all four case-study sections, gallery empty state, and sidebar CTA all render correctly with fallback content.
+
+**TDD note:** No new pure-logic units introduced (Server Components + one small `formatPublishedDate` date-formatting helper inlined in `ProjectSidebar`, judged too trivial to warrant an isolated unit test at this scope). Broader component/E2E coverage remains Phase 10 scope, consistent with prior phases.
+
+**Deviations from plan:** Skipped `/portfolio/[category]` and discipline filter chips (both already flagged as "optional"/overridden in Phase 0 and `IMPLEMENTATION-PLAN.md`'s Resolved Conflicts table); this session just re-confirms that override in the actual route structure.
+
+**Next task:** Phase 6 — About + Services (`/about`; `/services` + `/services/[slug]`).
+
+### 2026-07-09 — Phase 4 implementation session
+
+**Files added/changed:** `app/page.tsx` (rewritten), `components/sections/{Hero,Mission,FeaturedWork,Highlights,ContactCTA}.tsx`, `components/ui/Badge.tsx`, `lib/cms/image.ts`, `package.json`/`package-lock.json` (added `@sanity/image-url`), `context/progress-tracker.md`.
+
+**What was implemented:**
+- `app/page.tsx` is now an async Server Component. It fetches `getHomePage()`, `getProducts()`, and `getCaseStudies()` in parallel and resolves each against its typed fallback via `resolveWithFallback`, then renders the five `homePage.blocks` in canon order.
+- `generateMetadata()` sources the page title/description from `homePage.seo` (CMS or fallback), satisfying the per-route SEO rule in `code-standards.md`.
+- New presentational section components (`Hero`, `Mission`, `FeaturedWork`, `Highlights`, `ContactCTA`) each receive a single typed CMS block as props — no direct CMS calls inside sections, matching the "sections are presentational" rule.
+- `Hero` renders the CMS `hero` block plus a static secondary quick-link row (Services / Products / Contact) — satisfies `project-overview.md`'s "Secondary CTAs" Home feature without adding new CMS fields. Falls back to a branded sakura placeholder panel when no hero image is set (always true today, since no CMS project is provisioned).
+- `FeaturedWork` resolves `featuredWork.featuredProductSlugs` / `featuredCaseStudySlugs` against the fetched `Product[]` / `CaseStudy[]` lists and renders cards linking to `/products/[slug]` and `/portfolio/[slug]` (these routes do not exist yet — they land in Phases 5 and 8 — so links will 404 until then, consistent with the existing precedent of the Hero CTA already pointing at `/services` before Phase 6 exists). Each placeholder-backed card shows a "Coming soon" `Badge`; an honest empty state renders if no featured items resolve.
+- Added `components/ui/Badge.tsx` (`placeholder` / `info` pill variants).
+- Added `lib/cms/image.ts` with `getCmsImageUrl()`, wrapping `@sanity/image-url`'s `createImageUrlBuilder`; returns `null` when `CMS_PROJECT_ID`/`CMS_DATASET` are unset so callers can render a placeholder instead of a broken image `src`. Added `@sanity/image-url` as an explicit `package.json` dependency (previously only resolvable as a transitive dependency of `sanity`).
+- Deliberately did **not** build `ClientsPartners` or `AwardsHighlight` sections from the `IMPLEMENTATION-PLAN.md` Phase 4 file list — see Architecture Decisions for rationale (no canon data, not part of the actual `homePage` CMS schema built in Phase 3).
+
+**Verification:** `npm run test` ✅ (5/5, unchanged) · `npm run lint` ✅ · `npm run build` ✅ (`/` prerendered as static content with fallback data, since no CMS project is configured in this environment) · Read the generated static HTML output (`.next/server/app/index.html`) directly to confirm all five sections render with correct fallback copy, links, and "Coming soon" badges.
+
+**TDD note:** No new pure-logic units were introduced (only presentational Server Components and a thin Sanity image URL wrapper with no branching logic worth unit-testing in isolation). Formal TDD skipped per the same rationale as Phase 1/2 CSS/shell work; component/E2E test coverage remains Phase 10 scope.
+
+**Deviations from plan:** Home section list (5 sections, no Clients/Partners/Awards) diverges from `IMPLEMENTATION-PLAN.md`'s Phase 4 file list in favor of the already-implemented canon CMS schema — see Architecture Decisions. `@sanity/image-url` was added as a new direct dependency (not explicitly listed in the Phase 4 plan, but required for correct CMS image rendering).
+
+**Next task:** Phase 5 — Portfolio (`/portfolio` listing + `/portfolio/[slug]` case study detail).
 
 - Repo is default Next.js 16.2 template (`app/page.tsx`, `layout.tsx` still stock Geist fonts; `globals.css` has dark-mode media query) — no website implementation yet (as of Phase 0)
 - `docs/design-system/typography.md` and `docs/services/consultation-process.md` are erroneous duplicates — do not use as sources
