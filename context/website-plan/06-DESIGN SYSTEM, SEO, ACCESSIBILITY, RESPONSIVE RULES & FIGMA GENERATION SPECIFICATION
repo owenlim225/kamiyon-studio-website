@@ -1,0 +1,372 @@
+# PART 6 — DESIGN SYSTEM, SEO, ACCESSIBILITY & RESPONSIVE RULES
+
+Kamiyon Studio Website Specification v2.0
+
+---
+
+## OBJECTIVE
+
+The website should feel handcrafted — not a ThemeForest template. Every spacing choice, color, and component should communicate craftsmanship before visitors read a word.
+
+**Theme:** Light mode only (Sakura internet reference + Kamiyon brand).
+
+**Implementation:** Next.js 16, React 19, TypeScript, Tailwind CSS 4. Design tokens as CSS custom properties — see `context/ui-context.md`.
+
+---
+
+## DESIGN PRINCIPLES
+
+| # | Principle | Rule |
+| --- | --- | --- |
+| 1 | Clarity | If it hurts readability, remove it |
+| 2 | Breathing room | Whitespace is content; crowded layouts create anxiety |
+| 3 | Proof over marketing | Every claim followed by evidence (work, logos, awards) |
+| 4 | Editorial composition | Alternate layouts — never stack identical card grids repeatedly |
+| 5 | Light first | White backgrounds, pink accents, dark text — no dark mode v1 |
+
+---
+
+## DESIGN TOKENS
+
+### Colors
+
+| Token | Value | Usage |
+| --- | --- | --- |
+| `--bg-primary` | `#FFFFFF` | Page background |
+| `--bg-secondary` | `#FAFAFA` | Alternating sections |
+| `--bg-accent` | `#FFF5F7` | Sakura-tinted CTA bands |
+| `--bg-surface` | `#FFFFFF` | Cards |
+| `--text-primary` | `#1A1A1A` | Headlines, body |
+| `--text-secondary` | `#6B7280` | Captions, meta |
+| `--text-muted` | `#9CA3AF` | Placeholders |
+| `--color-sakura` | `#f97695` | Primary accent (confirmed) |
+| `--color-gold` | TBD | Premium headlines sparingly |
+| `--border-default` | `rgba(26,26,26,0.12)` | Inputs, dividers |
+
+Map semantic tokens to brand palette per `context/ui-context.md`. Do not hardcode hex in components.
+
+### Border radius
+
+| Element | Radius |
+| --- | --- |
+| Buttons (pill) | `9999px` |
+| Buttons (rounded) | `16px` |
+| Cards | `16px` – `24px` |
+| Large cards / bands | `24px` – `32px` |
+| Inputs | `16px` |
+| Badges / chips | `9999px` |
+
+### Shadows
+
+Three levels only — soft, opacity under 15%:
+
+| Level | Usage |
+| --- | --- |
+| Small | Buttons at rest |
+| Medium | Cards |
+| Large | Modals, elevated panels |
+
+### Spacing (8px grid)
+
+`4, 8, 12, 16, 24, 32, 40, 48, 64, 80, 96, 120, 160`
+
+Section padding: 80–120px desktop, 48–64px mobile.
+
+---
+
+## TYPOGRAPHY SCALE
+
+| Element | Size (desktop) | Font | Weight |
+| --- | --- | --- | --- |
+| Hero headline | 48–64px | Montserrat | 700 |
+| H1 (page title) | 40–48px | Montserrat | 700 |
+| H2 (section) | 32–40px | Montserrat | 600–700 |
+| H3 (card title) | 24px | Montserrat | 600 |
+| H4 | 20px | Poppins | 600 |
+| Body large | 18–20px | Poppins | 400 |
+| Body | 16–18px | Poppins | 400 |
+| Small / caption | 14–16px | Poppins | 400 |
+| Nav links | 14–16px | Poppins | 500 |
+
+- Line height: 130–150%
+- Max paragraph width: 650–700px
+- Load fonts via `next/font/google`
+
+---
+
+## BUTTON SYSTEM
+
+| Variant | Style | Usage |
+| --- | --- | --- |
+| Primary | Pink fill, white text, pill, soft shadow | Main CTAs |
+| Secondary | White fill, gray border, pink text | Secondary actions |
+| Text / link | No background, pink text, arrow optional | Inline actions |
+
+| Size | Height |
+| --- | --- |
+| Small | 40px |
+| Medium | 48px |
+| Large | 56px |
+
+**Hover:** slight lift + darker pink (primary) or pink fill (secondary)
+
+**Microcopy:** Discuss Your Project · View Work · Learn More · Download · View the portfolio
+
+---
+
+## INPUT FIELDS
+
+(For any non-Google-Form inputs — search, filters)
+
+- Rounded 16px, large touch target
+- White background, soft border
+- Hover: pink border
+- Focus: pink glow ring, visible outline
+- Label always visible (no placeholder-only labels)
+
+---
+
+## CARD SYSTEM
+
+Structure:
+
+```
+Image (optional)
+  ↓
+Metadata / tags
+  ↓
+Title
+  ↓
+Description
+  ↓
+Action
+```
+
+- White surface, soft shadow, 16–24px radius
+- Hover: lift + shadow increase
+- Never clutter cards with too many fields
+
+---
+
+## BADGES & CHIPS
+
+| Type | Style |
+| --- | --- |
+| Category tag | Pink pill, white text (active) or gray (inactive) |
+| Status badge | Soft pink background, pink text |
+| Platform tag | Muted gray pill |
+
+Examples: Featured · Award Winning · PC · Mobile · Web3
+
+---
+
+## ICONOGRAPHY
+
+- Outline style, rounded, consistent stroke width
+- No gaming cliché icons
+- No emoji in production UI
+
+---
+
+## GRID & BREAKPOINTS
+
+| Breakpoint | Columns | Max width |
+| --- | --- | --- |
+| Desktop 1440px+ | 12 | 1280px content |
+| Laptop 1280px | 12 | 1280px |
+| Tablet 768px | 8 | fluid |
+| Mobile 390px | 4 | fluid |
+
+### Responsive rules
+
+| Component | Desktop | Mobile |
+| --- | --- | --- |
+| Hero | Split layout | Stacked |
+| Card grids | 3 → 2 → 1 columns | 1 column |
+| Navigation | Horizontal links | Hamburger |
+| Portfolio bands | Full-width horizontal | Stacked, shorter height |
+| Project detail | Gallery + sidebar | Stacked |
+| Buttons | Auto width | Full width in forms/CTAs |
+
+Images: intelligent crop, never stretch. `object-fit: cover` with defined aspect ratios.
+
+---
+
+## ACCESSIBILITY (WCAG AA)
+
+| Requirement | Spec |
+| --- | --- |
+| Contrast | AA minimum all text/background pairs |
+| Touch targets | 48px minimum |
+| Keyboard | Full tab navigation, logical order |
+| Focus | Visible focus ring (pink or high-contrast outline) |
+| Headings | Semantic hierarchy, one H1 per page |
+| Images | Descriptive alt text |
+| Forms | Labels, error messages, aria attributes |
+| Motion | `prefers-reduced-motion` respected |
+| Color | Never sole indicator of state |
+
+Test sakura pink on white and on overlay panels.
+
+---
+
+## PERFORMANCE
+
+| Target | Approach |
+| --- | --- |
+| LCP | Optimize hero image, priority load, next-gen formats |
+| Images | WebP/AVIF, lazy-load below fold, responsive `srcset` |
+| Fonts | `next/font` with subsetting |
+| JS | Server components where possible; minimal client JS |
+| Third party | Google Form iframe only on contact page |
+
+---
+
+## SEO STRUCTURE
+
+### Global
+
+- Site title template: `%s | Kamiyon Studio`
+- Default description from positioning canon (~150–160 chars)
+- `robots.txt`, `sitemap.xml` generated at build
+- Canonical URLs on all pages
+
+### Per page
+
+| Page | H1 | Meta focus |
+| --- | --- | --- |
+| Home | One hero headline | Creative technology studio, Philippines |
+| Portfolio hub | Portfolio | Work across design, games, illustration… |
+| Category | {Category} | Discipline-specific keywords |
+| Project | {Project name} | Project-specific description |
+| News | News | Studio news and announcements |
+| About | About Kamiyon Studio | Story, team, mission |
+| Press | Press Kit | Media resources |
+| Contact | Contact | Get in touch, project inquiries |
+
+### Structured data (JSON-LD)
+
+- `Organization` on all pages (site-wide)
+- `WebSite` on home
+- `BreadcrumbList` on portfolio category + project pages
+- `FAQPage` on contact if FAQ present
+
+### Open Graph
+
+- Unique `og:title`, `og:description`, `og:image` per page
+- Project pages: project hero image
+- Default: logo or brand banner from `docs/assets/`
+
+### Keywords (natural, no stuffing)
+
+Game development Philippines, creative technology, interactive experiences, Unity, design studio, illustration, branding, 3D animation, web design
+
+---
+
+## CONTENT WRITING RULES
+
+**Never use:** cutting-edge, innovative, world-class, disruptive, industry-leading, game-changing
+
+**Prefer:** thoughtful, crafted, reliable, player-focused, collaborative, purposefully built, meaningful
+
+**Buttons:** action-oriented, short
+
+**Forms:** "Tell us about your project."
+
+---
+
+## ANIMATION (v1)
+
+Ship minimal interaction only:
+
+- Button/card hover states
+- FAQ accordion open/close
+- Thumbnail gallery swap
+- Nav shadow on scroll
+
+Prepare CSS for future fade/scale reveals. Nothing depends on animation to function.
+
+---
+
+## FILE & COMPONENT NAMING
+
+```
+components/
+  ui/           Button, Card, Badge, Input
+  layout/       SiteHeader, SiteFooter, MainNav
+  sections/     Hero, ServicesSummary, AwardsHighlight, ContactCTA
+  portfolio/    CategoryBand, ProjectCard, ProjectGallery
+  news/         NewsList, NewsListItem, CategoryFilter
+  press/        LogoDownload, FactSheet, MediaAssetGrid
+```
+
+Match conventions in `context/code-standards.md`.
+
+---
+
+## FIGMA / DESIGN HANDOFF (optional)
+
+If generating designs before code:
+
+- Canvas: 1440px desktop, 390px mobile frame
+- Auto Layout on all components
+- Variables for colors, spacing, radius, typography — mirror CSS tokens above
+- Component library: Button, Card, Nav, Footer, CategoryBand, ProjectCard, NewsListItem
+- Light mode only
+- Reference: Sakura internet (UI), Fully Illustrated (portfolio layout), Kamiyon brand assets (identity)
+
+---
+
+## DESIGN QA CHECKLIST
+
+Before marking any page complete:
+
+- [ ] Hierarchy obvious at a glance?
+- [ ] Primary CTA visible and reachable?
+- [ ] Enough whitespace — would Apple remove anything?
+- [ ] Every marketing claim backed by proof on the same page or linked?
+- [ ] Light mode consistent — no accidental dark sections?
+- [ ] Pink accent used sparingly (~15%)?
+- [ ] Responsive at 390px and 1440px?
+- [ ] WCAG AA contrast pass?
+- [ ] All images have alt text?
+- [ ] Canon facts only — placeholders labeled?
+- [ ] `npm run build` passes?
+
+---
+
+## FUTURE EXPANSION (design for, don't build)
+
+| Feature | Notes |
+| --- | --- |
+| On-site blog | Would replace external-only news |
+| Testimonials section | When canon quotes exist |
+| Careers page | Footer link placeholder OK |
+| Products page | Original IP showcase |
+| CMS integration | Replace static JSON |
+| Dark mode | Not planned for v1 |
+| Calendly | Explicitly excluded |
+| Custom form backend | Explicitly excluded for v1 |
+
+Navigation and content models should scale without redesign.
+
+---
+
+## MASTER IMPLEMENTATION PROMPT
+
+Use this as the top-level instruction when building from these specs:
+
+> Build a simple, light-mode marketing website for Kamiyon Studio using Next.js 16, React 19, TypeScript, and Tailwind CSS 4. Implement exactly 7 pages: Home (hero, clients, services, awards, CTA), Portfolio (3-level: hub → category → project for design/illustration/games/branding/3d-motion/web), News (external links only), About, Press kit, and Contact (Google Form embed + mailto + socials, no Calendly). Apply Kamiyon brand: white backgrounds, sakura pink `#f97695` accents, Poppins/Montserrat typography, official logo, subtle Kami-chan. Portfolio uses Fully Illustrated layout patterns in light mode. UI reference: Sakura internet cleanliness. Content from `docs/` and `context/` canon only — labeled placeholders elsewhere. No separate Services, Team, Awards, or Testimonials pages. No dark mode, no on-site blog, no fabricated clients or awards.
+
+---
+
+## RELATED DOCUMENTS
+
+| Document | Purpose |
+| --- | --- |
+| `context/ui-context.md` | Runtime theme tokens and component conventions |
+| `context/project-overview.md` | Product scope and visitor flows |
+| `context/code-standards.md` | Implementation rules |
+| `docs/design-system/` | Canon color, typography, logo rules |
+| `docs/branding/` | Voice, mascot, visual identity |
+| Parts 01–05 | Page-level specifications |
