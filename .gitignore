@@ -15,17 +15,23 @@
 /playwright-report
 /test-results
 /blob-report
+.nyc_output/
 
 # next.js
 /.next/
 /out/
+.turbo/
 
 # production
 /build
+/dist/
 
 # misc
 .DS_Store
 *.pem
+.cache/
+.eslintcache
+.vitest/
 
 # debug
 npm-debug.log*
@@ -42,8 +48,15 @@ yarn-error.log*
 
 # local metadata
 .claude/
+.claude-flow/
 .cursor/
 .mcp.json
+
+# sanity studio
+.sanity/
+sanity/.cache/
+sanity/.sanity/
+sanity-static/
 
 # typescript
 *.tsbuildinfo
