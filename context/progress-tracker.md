@@ -75,11 +75,11 @@ Defined in `context/architecture.md`: siteSettings, homePage, aboutPage, teamMem
 
 ## Current Phase
 
-**Phase 1 — Design Foundation** — complete. Kamiyon design tokens, Poppins + Montserrat fonts, and Tailwind 4 `@theme` layer are in place. **Phase 2 (App Shell) is next.**
+**Phase 3 — CMS Layer** — complete. Sanity dependencies, typed CMS client/queries/types, typed fallbacks, schema definitions, seed placeholder docs, and env documentation are in place. **Phase 4 (Homepage) is next.**
 
 ## Current Goal
 
-Design token foundation is live. Next: build `PageShell`, `SiteHeader` (7-section nav), `SiteFooter`, SEO defaults (`Organization` JSON-LD), and `not-found.tsx` in Phase 2.
+CMS plumbing is available but not yet rendered by pages. Next: build the homepage sections and wire `app/page.tsx` to CMS data with typed fallbacks.
 
 ## Completed
 
@@ -100,6 +100,27 @@ Design token foundation is live. Next: build `PageShell`, `SiteHeader` (7-sectio
   - [x] Produce 11-phase roadmap (Phase 0–10)
   - [x] Write `context/website-plan/IMPLEMENTATION-PLAN.md`
   - [x] Update this tracker
+- [x] **Phase 2 — App Shell**
+  - [x] `components/layout/PageShell.tsx` — skip-to-content link, semantic `<main>` landmark
+  - [x] `components/layout/SiteHeader.tsx` — sticky header, 7-section nav, mobile drawer (`"use client"`), Contact CTA
+  - [x] `components/layout/MainNav.tsx`, `Logo.tsx`, `SiteFooter.tsx` — 4-column footer, social placeholders labeled "Coming soon"
+  - [x] `components/ui/Button.tsx`, `Container.tsx` — token-based primitives
+  - [x] `lib/config/navigation.ts` — static nav + social link config (CMS wiring deferred)
+  - [x] `lib/seo/constants.ts`, `lib/seo/organization-jsonld.ts` — default description from positioning canon; Organization JSON-LD (canon facts only, no fabricated URL)
+  - [x] `app/layout.tsx` — PageShell wrapper, metadata template `%s | Kamiyon Studio`, JSON-LD script
+  - [x] `app/not-found.tsx` — branded 404 with home + contact links
+  - [x] `app/globals.css` — `:focus-visible` styles + `prefers-reduced-motion` guard
+  - [x] `npm run build` ✅ · `npm run lint` ✅
+- [x] **Phase 3 — CMS Layer**
+  - [x] Installed `next-sanity` + `sanity`
+  - [x] Added `lib/cms/types.ts` for all CMS content models from `architecture.md`
+  - [x] Added typed fallback stubs for site settings, Home, About, Team, Services, Products, Portfolio, Community, and Contact
+  - [x] Added `lib/cms/client.ts` with env-aware Sanity client and fallback-safe missing-config behavior
+  - [x] Added `lib/cms/queries.ts` with one `get*` function per singleton, collection, and slug route
+  - [x] Added Sanity Studio config, CLI config, reusable object schemas, document schemas, and seed placeholder docs
+  - [x] Added `.env.example` for `CMS_PROJECT_ID`, `CMS_DATASET`, and optional `CMS_API_TOKEN`
+  - [x] Added minimal Vitest setup for pure CMS fallback resolution logic
+  - [x] `npm run test` ✅ · `npm run lint` ✅ · `npm run build` ✅
 
 ## In Progress
 
@@ -110,8 +131,8 @@ Design token foundation is live. Next: build `PageShell`, `SiteHeader` (7-sectio
 Per `context/website-plan/IMPLEMENTATION-PLAN.md` (each ≈ one PR / session):
 
 1. ~~**Phase 1 — Design foundation**~~ ✅ complete
-2. **Phase 2 — App shell** — PageShell, SiteHeader (7-section nav), SiteFooter (social placeholders), SEO defaults + Organization JSON-LD in root `layout.tsx`, `not-found.tsx`
-3. **Phase 3 — CMS layer** — `lib/cms/` client/queries/types + typed fallbacks for all collections; Sanity schemas + seed placeholder docs
+2. ~~**Phase 2 — App shell**~~ ✅ complete
+3. ~~**Phase 3 — CMS layer**~~ ✅ complete
 4. **Phase 4 — Homepage** — hero, clients/partners, services summary, awards highlight, featured work, contact CTA (CMS-driven, fallbacks)
 5. **Phase 5 — Portfolio** — `/portfolio` listing + `/portfolio/[slug]` case study (challenge/solution/impact)
 6. **Phase 6 — About + Services** — About (story/mission/vision/values/6-member team) + Services listing + `/services/[slug]`
@@ -122,7 +143,7 @@ Per `context/website-plan/IMPLEMENTATION-PLAN.md` (each ≈ one PR / session):
 
 ## Open Questions
 
-- [ ] **CMS final choice** — defaulted to **Sanity** in Phase 0; confirm with team before Phase 3
+- [ ] **Sanity project provisioning** — Phase 3 implemented Sanity as the working CMS; create/confirm project ID, dataset, CORS, and token handling before real content entry
 - [ ] **`/news` route** — deferred/skipped for v1 (Vision item); confirm no external news feed needed at launch
 - [ ] **Press Kit `/pres`** — deferred (Part 4 spec); revisit post-v1; assets exist in `docs/assets/`
 - [ ] **Portfolio taxonomy divergence** — canon `caseStudy` model adopted over `website-plan/` 6-category IA; if discipline browsing wanted later, add tag filters (no new routes) — flagged for review
@@ -133,7 +154,7 @@ Per `context/website-plan/IMPLEMENTATION-PLAN.md` (each ≈ one PR / session):
 - [ ] **Public email address** — not in canon (placeholder until provided)
 - [ ] **Remaining brand color hex values** — Warm Ivory, Charcoal, Deep Indigo, Soft Gold TBD; extract from `brand-kit.png` in canon update; do not invent
 - [ ] **Next.js 16.2 docs missing** — `node_modules/next/dist/docs/` exists but is empty (confirmed in Phase 1); relied on installed types + current file patterns instead; noted as known gap
-- [ ] **Test stack** — no runner installed; Phase 1 had no testable TS utility (pure CSS + next/font call); Phase 10 will add Vitest + Testing Library + Playwright
+- [ ] **Test stack** — minimal Vitest runner added for Phase 3 fallback resolution only; Phase 10 will add coverage thresholds, Testing Library, and Playwright
 - [ ] **Beaufort for LoL license** — confirm before production use
 - [ ] **Product development status** — canon says "Original IP" only; per-product status defaults to `tbd`
 - [ ] **README motto conflict** — update canon README to match Create. Play. Inspire.?
@@ -158,6 +179,10 @@ Per `context/website-plan/IMPLEMENTATION-PLAN.md` (each ≈ one PR / session):
 | Contact mechanism | External links only (Facebook, LinkedIn, mailto) | Overrides `website-plan/` Google Form embed; canon invariant (no forms/auth) |
 | News + Press Kit | Deferred out of v1 | Vision items per project-overview.md; not built in v1 |
 | FAQ source | `docs/ai/faq.md` | `docs/services/consultation-process.md` is a known duplicate — not a source |
+| Nav config (Phase 2) | Static `lib/config/navigation.ts` | CMS wiring deferred to Phase 3; shell uses static 7-section nav + placeholder social links |
+| Logo (Phase 2) | Text + sakura icon placeholder | Asset migration from `docs/assets/` deferred to Phase 9; no fake logo image |
+| CMS implementation (Phase 3) | Sanity via `next-sanity` + `sanity` | Adopted the defaulted Phase 0 recommendation; app falls back cleanly when `CMS_PROJECT_ID` / `CMS_DATASET` are unset |
+| Phase 3 testing scope | Minimal Vitest coverage for fallback resolution only | Added a pure TypeScript test harness without React/JSDOM/E2E; broader coverage remains Phase 10 scope |
 
 ## Session Notes
 
@@ -166,6 +191,47 @@ Per `context/website-plan/IMPLEMENTATION-PLAN.md` (each ≈ one PR / session):
 - Brand assets in `docs/assets/`: logo.png, logo-frame.png, svg.svg, kami-chan-concept-art.png, brand-kit.png, youtube-banner.png
 - Context files are now the build spec; read `context/CLAUDE.md` order before implementing
 - After CMS setup, seed placeholder documents matching schemas in `architecture.md`
+
+### 2026-07-09 — Phase 3 implementation session
+
+**Files added/changed:** `package.json`, `package-lock.json`, `.gitignore`, `.env.example`, `vitest.config.ts`, `lib/cms/{client,queries,types,index}.ts`, `lib/cms/fallbacks/{about,community,contact,home,index,portfolio,products,resolve,resolve.test,services,site-settings}.ts`, `sanity.config.ts`, `sanity.cli.ts`, `sanity/schemaTypes/{documents,index,objects}.ts`, `sanity/seed/placeholder-docs.ts`, `context/progress-tracker.md`.
+
+**What was implemented:**
+- Sanity integration dependencies installed: `next-sanity` and `sanity`.
+- CMS TypeScript model added for all architecture collections: `siteSettings`, `homePage`, `aboutPage`, `teamMember`, `serviceCategory`, `service`, `product`, `caseStudy`, `communityItem`, `contactPage`, and `seoMetadata`.
+- Typed fallbacks added for every collection. Canon facts are sourced from `docs/`; unknown social URLs, email, case studies, community events, team bios/photos, media, and product development statuses remain honest placeholders.
+- Query layer added with fallback-safe `get*` functions returning typed results or `null`; missing CMS env vars do not break local builds.
+- Sanity Studio schema types added plus seed placeholder docs with stable IDs and references.
+- `.env.example` documents `CMS_PROJECT_ID`, `CMS_DATASET`, and optional `CMS_API_TOKEN`.
+- `.gitignore` now explicitly allows `.env.example` while keeping real `.env*` files ignored.
+- Minimal Vitest setup added for `resolveWithFallback`, covering CMS content present, `null`, `undefined`, and empty object behavior.
+- Review follow-up fixed seed `_key` generation, case-study gallery image metadata fields, ISR fetch revalidation, required service category references, fallback-only seed slug cleanup, Sanity client memoization, and CMS image `_key` projection for future React list rendering.
+- TypeScript review follow-up tightened CMS env narrowing, nullable image metadata/featured refs, home block GROQ projections, product media schema alignment, static nav social type naming, Studio/CLI project ID errors for Sanity commands, and minimal Vitest coverage including future `.tsx` tests.
+
+**Verification:** `npm run test` ✅ · `npm run lint` ✅ · `npm run build` ✅ · IDE diagnostics clean.
+
+**TDD note:** Added only the pure TypeScript fallback-resolution test harness. Phase 10 still owns coverage thresholds, React Testing Library, component tests, and Playwright E2E.
+
+**Deviations from plan:** CMS project provisioning and real Sanity dataset import were not performed; Phase 3 added the local integration layer and seed fixture only.
+
+**Next task:** Phase 4 — Homepage wired to CMS with fallbacks.
+
+### 2026-07-09 — Phase 2 implementation session
+
+**Files added/changed:** `components/layout/{PageShell,SiteHeader,MainNav,Logo,SiteFooter}.tsx`, `components/ui/{Button,Container}.tsx`, `lib/config/navigation.ts`, `lib/seo/{constants,organization-jsonld}.ts`, `app/layout.tsx` (PageShell + metadata + JSON-LD), `app/not-found.tsx`, `app/globals.css` (`:focus-visible` + reduced-motion).
+
+**What was implemented:**
+- Global app shell wraps all pages via root layout: sticky header with 7-section nav (Home, About, Services, Products, Portfolio, Community, Contact), mobile drawer with Escape-to-close, Contact CTA, skip-to-content link.
+- Footer: 4-column layout (brand/motto, nav repeat, social placeholders labeled "Coming soon", studio location from canon). No fabricated social URLs or email.
+- SEO: metadata title template `%s | Kamiyon Studio`, default description from `docs/marketing/positioning.md`, Organization JSON-LD with canon name/foundingDate/address only (no fabricated website URL).
+- Branded `not-found.tsx` with home + contact links.
+- UI primitives: `Button` (primary/secondary/ghost, link or button), `Container` (max-w-7xl).
+
+**Verification:** `npm run build` ✅ · `npm run lint` ✅ · Routes: `/` + `/_not-found` static.
+
+**Deviations from plan:** Logo uses text + sakura blossom icon placeholder (assets not yet in `public/`). `app/page.tsx` left as stock stub — homepage content is Phase 4.
+
+**Next task:** Phase 3 — CMS layer.
 
 ### 2026-07-09 — Phase 1 implementation session
 
