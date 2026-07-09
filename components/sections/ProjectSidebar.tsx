@@ -35,7 +35,7 @@ export function ProjectSidebar({ caseStudy }: ProjectSidebarProps) {
           <dd className="mt-1">
             <Link
               href="/portfolio"
-              className="text-[var(--text-primary)] transition-colors hover:text-sakura focus-visible:outline-offset-2"
+              className="text-[var(--text-primary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2"
             >
               {caseStudy.industry}
             </Link>

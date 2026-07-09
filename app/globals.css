@@ -14,17 +14,25 @@
 @theme {
   --color-sakura: #f97695;
 
-  /* TODO(TBD): Warm Ivory — extract hex from docs/assets/brand-kit.png;
-     do not invent. Assign to --color-ivory and --bg-base once confirmed. */
+  /* Phase 9: extracted directly from the color swatches in
+     docs/assets/brand-kit.png (do not invent — see ui-context.md §Colors). */
+  --color-ivory: #f8f8f8;
+  --color-charcoal: #201013;
+  --color-gold: #e9c080;
 
-  /* TODO(TBD): Charcoal — extract hex from docs/assets/brand-kit.png;
-     do not invent. Assign to --color-charcoal once confirmed. */
+  /* TODO(TBD): Deep Indigo — brand-kit.png's swatch grid only contains 4
+     color chips (ivory/charcoal/pink/gold above) and none reads as a
+     blue-violet "indigo" (the darkest chip, #201013, is a near-neutral
+     dark charcoal, not indigo — assigned to --color-charcoal instead).
+     Still not documented anywhere in docs/. Do not invent; assign to
+     --color-indigo and --accent-dark once a real swatch is confirmed. */
 
-  /* TODO(TBD): Deep Indigo — extract hex from docs/assets/brand-kit.png;
-     do not invent. Assign to --color-indigo and --accent-dark once confirmed. */
-
-  /* TODO(TBD): Soft Gold — extract hex from docs/assets/brand-kit.png;
-     do not invent. Assign to --color-gold and --accent-premium once confirmed. */
+  /* Phase 9 (WCAG AA): --color-sakura (#f97695) is ~2.6:1 against white/ivory —
+     fails AA for both text (4.5:1) and non-text UI (3:1). --color-sakura-ink is
+     the same hue/saturation darkened to ~5.2:1, for use as text/icon foreground
+     on light surfaces. Raw --color-sakura stays reserved for fills/backgrounds
+     (paired with --text-on-accent) and large brand marks. */
+  --color-sakura-ink: #c23a5e;
 
   /* ---- Shadow scale — 3 levels, max 15% opacity (Part 6) -------------- */
   --shadow-sm: 0 1px 4px rgba(26, 26, 26, 0.08);
@@ -59,19 +67,25 @@
   --bg-accent:    #fff5f7;  /* Sakura-tinted CTA bands */
   --bg-surface:   #ffffff;  /* Cards */
 
-  /* Alias used by ui-context.md mapping; update to var(--color-ivory) once confirmed */
-  --bg-base: var(--bg-primary);
+  /* ui-context.md maps page background → Warm Ivory (confirmed Phase 9) */
+  --bg-base: var(--color-ivory);
 
-  /* -- Text (Part 6) ----------------------------------------------------- */
-  --text-primary:   #1a1a1a; /* Headlines, body */
+  /* -- Text (Part 6) ------------------------------------------------------
+     ui-context.md maps primary text → Charcoal (confirmed Phase 9). */
+  --text-primary:   var(--color-charcoal);
   --text-secondary: #6b7280; /* Captions, meta */
   --text-muted:     #9ca3af; /* Placeholders */
 
   /* -- Accents ----------------------------------------------------------- */
   --accent-primary: var(--color-sakura); /* Sakura Pink — confirmed */
 
-  /* TODO(TBD): --accent-dark    → var(--color-indigo) once hex confirmed */
-  /* TODO(TBD): --accent-premium → var(--color-gold)   once hex confirmed */
+  /* Dark foreground for text/icons placed on top of --accent-primary fills
+     (buttons, active chips) — --color-sakura fails AA contrast with white text. */
+  --text-on-accent: var(--color-charcoal);
+
+  --accent-premium: var(--color-gold); /* Soft Gold — confirmed Phase 9 */
+
+  /* TODO(TBD): --accent-dark → var(--color-indigo) once hex confirmed */
 
   /* -- Borders ----------------------------------------------------------- */
   --border-default: rgba(26, 26, 26, 0.12);
@@ -99,9 +113,12 @@ body {
   color: var(--text-primary);
 }
 
-/* Accessibility — focus visible on all interactive elements */
+/* Accessibility — focus visible on all interactive elements.
+   Uses --color-sakura-ink, not --accent-primary: the raw brand sakura hex
+   is ~2.6:1 against ivory/white and fails the 3:1 non-text contrast
+   minimum required for focus indicators (WCAG 1.4.11 / 2.4.7). */
 :focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--color-sakura-ink);
   outline-offset: 2px;
 }
 

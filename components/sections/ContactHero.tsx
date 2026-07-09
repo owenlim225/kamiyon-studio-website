@@ -17,7 +17,7 @@ export function ContactHero({ contactPage }: ContactHeroProps) {
   return (
     <section className="bg-[var(--bg-primary)] py-16 md:py-24">
       <Container className="mx-auto max-w-[820px] text-center">
-        <p className="text-sm font-semibold uppercase tracking-wide text-sakura">
+        <p className="text-sm font-semibold uppercase tracking-wide text-sakura-ink">
           Contact
         </p>
         <h1 className="mt-4 font-display text-4xl font-bold text-[var(--text-primary)] md:text-5xl">

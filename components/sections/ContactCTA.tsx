@@ -23,7 +23,7 @@ export function ContactCTA({ ctaBanner }: ContactCTAProps) {
           </Button>
           <Link
             href="/portfolio"
-            className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura focus-visible:outline-offset-2"
+            className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2"
           >
             View our work
           </Link>

@@ -15,7 +15,7 @@ export function EmptyState({ message, backHref, backLabel }: EmptyStateProps) {
       <p className="mt-4 text-base text-[var(--text-secondary)]">{message}</p>
       <Link
         href={backHref}
-        className="mt-4 text-sm font-medium text-sakura transition-colors hover:opacity-80 focus-visible:outline-offset-2"
+        className="mt-4 text-sm font-medium text-sakura-ink transition-colors hover:opacity-80 focus-visible:outline-offset-2"
       >
         {backLabel}
       </Link>

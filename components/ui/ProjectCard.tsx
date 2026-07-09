@@ -40,7 +40,7 @@ export function ProjectCard({ caseStudy }: ProjectCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col p-6">
-        <p className="text-sm font-medium uppercase tracking-wide text-sakura">
+        <p className="text-sm font-medium uppercase tracking-wide text-sakura-ink">
           {caseStudy.industry}
         </p>
         <h3 className="mt-2 line-clamp-2 font-display text-lg font-semibold text-[var(--text-primary)]">

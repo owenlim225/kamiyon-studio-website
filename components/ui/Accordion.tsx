@@ -30,12 +30,12 @@ export function Accordion({ items }: AccordionProps) {
               aria-expanded={isOpen}
               aria-controls={panelId}
               onClick={() => setOpenIndex(isOpen ? null : index)}
-              className="flex min-h-11 w-full items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-[var(--text-primary)] transition-colors hover:text-sakura focus-visible:outline-offset-2 md:text-base"
+              className="flex min-h-11 w-full items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-[var(--text-primary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2 md:text-base"
             >
               <span>{item.question}</span>
               <span
                 aria-hidden="true"
-                className={`shrink-0 text-lg text-sakura transition-transform motion-reduce:transition-none ${
+                className={`shrink-0 text-lg text-sakura-ink transition-transform motion-reduce:transition-none ${
                   isOpen ? "rotate-45" : ""
                 }`}
               >

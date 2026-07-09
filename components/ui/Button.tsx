@@ -22,12 +22,13 @@ type ButtonAsLink = ButtonBaseProps & {
 type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 const variantClasses: Record<ButtonVariant, string> = {
+  // Dark text-on-accent (not white) — raw sakura fails AA contrast with white text.
   primary:
-    "bg-sakura text-white hover:opacity-90 focus-visible:outline-offset-2",
+    "bg-sakura text-[var(--text-on-accent)] hover:opacity-90 focus-visible:outline-offset-2",
   secondary:
     "border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]",
   ghost:
-    "text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] hover:text-sakura",
+    "text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] hover:text-sakura-ink",
 };
 
 const baseClasses =

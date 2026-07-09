@@ -14,7 +14,7 @@ export function ServiceDetail({ service, category }: ServiceDetailProps) {
     <section className="bg-[var(--bg-primary)] py-16 md:py-24">
       <Container>
         {category ? (
-          <p className="text-sm font-semibold uppercase tracking-wide text-sakura">
+          <p className="text-sm font-semibold uppercase tracking-wide text-sakura-ink">
             {category.title}
           </p>
         ) : null}

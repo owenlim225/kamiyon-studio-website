@@ -23,14 +23,16 @@ Use CSS custom properties for all colors. Components must reference tokens — n
 | Role | CSS Variable | Value | Usage |
 | --- | --- | --- | --- |
 | Sakura Pink | `--color-sakura` | `#f97695` | Primary brand, CTAs, highlights, mascot accents |
-| Warm Ivory | `--color-ivory` | TBD | Primary light background (~55% visual weight) |
-| Charcoal | `--color-charcoal` | TBD | Body text, navigation (~20%) |
+| Warm Ivory | `--color-ivory` | `#f8f8f8` | Primary light background (~55% visual weight) |
+| Charcoal | `--color-charcoal` | `#201013` | Body text, navigation (~20%) |
 | Deep Indigo | `--color-indigo` | TBD | Hero sections, headers, depth (~8%) |
-| Soft Gold | `--color-gold` | TBD | Sparingly: achievements, premium accents (~2%) |
+| Soft Gold | `--color-gold` | `#e9c080` | Sparingly: achievements, premium accents (~2%) |
 
-**Confirmed hex:** Sakura Pink `#f97695` extracted from [`docs/assets/svg.svg`](../docs/assets/svg.svg) logo paths.
+**Confirmed hex:** Sakura Pink `#f97695` extracted from [`docs/assets/svg.svg`](../docs/assets/svg.svg) logo paths. Warm Ivory `#f8f8f8`, Charcoal `#201013`, and Soft Gold `#e9c080` extracted (Phase 9) from the labeled color swatches in [`docs/assets/brand-kit.png`](../docs/assets/brand-kit.png).
 
-**TBD hex values:** Warm Ivory, Charcoal, Deep Indigo, and Soft Gold are named in canon but hex codes are not documented in markdown. Extract from [`docs/assets/brand-kit.png`](../docs/assets/brand-kit.png) in a future canon update — do not invent values.
+**Deep Indigo still TBD:** `brand-kit.png`'s swatch grid contains exactly 4 chips — the 3 above plus one pink chip (`#FF7998`, a near-duplicate of the confirmed Sakura Pink, not a new color). None of the 4 reads as a blue-violet "indigo" hue; the darkest chip (`#201013`) is a near-neutral dark tone (R>G>B, no blue bias) and was assigned to Charcoal instead, matching its documented role (body text) and its use as a background behind light/gold wordmark lockups in the kit. Do not invent a Deep Indigo hex — extract it from a future canon update.
+
+**Accessibility tint:** `--color-sakura-ink` (`#c23a5e`) is a WCAG AA–accessible darkened tint of Sakura Pink (same hue/saturation, ~5.2:1 contrast on white/ivory vs. the raw brand hex's ~2.6:1). It is a derived UI utility, not a new brand color — use it for any Sakura-colored text/icon/focus-ring foreground on light backgrounds; reserve raw `--color-sakura` for fills/backgrounds and pair those with `--text-on-accent` (maps to Charcoal) for legible foreground text.
 
 ### Semantic UI tokens (map to brand palette)
 
@@ -44,6 +46,7 @@ Use CSS custom properties for all colors. Components must reference tokens — n
 | Accent dark | `--accent-dark` | `--color-indigo` |
 | Border | `--border-default` | charcoal ~10–15% opacity |
 | Premium highlight | `--accent-premium` | `--color-gold` |
+| Text/icon on accent fill | `--text-on-accent` | `--color-charcoal` (dark foreground for content placed on top of `--accent-primary`) |
 
 ### Color hierarchy (emphasis order)
 
@@ -56,6 +59,7 @@ Use CSS custom properties for all colors. Components must reference tokens — n
 - Maintain sufficient contrast for all text/background pairs (WCAG AA minimum).
 - Never use color as the only indicator of state or meaning.
 - Test Sakura Pink on ivory and indigo backgrounds.
+- **Phase 9 finding:** raw Sakura Pink (`#f97695`) is ~2.6:1 against Warm Ivory/white — fails AA for text (4.5:1) and non-text UI like focus rings/icons (3:1). Site now uses `--color-sakura-ink` for that foreground role (see Brand palette above) and `--text-on-accent` for content placed on Sakura fills. Re-verify once Deep Indigo's hex is confirmed — that pairing is still untested.
 
 ---
 

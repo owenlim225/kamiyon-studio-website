@@ -75,11 +75,11 @@ Defined in `context/architecture.md`: siteSettings, homePage, aboutPage, teamMem
 
 ## Current Phase
 
-**Phase 7 — Trust + Contact** — complete. `/contact` is live on CMS + typed fallbacks. **Phase 8 (Products + Community) is next.**
+**Phase 8 — Products + Community** — complete. `/products`, `/products/[slug]` (3 canon IP titles), and `/community` are live on CMS + typed fallbacks. **Phase 9 (Polish) is next.**
 
 ## Current Goal
 
-Contact is live end-to-end on fallbacks. Next: build `/products` + `/products/[slug]` (3 canon IP titles) and `/community` per `context/website-plan/IMPLEMENTATION-PLAN.md` Phase 8.
+Products and Community are live end-to-end on fallbacks. Next: Phase 9 — per-route SEO/OG, WCAG AA pass, responsive breakpoints, asset migration `docs/assets/` → `public/` per `context/website-plan/IMPLEMENTATION-PLAN.md` Phase 9.
 
 ## Completed
 
@@ -166,6 +166,19 @@ Contact is live end-to-end on fallbacks. Next: build `/products` + `/products/[s
   - [x] Expanded `contactPageFallback.faq` from 3 to 8 canon Q&A pairs sourced verbatim from `docs/ai/faq.md` (identity, services, industries, consultation, original products, partnerships, brand description) — the `contactPage` CMS type/query/fallback shell already existed from Phase 3, so this phase only deepened its FAQ content and built the rendering layer
   - [x] Deliberately did **not** add a Google Form, `NEXT_PUBLIC_CONTACT_FORM_URL`, Calendly embed, or custom thank-you route — canon invariant confirmed in `IMPLEMENTATION-PLAN.md` Phase 7 scope
   - [x] `npm run test` ✅ (18/18, unchanged — no new pure-logic units; see TDD note) · `npm run lint` ✅ · `npm run build` ✅ (`/contact` prerendered as static content) · verified rendered HTML directly: headline/intro, "Ways to reach us" heading, three "Coming soon" placeholder cards (no `mailto:` present, confirming placeholder channels never render as fake links), "Studio facts" sidebar with `Founded`/`2024`/location, "Frequently asked questions" heading, `FAQPage` JSON-LD script, and accordion button `contact-faq-button-0`
+- [x] **Phase 8 — Products + Community**
+  - [x] `app/products/page.tsx` — static `generateMetadata`; fetches `getProducts()` resolved against `productsFallback` (both already existed from Phase 3); renders `ProductGrid`
+  - [x] `app/products/[slug]/page.tsx` — `generateStaticParams` from CMS-or-fallback product slugs; `generateMetadata` from `product.seo`; `getProductContent(slug)` tries `getProductBySlug` then falls back to a slug lookup in `productsFallback`, then `notFound()`; renders a `BreadcrumbList` JSON-LD (Home → Products → product) + `ProductDetail`
+  - [x] `app/community/page.tsx` — static `generateMetadata`; fetches `getCommunityItems()` resolved against `communityItemsFallback`; renders `CommunityFeed`. No `/community/[slug]` route — canon scope (`IMPLEMENTATION-PLAN.md` Phase 8) is feed-only, matching `communityItem`'s lack of a dedicated detail-page CMS field beyond `body`
+  - [x] Added `components/sections/{ProductGrid,ProductMedia,ProductDetail,CommunityFeed}.tsx` and `components/ui/{ProductCard,CommunityCard,TypeFilter}.tsx`
+  - [x] `ProductGrid`/`ProductCard`: 3-column responsive card grid; each card shows genre, title, tagline, a `Badge` with the product's development-status label (`getDevelopmentStatusLabel`, new `lib/products/development-status.ts`), and a "Media coming soon" placeholder state when `media[0].asset` is unset (true for all 3 fallback products today, since no CMS project is configured)
+  - [x] `ProductDetail`: hero (genre eyebrow, title, status badge, tagline) → `~65/35` two-column layout (same grid classes as `ServiceDetail`/`CaseStudy`) — main column renders `ProductMedia` + Overview + Key features, aside renders Project goals + Platforms + "Interested in this project?" CTA → `/contact` (same sidebar-CTA precedent as `ServiceSidebar`/`ProjectSidebar`)
+  - [x] `ProductMedia` (new): renders resolved CMS media images in a grid, or an honest media-coming-soon placeholder (using the media item's own `caption` when set) when the array has no resolvable images; renders a "Watch trailer →" external link only when `product.trailerUrl` is set
+  - [x] `CommunityFeed` (`"use client"`, new): the smallest client boundary needed for interactive type filtering — receives all `CommunityItem[]` as a prop (fetched server-side in `app/community/page.tsx`), holds `activeType` state, and derives the filtered list + available filter chips via two new pure functions in `lib/community/filter-by-type.ts` (`getAvailableTypes`, `filterCommunityItemsByType`); renders the existing `EmptyState` when a filter yields zero results
+  - [x] `TypeFilter` (new, presentational, no `"use client"` of its own — bundled into the client boundary via `CommunityFeed`'s import): filter chip row with an "All" option plus one chip per type actually present in the fetched items (via `getAvailableTypes`, not a static enum list — avoids showing empty filter categories); `aria-pressed` + `role="group"` for a11y
+  - [x] `CommunityCard` (new): renders type label (`getCommunityTypeLabel`, new `lib/community/type-labels.ts`) + optional formatted date, title, summary, optional location, a "Coming soon" `Badge` for placeholder items, and an external `Learn more →` link only when `externalUrl` is set (no internal detail route exists, matching the feed-only IA)
+  - [x] Added unit tests for the two new pure filtering functions before wiring them into `CommunityFeed`: `lib/community/filter-by-type.test.ts` (`getAvailableTypes` — empty input, dedupe, first-seen order; `filterCommunityItemsByType` — `"all"` pass-through, type match, no-match empty array)
+  - [x] `npm run test` ✅ (24/24, up from 18 — 6 new assertions) · `npm run lint` ✅ · `npm run build` ✅ (`/products` static, `/products/[slug]` SSG — all 3 fallback product slugs prerendered: `eclipse`, `vocabu-wildlife-edition`, `afterschool-cleanup`; `/community` static) · verified rendered HTML directly for all three routes: `/products` (all 3 product cards, correct genres/taglines, "Status: TBD" badges, media-coming-soon placeholders), `/products/eclipse` (breadcrumb JSON-LD, status badge, media-coming-soon state, overview, 3 features, 3 project goals, `PC` platform tag, contact CTA), and `/community` (type filter chips reading "All"/"Workshop"/"Partnership" derived from the 2 fallback items, both cards rendering correct type label, title, summary, and "Coming soon" badge)
 
 ## In Progress
 
@@ -182,7 +195,7 @@ Per `context/website-plan/IMPLEMENTATION-PLAN.md` (each ≈ one PR / session):
 5. ~~**Phase 5 — Portfolio**~~ ✅ complete
 6. ~~**Phase 6 — About + Services**~~ ✅ complete
 7. ~~**Phase 7 — Trust + Contact**~~ ✅ complete
-8. **Phase 8 — Products + Community** — 3 IP product pages + community feed placeholders (canon-only)
+8. ~~**Phase 8 — Products + Community**~~ ✅ complete
 9. **Phase 9 — Polish** — per-route SEO/OG, WCAG AA pass, responsive breakpoints, asset migration `docs/assets/` → `public/`
 10. **Phase 10 — Verification** — add test infra; E2E smoke all routes; `npm run build` + lint; 80%+ coverage on new `lib/` + section components
 
@@ -245,8 +258,35 @@ Per `context/website-plan/IMPLEMENTATION-PLAN.md` (each ≈ one PR / session):
 | FAQ JSON-LD computed at page level | New `lib/seo/faq-jsonld.ts` (`getFaqJsonLd`) is called from `app/contact/page.tsx`, not inside `ContactFAQ` | Mirrors the existing `getBreadcrumbJsonLd` precedent from Phase 5 — JSON-LD scripts are a page-level SEO concern, not a Server Component's rendering responsibility |
 | Studio facts sidebar sourced from new SEO constants | `ContactSidebar` reads `STUDIO_FOUNDED_YEAR`/`STUDIO_LOCATION` from `lib/seo/constants.ts` rather than a CMS field | These are static canon facts (`docs/company/overview.md`) already duplicated as literals in `organization-jsonld.ts`'s `foundingDate`/`address`; promoting them to named constants avoids introducing a third hardcoded copy without adding CMS schema scope creep for Phase 7 |
 | Phase 7 testing scope | No new pure-logic unit added; test count stays at 18/18 | `Accordion`'s open/closed state and `ContactCard`'s href derivation are both trivial single-branch logic embedded in presentational components (same threshold `ProjectSidebar`'s `formatPublishedDate` used in Phase 5 to justify skipping an isolated unit test) — broader component/E2E coverage remains Phase 10 scope |
+| Community filter state lives in `CommunityFeed`, not `TypeFilter` | `CommunityFeed` is the sole `"use client"` boundary for the `/community` route; `TypeFilter` and `CommunityCard` stay plain presentational components that receive props/callbacks | Matches the existing "smallest client boundary" precedent (`Accordion` in Phase 7); avoids marking more of the community section as client-rendered than strictly needed for the filter interaction |
+| Filter chips derived from data, not a static `CommunityItemType` enum list | `TypeFilter` receives `types` from `getAvailableTypes(items)` (first-seen order across the actual fetched items) rather than iterating all 7 enum values | Prevents showing empty filter chips for types with zero current items (e.g. `hackathon`, `game-jam`, `speaking`, `education`, `other` all have zero fallback items today) — same "don't show structure with nothing behind it" instinct as `ServicesListing`'s per-category coming-soon text, applied in the opposite direction (hide instead of label) since a filter chip with 0 results is pure noise, not a placeholder-worthy content gap |
+| No `/community/[slug]` detail route | Community section is `/community` feed-only; `CommunityCard` links externally (`externalUrl`) when present, otherwise is not a link at all | Re-confirms the Phase 0/`IMPLEMENTATION-PLAN.md` Phase 8 scope (feed + type filters only, no detail route in the Spec Reconciliation Matrix); `communityItem.body` (portable text) is fetched by `getCommunityItems()` but intentionally unused until a detail route is scoped |
+| Product development-status shown as a card/detail badge, not separate copy | `getDevelopmentStatusLabel` (new `lib/products/development-status.ts`) maps the 4 enum values to display labels reused by both `ProductCard` and `ProductDetail` | Single source of truth for the label text avoids drifting copy between the grid and detail views; mirrors the `getCommunityTypeLabel`/`getDevelopmentStatusLabel` pairing as the same kind of trivial-lookup helper Phase 7's `ContactCard` established as below the unit-test threshold |
 
 ## Session Notes
+
+### 2026-07-10 — Phase 8 implementation session
+
+**Files added/changed:** `app/products/page.tsx`, `app/products/[slug]/page.tsx`, `app/community/page.tsx`, `components/sections/{ProductGrid,ProductMedia,ProductDetail,CommunityFeed}.tsx`, `components/ui/{ProductCard,CommunityCard,TypeFilter}.tsx`, `lib/products/development-status.ts`, `lib/community/{type-labels,filter-by-type,filter-by-type.test}.ts`, `context/progress-tracker.md`.
+
+**What was implemented:**
+- `app/products/page.tsx` / `app/products/[slug]/page.tsx`: same CMS-then-fallback-then-`notFound()` pattern as `/services`/`/services/[slug]` and `/portfolio`/`/portfolio/[slug]`; `generateStaticParams` prerenders all 3 canon fallback slugs (`eclipse`, `vocabu-wildlife-edition`, `afterschool-cleanup`); breadcrumb JSON-LD via the existing `getBreadcrumbJsonLd` helper.
+- `ProductGrid`/`ProductCard`: responsive 3-column grid; each card shows genre, title, tagline, a development-status `Badge`, and a "Media coming soon" placeholder (true for all 3 products today, since `productsFallback` media entries have no `asset`).
+- `ProductDetail`: `~65/35` layout reusing the `ServiceDetail`/`CaseStudy` grid precedent — main column (`ProductMedia`, Overview, Key features), aside (Project goals, Platforms, "Interested in this project?" → `/contact` CTA).
+- `ProductMedia` (new): resolves CMS media via `getCmsImageUrl`; renders an honest coming-soon placeholder using the media item's own `caption` when no image resolves; renders a trailer link only when `trailerUrl` is set.
+- `app/community/page.tsx`: fetches `getCommunityItems()` resolved against `communityItemsFallback` (both already existed from Phase 3); renders `CommunityFeed`. No `/community/[slug]` — feed-only per canon scope.
+- `CommunityFeed` (new `"use client"` section): the only client boundary for this route; holds `activeType` filter state; derives the filter-chip list and filtered items via two new pure functions in `lib/community/filter-by-type.ts`.
+- `TypeFilter` + `CommunityCard` (new `ui` primitives): `TypeFilter` renders "All" plus one chip per type actually present in the data (never a fixed 7-value list); `CommunityCard` shows type label, optional date/location, summary, "Coming soon" badge, and an external link only when `externalUrl` is set.
+- Added `lib/products/development-status.ts` (`getDevelopmentStatusLabel`) and `lib/community/type-labels.ts` (`getCommunityTypeLabel`) — simple enum-to-label lookup helpers shared between grid/card and detail views.
+- Wrote `lib/community/filter-by-type.test.ts` first (RED — confirmed failing on missing module), then implemented `getAvailableTypes`/`filterCommunityItemsByType` (GREEN) before wiring them into `CommunityFeed`, mirroring the Phase 6 `getUniqueIndustries` TDD precedent exactly.
+
+**Verification:** `npm run test` ✅ (24/24, up from 18 — 6 new assertions in `filter-by-type.test.ts`) · `npm run lint` ✅ · `npm run build` ✅ (`/products` static, `/products/[slug]` SSG with all 3 canon slugs, `/community` static). Read the generated static HTML directly to confirm: `/products` (all 3 product cards with correct genre/title/tagline/status-badge/media-placeholder), `/products/eclipse` (breadcrumb JSON-LD, status badge, media-coming-soon block, overview paragraph, 3 key features, 3 project goals, `PC` platform tag, "Interested in this project?" CTA linking to `/contact`), and `/community` (filter chips "All"/"Workshop"/"Partnership" — correctly derived from only the 2 types present in `communityItemsFallback`, not all 7 enum values — plus both cards rendering with correct type label, title, summary, and "Coming soon" badge).
+
+**TDD note:** Followed RED→GREEN for the two new pure community-filter functions (test written and run-to-fail before the implementation existed), consistent with the Phase 6 precedent. `getDevelopmentStatusLabel`/`getCommunityTypeLabel` (single-branchless `Record` lookups) and the new presentational components remain untested in isolation — same "trivial lookup, no branching" threshold Phase 7 used for `ContactCard`'s href derivation. Broader component/E2E coverage remains Phase 10 scope.
+
+**Deviations from plan:** None structural. `IMPLEMENTATION-PLAN.md`'s Phase 8 file list named `ui/TypeFilter` and this session kept it purely presentational (no `"use client"` of its own) rather than making it a second client component — an implementation-level choice, not a scope change. The `product`/`communityItem` CMS types, queries, and fallback data all already existed from Phase 3 and needed no changes.
+
+**Next task:** Phase 9 — Polish (per-route SEO/OG for all routes, WCAG AA audit, responsive breakpoint pass, asset migration `docs/assets/` → `public/`).
 
 ### 2026-07-10 — Phase 7 implementation session
 

@@ -20,7 +20,7 @@ export function ValuesGrid({ values }: ValuesGridProps) {
               className="rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-sm)]"
             >
               <span
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-accent)] text-sakura"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg-accent)] text-sakura-ink"
                 aria-hidden="true"
               >
                 ✦
