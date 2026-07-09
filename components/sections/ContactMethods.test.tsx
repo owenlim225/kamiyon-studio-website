@@ -1,0 +1,36 @@
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
+import type { ContactChannel } from "@/lib/cms/types";
+import { ContactMethods } from "./ContactMethods";
+
+const channels: ContactChannel[] = [
+  { type: "facebook", label: "Facebook", value: "#", isPlaceholder: true },
+  { type: "linkedin", label: "LinkedIn", value: "#", isPlaceholder: true },
+  { type: "email", label: "Email", value: "#", isPlaceholder: true },
+];
+
+describe("ContactMethods", () => {
+  it("renders one ContactCard per channel and states there is no contact form", () => {
+    render(<ContactMethods channels={channels} />);
+
+    expect(screen.getByText("Facebook")).toBeInTheDocument();
+    expect(screen.getByText("LinkedIn")).toBeInTheDocument();
+    expect(screen.getByText("Email")).toBeInTheDocument();
+    expect(screen.getByText(/does not use a contact form/)).toBeInTheDocument();
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+  });
+
+  it("renders the ctaNote only when provided", () => {
+    const { rerender } = render(<ContactMethods channels={channels} />);
+    expect(screen.queryByText("We usually reply within 2 business days.")).not.toBeInTheDocument();
+
+    rerender(
+      <ContactMethods
+        channels={channels}
+        ctaNote="We usually reply within 2 business days."
+      />
+    );
+    expect(screen.getByText("We usually reply within 2 business days.")).toBeInTheDocument();
+  });
+});

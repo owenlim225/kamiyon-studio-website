@@ -1,0 +1,280 @@
+# PART 3 — PORTFOLIO & PROJECT PAGES
+
+Kamiyon Studio Website Specification v2.0
+
+---
+
+## OBJECTIVE
+
+The portfolio sells confidence through curated work — not a generic Behance grid.
+
+Every project page should answer: **"Can Kamiyon Studio deliver work like this for me?"**
+
+**Layout reference:** Fully Illustrated portfolio pattern (category bands → category list → project detail), rendered in **Kamiyon light mode**.
+
+---
+
+## INFORMATION ARCHITECTURE
+
+```
+/portfolio                              → Category hub
+/portfolio/[category]                   → Project list
+/portfolio/[category]/[slug]            → Project detail
+```
+
+### Categories
+
+| Slug | Label |
+| --- | --- |
+| `design` | Design |
+| `illustration` | Illustration |
+| `games` | Games |
+| `branding` | Branding |
+| `3d-motion` | 3D & Motion |
+| `web` | Web |
+
+---
+
+## LEVEL 1 — PORTFOLIO HUB (`/portfolio`)
+
+**Purpose:** Orient visitors and route them to a discipline.
+
+**Hero**
+
+- Page title: "Portfolio" (or "Work")
+- Intro line: one sentence — e.g. "Select a category to explore our work."
+- Optional: "Select a category" dropdown / jump menu anchoring to bands
+
+**Category bands (6 stacked full-width sections)**
+
+Each band contains:
+
+| Element | Spec |
+| --- | --- |
+| Background | Category collage or representative imagery (full-bleed) |
+| Overlay panel | Semi-transparent panel (ensure AA contrast) with title + description |
+| Title | Category name (large Montserrat) |
+| Description | 2–3 lines on what Kamiyon delivers in this discipline |
+| CTA | "View the portfolio" → `/portfolio/[category]` |
+
+**Light-mode treatment**
+
+- White or dark overlay text panel on imagery — never low-contrast text on busy photos
+- Pink CTA links/buttons
+- Subtle hover: band scale 1.01 or overlay brighten — no heavy animation
+
+**Band order (top to bottom)**
+
+1. Design
+2. Illustration
+3. Games
+4. Branding
+5. 3D & Motion
+6. Web
+
+---
+
+## LEVEL 2 — CATEGORY PAGE (`/portfolio/[category]`)
+
+**Purpose:** Showcase all projects within one discipline.
+
+**Header**
+
+- Category title (e.g. "Games")
+- Intro paragraph: 1–2 sentences
+- Optional: "Select a project" quick-nav dropdown
+
+**Featured / latest project**
+
+- Large hero image (full content width)
+- Metadata bar below hero:
+  - Status label (e.g. "Featured") in pink
+  - Project title (bold)
+  - Platform / tag list (muted, caps optional)
+  - Short description (1–2 sentences, right-aligned or below on mobile)
+
+**Project grid**
+
+- Responsive: 3 cols desktop, 2 tablet, 1 mobile
+- Each card:
+  - Thumbnail (16:9)
+  - Title
+  - Subtitle or type tag (pink accent text)
+  - Optional year
+- Entire card clickable → `/portfolio/[category]/[slug]`
+- Hover: slight zoom + soft shadow + pink accent glow
+
+**Empty state**
+
+- Kami-chan illustration
+- Message: "Projects coming soon."
+- Link back to `/portfolio`
+
+**Pagination**
+
+- "Load more" button preferred over infinite scroll (SEO + navigation)
+
+---
+
+## LEVEL 3 — PROJECT DETAIL (`/portfolio/[category]/[slug]`)
+
+**Purpose:** Present one project as a focused case presentation.
+
+**Inspired by:** Wulverblade / Mini Legends reference layouts — hero + gallery + sidebar.
+
+### Hero
+
+- Full-width feature image (game art, design mockup, illustration, etc.)
+- Optional: soft gradient fade from image into white content area below
+
+### Main layout (desktop)
+
+| Column | Width | Content |
+| --- | --- | --- |
+| Gallery | ~65% | Primary image + thumbnail grid (2–4 columns) |
+| Sidebar | ~35% | Project metadata + description + CTAs |
+
+**Mobile:** stack — hero → metadata → gallery
+
+### Sidebar / metadata
+
+| Field | Notes |
+| --- | --- |
+| Title | Large, Montserrat |
+| Client | If applicable; link if public |
+| Category | Label + link back to category page |
+| Platforms | e.g. PC, Mobile, Web |
+| Year | |
+| Location | If relevant |
+| Description | 2–4 short paragraphs max |
+
+### CTAs
+
+| Button | When |
+| --- | --- |
+| Discuss Similar Project | Always → `/contact` |
+| View Live / External Link | If `externalUrl` exists |
+| Download Press Assets | If applicable → `/pres` |
+
+### Gallery
+
+- Thumbnail grid below or beside primary image
+- Click thumbnail to swap primary view (client-side, no page reload)
+- Rounded corners 16–24px, soft shadow
+- Alt text on every image
+
+### What NOT to include in v1
+
+- Fake download/revenue metrics
+- Fabricated client testimonials
+- Full long-form case study sections (Challenge / Solution / Process) unless content exists in canon
+- "Buy now" platform buttons (unless product has real store links)
+
+---
+
+## PROJECT CARD COMPONENT
+
+| Property | Value |
+| --- | --- |
+| Image ratio | 16:9 |
+| Corner radius | 24px |
+| Badge (optional) | Top-left: Featured, Award Winning, etc. |
+| Title | Max 2 lines |
+| Description | Max 3 lines on grid cards |
+| Entire card | Clickable |
+
+---
+
+## CONTENT MODEL (static v1)
+
+```typescript
+type PortfolioCategory = {
+  slug: string
+  label: string
+  description: string
+  bandImage: string
+  heroImage?: string
+}
+
+type PortfolioProject = {
+  slug: string
+  category: string
+  title: string
+  subtitle?: string
+  client?: string
+  location?: string
+  year?: number
+  platforms?: string[]
+  tags?: string[]
+  description: string
+  heroImage: string
+  gallery: string[]
+  featured?: boolean
+  externalUrl?: string
+}
+```
+
+Seed 1–2 placeholder projects per category; label placeholders visibly.
+
+---
+
+## PHOTOGRAPHY & MEDIA
+
+- Screenshots and artwork dominate
+- No fake device mockups
+- Mix: final deliverables, process sketches, UI captures where available
+- Lazy-load below-fold images; use next-gen formats (WebP/AVIF)
+
+---
+
+## SEO (per project page)
+
+- Unique `<title>`: `{Project Name} | {Category} | Kamiyon Studio`
+- Unique meta description (150–160 chars)
+- Open Graph image: project hero
+- Breadcrumb: Portfolio → {Category} → {Project}
+- Semantic headings: one H1 per page
+- Image alt text
+
+---
+
+## RESPONSIVE
+
+| Viewport | Grid | Hero |
+| --- | --- | --- |
+| Desktop | 3 columns | Side-by-side gallery + sidebar |
+| Tablet | 2 columns | Stacked or narrowed sidebar |
+| Mobile | 1 column | Full-width hero, stacked content |
+
+---
+
+## ACCEPTANCE CRITERIA
+
+- [ ] Hub → category → project navigation works end-to-end
+- [ ] All 6 categories have hub bands and list routes
+- [ ] Light mode throughout; AA contrast on overlays
+- [ ] Placeholder projects labeled; no fabricated clients
+- [ ] Gallery and external links functional
+- [ ] Breadcrumbs and SEO metadata present
+
+---
+
+## COMPONENT HIERARCHY
+
+```
+PortfolioHub
+ ├── CategoryBand (×6)
+ └── CategoryJumpNav (optional)
+
+CategoryPage
+ ├── CategoryHeader
+ ├── FeaturedProject
+ ├── ProjectCardGrid
+ └── LoadMore
+
+ProjectDetail
+ ├── ProjectHero
+ ├── ProjectGallery
+ ├── ProjectSidebar
+ └── ProjectCTA
+```

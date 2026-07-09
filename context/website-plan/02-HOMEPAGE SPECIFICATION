@@ -1,0 +1,284 @@
+# PART 2 — HOMEPAGE SPECIFICATION
+
+Kamiyon Studio Website Specification v2.0
+
+---
+
+## HOMEPAGE GOAL
+
+**Primary KPI:** Drive visitors to `/contact` ("Discuss Your Project")
+
+**Secondary KPI:** Build trust quickly via clients, services summary, and awards
+
+**Tertiary KPI:** Route interested visitors to `/portfolio`
+
+The homepage is **not** a long-scroll manifesto. It is a concise landing page — roughly 4–5 screenfuls on desktop — that tells a short story and converts.
+
+---
+
+## PAGE FLOW
+
+```
+Navigation
+    ↓
+Hero
+    ↓
+Clients / Partners
+    ↓
+Services (summary)
+    ↓
+Awards (highlight)
+    ↓
+Contact CTA
+    ↓
+Footer
+```
+
+**Optional:** 2–3 latest news links (external) as a small teaser above footer → `/news`
+
+**Estimated page length:** ~2,500–3,500px desktop (not 6,500–8,000px)
+
+---
+
+## GLOBAL LAYOUT
+
+| Property | Value |
+| --- | --- |
+| Canvas | 1440px reference |
+| Content width | 1280px max |
+| Grid | 12 columns |
+| Max text width | 680px |
+| Section spacing | 80–120px desktop, 48–64px mobile |
+| Horizontal padding | 24px mobile, 48px tablet, 80px desktop |
+| Theme | Light mode only — white / `#FAFAFA` sections |
+
+---
+
+## NAVIGATION
+
+| Property | Spec |
+| --- | --- |
+| Height | 72–88px |
+| Behavior | Sticky; white background with subtle shadow on scroll |
+| Left | Official Kamiyon Studio logo → `/` |
+| Center / links | Portfolio, News, About, Press, Contact |
+| Right | Primary CTA pill button: **Discuss Your Project** → `/contact` |
+| Mobile | Hamburger menu; full-width CTA in drawer |
+
+**No** separate Services, Team, or Awards nav items — those live on Home or About.
+
+---
+
+## SECTION 1 — HERO
+
+**Purpose:** Communicate who Kamiyon is in under 10 seconds.
+
+**Layout**
+
+- Split layout desktop (60/40): copy left, visual right
+- Stack vertically on mobile (copy first)
+- Optional: landscape hero art as background with white/light gradient overlay for readability
+
+**Headline**
+
+- Large Montserrat, ~48–64px desktop
+- Example structure (placeholder — finalize from canon messaging):
+
+  > **Creative work people remember.**
+
+- Avoid marketing clichés
+
+**Supporting copy**
+
+- 1–2 short paragraphs max
+- Cover: creative technology studio, Philippines-based, multidisciplinary capabilities
+- Source copy from `docs/marketing/messaging.md` and `docs/marketing/positioning.md`
+
+**CTA row**
+
+| Button | Style | Destination |
+| --- | --- | --- |
+| Discuss Your Project | Primary pink pill | `/contact` |
+| View Work | Secondary outlined | `/portfolio` |
+
+**Trust row (optional, compact)**
+
+- Small stat blocks inline: Founded 2024 · X Projects · X Awards · X Team Members
+- Use canon values only; placeholder if unknown
+
+**Hero visual**
+
+- Editorial composition: featured work thumbnails, Kami-chan subtle accent, or landscape art crop
+- Not a device mockup; not random stock art
+
+---
+
+## SECTION 2 — CLIENTS / PARTNERS
+
+**Purpose:** Borrow trust through recognizable logos.
+
+**Layout**
+
+- Section label: "Trusted by" or "Clients & Partners"
+- Horizontal logo strip or 2-row grid
+- Logos: grayscale default, full color on hover
+- Generous spacing between logos
+
+**Content rules**
+
+- Use real partner/client logos from canon only
+- Placeholder slots labeled "Coming soon" if none available
+- Never fabricate client names
+
+---
+
+## SECTION 3 — SERVICES (SUMMARY)
+
+**Purpose:** Tell visitors what Kamiyon offers without a separate Services page.
+
+**Layout**
+
+- Section heading: "What We Do" or "Services"
+- Grid: 2×3 or 3×2 cards on desktop, 1 column mobile
+- Each card: icon, title, 1–2 line description
+
+**Service areas (align with portfolio categories + canon)**
+
+| Card | Maps to portfolio |
+| --- | --- |
+| Design | `/portfolio/design` |
+| Illustration | `/portfolio/illustration` |
+| Games | `/portfolio/games` |
+| Branding | `/portfolio/branding` |
+| 3D & Motion | `/portfolio/3d-motion` |
+| Web | `/portfolio/web` |
+
+**Interaction**
+
+- Card hover: soft lift + shadow
+- Optional: entire card links to portfolio category
+- Pink accent line or border on hover
+
+**No** detailed deliverables, pricing, or engagement models on homepage — keep scannable.
+
+---
+
+## SECTION 4 — AWARDS (HIGHLIGHT)
+
+**Purpose:** Proof of excellence in compact form.
+
+**Layout**
+
+- White or light gray section
+- Headline: "Recognized for Excellence" or similar
+- Large stat: e.g. "15+ Awards" (canon or placeholder)
+- Compact grid: 3–6 award cards OR single row of competition logos
+- Each card: competition name, award, year, project (if applicable)
+- Link: "View press kit" → `/pres` (optional)
+
+**Content rules**
+
+- Canon awards only; placeholders labeled clearly
+- Never exaggerate counts
+
+---
+
+## SECTION 5 — CONTACT CTA
+
+**Purpose:** Strongest conversion band on the page.
+
+**Layout**
+
+- Light sakura-tinted background (`#FFF5F7` or similar) OR white with pink decorative stroke (Sakura internet style)
+- Centered copy, generous padding (80–120px vertical)
+
+**Copy**
+
+- Headline: "Let's build something together." (finalize from messaging canon)
+- Supporting: one sentence inviting project discussion
+
+**Buttons**
+
+| Button | Destination |
+| --- | --- |
+| Discuss Your Project | `/contact` |
+| View Portfolio | `/portfolio` |
+
+**Kami-chan:** optional small waving illustration in corner — subtle only
+
+---
+
+## FOOTER
+
+**Layout:** 4 columns desktop, stacked mobile
+
+| Column | Content |
+| --- | --- |
+| 1 | Logo, tagline, short description |
+| 2 | Company: About, Portfolio, Press, Contact |
+| 3 | Work: links to portfolio categories |
+| 4 | Social: Facebook, LinkedIn, Email |
+
+**Bottom bar:** Copyright, Privacy, Terms (placeholder links OK for v1)
+
+**Kami-chan:** small footer mascot accent acceptable
+
+---
+
+## OPTIONAL — NEWS TEASER
+
+If included, place above footer:
+
+- Heading: "News"
+- 2–3 items: date, category tag, title, external link icon
+- "View all news" → `/news`
+- All links open external URLs in new tab
+
+---
+
+## MICROINTERACTIONS (v1)
+
+Prepare layout for future motion; v1 ships minimal interaction only:
+
+- Button hover: slight elevation + color shift
+- Card hover: soft lift
+- Logo strip: grayscale → color
+- Sticky nav: background + shadow on scroll
+- No scroll-jacking, parallax, or animation-dependent UX
+
+---
+
+## RESPONSIVE BEHAVIOR
+
+| Breakpoint | Notes |
+| --- | --- |
+| Desktop 1280px+ | Split hero, multi-column grids |
+| Tablet 768px | 2-column service grid, stacked hero |
+| Mobile 390px | Single column, full-width CTAs, hamburger nav |
+
+---
+
+## ACCEPTANCE CRITERIA
+
+- [ ] Max 5 primary sections (+ optional news teaser)
+- [ ] Primary CTA visible above fold and in final CTA band
+- [ ] All content from canon or labeled placeholders
+- [ ] Light mode, Sakura pink accents, generous whitespace
+- [ ] LCP-friendly hero (optimized images, no giant video)
+- [ ] WCAG AA contrast on all text/background pairs
+
+---
+
+## COMPONENT HIERARCHY
+
+```
+Homepage
+ ├── Navigation
+ ├── Hero
+ ├── ClientsPartners
+ ├── ServicesSummary
+ ├── AwardsHighlight
+ ├── ContactCTA
+ ├── NewsTeaser (optional)
+ └── Footer
+```

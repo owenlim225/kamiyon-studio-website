@@ -1,0 +1,301 @@
+# PART 5 — CONTACT, NAVIGATION & TRUST ELEMENTS
+
+Kamiyon Studio Website Specification v2.0
+
+> **Note:** v1 has no separate Awards, Partners, Team, or Testimonials pages. Trust elements are distributed across Home, About, and Press. This document defines Contact, global navigation, footer, and where trust content lives.
+
+---
+
+## TRUST CONTENT DISTRIBUTION
+
+| Trust element | Location in v1 |
+| --- | --- |
+| Client / partner logos | Home → Clients / Partners section |
+| Awards highlight | Home → Awards section |
+| Full press / media assets | Press kit → `/pres` |
+| Team profiles | About → Team section |
+| Testimonials | **Not in v1** — add when real quotes exist in canon |
+| Studio stats | Home trust row (optional) + About stats row (optional) |
+
+**Rule:** Never fabricate logos, awards, or testimonials. Use labeled placeholders.
+
+---
+
+## CONTACT PAGE (`/contact`)
+
+### Objective
+
+Primary conversion page. Make it effortless to reach Kamiyon.
+
+### Page flow
+
+```
+Hero
+    ↓
+Google Form embed
+    ↓
+Direct contact methods (mailto + socials)
+    ↓
+FAQ (optional)
+    ↓
+Sidebar info (optional on desktop)
+```
+
+---
+
+### Hero
+
+- Headline: "Let's build something together."
+- Supporting: 1–2 sentences welcoming project inquiries of any stage
+- Tone: warm, professional, concise
+
+---
+
+### Google Form embed
+
+**Primary contact mechanism for v1.**
+
+| Property | Spec |
+| --- | --- |
+| Implementation | iframe or Google Forms embed |
+| Config | `NEXT_PUBLIC_CONTACT_FORM_URL` environment variable |
+| Width | Full content width, max ~720px centered |
+| Height | Responsive; min ~600px or auto-resize if supported |
+| Styling | Surrounded by white card with soft shadow to match site |
+
+**Suggested form fields (configure in Google Form):**
+
+- Name
+- Company (optional)
+- Email
+- Project type (dropdown: Games, Design, Illustration, Branding, 3D & Motion, Web, Other)
+- Budget range (dropdown, optional)
+- Timeline (dropdown, optional)
+- Project description (long text)
+
+**Explicitly excluded:**
+
+- Calendly or any booking widget
+- Custom backend form handler / API route for v1
+- File upload (unless added to Google Form directly)
+
+---
+
+### Direct contact methods
+
+Display below or beside the form as prominent cards or link row:
+
+| Method | Implementation |
+| --- | --- |
+| Email | `mailto:` link from canon |
+| LinkedIn | External URL from canon |
+| Facebook | External URL from canon |
+
+- Each: icon, label, short description (e.g. "We respond within 1–2 business days")
+- Placeholder `#` with "Coming soon" label if URL not in canon yet
+
+---
+
+### FAQ (optional, 3–5 items)
+
+Accordion on contact page only:
+
+- How quickly do you respond?
+- Do you sign NDAs?
+- Do you work internationally?
+- Can you help refine an early idea?
+- Do you work with startups?
+
+Source answers from `docs/services/consultation-process.md` and `docs/ai/faq.md` where available.
+
+---
+
+### Sidebar (desktop)
+
+Optional right column:
+
+| Item | Value |
+| --- | --- |
+| Location | Biñan City, Laguna, Philippines |
+| Founded | 2024 |
+| Email | mailto link |
+| Social | LinkedIn, Facebook icons |
+
+---
+
+### Success / error states
+
+Google Form handles submission natively. No custom success page required for v1.
+
+If a custom thank-you route is added later:
+
+- Kami-chan celebrating illustration
+- Message: "Thanks for reaching out! We'll review your project within 1–2 business days."
+- Buttons: Back to Home, Explore Portfolio
+
+---
+
+## GLOBAL NAVIGATION
+
+### Desktop
+
+```
+[Logo]     Portfolio   News   About   Press   Contact     [Discuss Your Project]
+```
+
+| Link | Route |
+| --- | --- |
+| Logo | `/` |
+| Portfolio | `/portfolio` |
+| News | `/news` |
+| About | `/about` |
+| Press | `/pres` |
+| Contact | `/contact` |
+| CTA button | `/contact` |
+
+### Mobile
+
+- Hamburger icon opens full-screen or slide drawer
+- All links + CTA button inside drawer
+- Close on navigation
+
+### Active state
+
+- Current page: pink underline or pink text
+- CTA button: always pink filled pill
+
+### Behavior
+
+- Sticky top
+- White background + subtle shadow after scroll
+- Height: 72–88px
+- Logo never smaller than readable minimum
+
+---
+
+## FOOTER (global)
+
+### Layout
+
+4 columns desktop → stacked mobile
+
+**Column 1 — Brand**
+
+- Logo
+- Tagline (from messaging canon)
+- One-line studio description
+
+**Column 2 — Company**
+
+- About
+- Portfolio
+- Press
+- Contact
+
+**Column 3 — Work**
+
+- Design
+- Illustration
+- Games
+- Branding
+- 3D & Motion
+- Web
+
+(Links to `/portfolio/[category]`)
+
+**Column 4 — Connect**
+
+- Email (mailto)
+- LinkedIn
+- Facebook
+
+### Bottom bar
+
+- © {year} Kamiyon Studio
+- Privacy Policy (placeholder OK)
+- Terms of Service (placeholder OK)
+
+### Kami-chan
+
+- Small mascot in footer corner — optional, subtle
+
+---
+
+## 404 PAGE
+
+- Friendly headline: "This page wandered off."
+- Kami-chan holding broken controller (or similar on-brand illustration)
+- Buttons: Back to Home, View Portfolio
+- Light mode, centered layout
+
+---
+
+## AWARDS (homepage section reference)
+
+Detailed in Part 2. Summary for trust hierarchy:
+
+- Compact grid or logo row on homepage only
+- Link to press kit for full media assets
+- No `/awards` route in v1
+
+---
+
+## PARTNERS / CLIENTS (homepage section reference)
+
+- Logo strip on homepage
+- Grayscale → color on hover
+- No `/partners` route in v1
+
+---
+
+## TESTIMONIALS
+
+**Not included in v1.**
+
+When real testimonials exist in canon:
+
+- Option A: 1–3 cards on homepage below awards
+- Option B: Quotes on relevant portfolio project pages
+- Never use fake reviews or placeholder quotes that read as real
+
+---
+
+## ACCEPTANCE CRITERIA
+
+- [ ] Google Form embeds and loads via env var
+- [ ] Mailto + social links present
+- [ ] No Calendly, no custom form API
+- [ ] Nav links match 7-page site map
+- [ ] Footer links to all pages and portfolio categories
+- [ ] 404 page exists with recovery links
+- [ ] All contact info from canon or labeled placeholder
+
+---
+
+## COMPONENT HIERARCHY
+
+```
+Layout
+ ├── SiteHeader
+ │    ├── Logo
+ │    ├── MainNav
+ │    └── CTAButton
+ ├── Main (page content)
+ └── SiteFooter
+      ├── BrandColumn
+      ├── CompanyLinks
+      ├── WorkLinks
+      ├── SocialLinks
+      └── CopyrightBar
+
+ContactPage
+ ├── ContactHero
+ ├── GoogleFormEmbed
+ ├── ContactMethods
+ ├── ContactFAQ (optional)
+ └── ContactSidebar (optional)
+
+NotFoundPage
+ ├── NotFoundIllustration
+ └── NotFoundActions
+```

@@ -2,61 +2,204 @@
 
 ## Approach
 
-[Describe the overall development approach — e.g. Build
-this project incrementally using a spec-driven workflow.
-Context files define what to build, how to build it, and
-the current state of progress. Always implement against
-these specs — do not infer or invent behavior from scratch.]
+Build this website incrementally using a spec-driven workflow. **Context files define what to build, how to build it, and current progress.** Always implement against these specs — do not infer product behavior or company facts from training data.
+
+When company information is needed:
+
+1. Read `context/` for build instructions and scope
+2. Read `docs/` for authoritative company facts
+3. Read CMS for published runtime content (when integrated)
+
+> **Source:** [`docs/ai/ai-rules.md`](../docs/ai/ai-rules.md), [`docs/ai/ai-context.md`](../docs/ai/ai-context.md), [`docs/ai/canon.md`](../docs/ai/canon.md)
+
+---
+
+## Canon Compliance
+
+### Hierarchy of truth
+
+1. **User instructions** for the current task (may override for that task only)
+2. **`docs/`** — Kamiyon canon (long-term source of truth)
+3. **`context/`** — Website build specs derived from canon
+4. **CMS** — Published website content
+5. **Assumptions** — never substitute for missing canon
+
+> **Source:** [`docs/ai/canon.md`](../docs/ai/canon.md)
+
+### Canon vs Vision vs Proposals
+
+| Category | Meaning | Website treatment |
+| --- | --- | --- |
+| **Canon** | Current reality | State as fact |
+| **Vision** | Long-term aspirations | Label clearly; never imply already achieved |
+| **Proposals** | Under discussion | Do not present on website unless adopted into canon |
+
+Examples of **Vision** (not current facts): globally recognized multimedia company, publishing division, blog/careers/press kit on website, primary revenue from original IP.
+
+### Never invent
+
+Do not fabricate: clients, partnerships, awards, funding, revenue, office locations, employees beyond canon, published products, metrics, testimonials, certifications, release dates, or community events.
+
+If information is missing, mark **TBD** in context or CMS — do not fill gaps with plausible fiction.
+
+> **Source:** [`docs/ai/ai-rules.md`](../docs/ai/ai-rules.md) Rules 1–2, 13
+
+---
+
+## Operational Rules (from ai-rules.md)
+
+Apply these when generating code, copy, or architecture for this repo:
+
+| Rule | Summary |
+| --- | --- |
+| Protect the canon | Extend docs; do not contradict |
+| Never invent company facts | TBD or suggestion — never present as fact |
+| Mission before marketing | Reinforce educate / inspire / lasting impact |
+| Education first | Explain clearly; reduce unnecessary complexity |
+| Technology serves the problem | No trendy stack choices without rationale |
+| Preserve brand voice | Professional, playful, educational; no hype |
+| Think long-term | Maintainable, scalable decisions |
+| Solve the real problem | Identify objective before implementing |
+| Human creativity first | AI assists; humans decide creative direction |
+| Respect the audience | Accessible language; accurate for experts |
+| Recommend responsibly | Explain trade-offs |
+| Maintain internal consistency | Shared terminology across files |
+| Separate facts from suggestions | Label clearly |
+| Default to simplicity | Easiest maintainable approach |
+| Protect reputation | No unsupported claims |
+| Honor studio identity | Multidisciplinary interactive experience studio |
+| Support Filipino excellence | Inspire without exaggeration |
+
+**Decision priority:** mission alignment → accuracy → user benefit → educational value → sustainability → maintainability → creativity.
+
+---
+
+## When to Read What
+
+| Need | Read first |
+| --- | --- |
+| What to build, scope, pages | `context/project-overview.md` |
+| CMS model, routes, fetching | `context/architecture.md` |
+| Colors, fonts, layout, mascot | `context/ui-context.md` |
+| TypeScript, Next.js, CMS patterns | `context/code-standards.md` |
+| Current phase and next steps | `context/progress-tracker.md` |
+| Company mission, team, products | `docs/company/`, `docs/products/` |
+| Brand voice and visual rules | `docs/branding/`, `docs/design-system/` |
+| Website strategy | `docs/marketing/website-guidelines.md` |
+| Services detail | `docs/services/services.md` |
+| AI behavior (full rules) | `docs/ai/ai-rules.md` |
+
+**Do not copy entire docs into context or components.** Synthesize for developers; link to source paths.
+
+---
+
+## Placeholder Content Rules
+
+### Safe placeholders
+
+- Generic section intros aligned with tone of voice
+- "Coming soon" media states for products
+- Stub case studies with obviously generic titles (e.g. "Sample Client Project — Placeholder")
+- Stub community items (e.g. "Workshop — Details coming soon")
+- Team bios: "Bio coming soon" with **canon name and role**
+- Lorem-free branded stubs — short, on-voice, honest about placeholder status
+
+### Forbidden placeholders
+
+- Fake client company names presented as real
+- Invented awards, competition wins, or press mentions
+- Fabricated download/player counts
+- Testimonials attributed to real or fake people
+- Product status "Released" or "Available now" without canon proof
+- Social URLs or email addresses invented — leave TBD until provided
+
+### Canon content in fallbacks
+
+These may appear in typed fallbacks (copied from docs):
+
+- Mission, motto (**Create. Play. Inspire.**), core values
+- Team names and roles (six members)
+- Product titles, genres, high-level descriptions (Eclipse, Vocabu, Afterschool Cleanup)
+- Service categories and service names from services.md
+- Company founding year (2024), HQ (Biñan City, Laguna, Philippines)
+
+---
 
 ## Scoping Rules
 
-- Work on one feature unit at a time
-- Prefer small, verifiable increments over large
-  speculative changes
-- Do not combine unrelated system boundaries in a
-  single implementation step
+- Work on one feature unit at a time (e.g. layout shell, then Home, then About)
+- Prefer small, verifiable increments over large speculative changes
+- Do not combine unrelated boundaries in one step (e.g. CMS setup + all seven pages)
+- If a change cannot be verified quickly (`npm run build`, route renders), scope is too broad — split it
+
+---
 
 ## When to Split Work
 
 Split an implementation step if it combines:
 
-- [Concern one — e.g. UI changes and background task changes]
-- [Concern two — e.g. Multiple unrelated API routes]
-- [Concern three — e.g. Behavior not clearly defined in
-  the context files]
+- UI changes and CMS schema changes in ways that cannot be tested independently
+- Multiple unrelated routes in one PR without per-route verification
+- Behavior not defined in context files
 
-If a change cannot be verified end to end quickly,
-the scope is too broad — split it.
+If requirements are ambiguous, add an open question to `progress-tracker.md` before implementing.
+
+---
 
 ## Handling Missing Requirements
 
-- Do not invent product behavior not defined in the
-  context files
-- If a requirement is ambiguous, resolve it in the
-  relevant context file before implementing
-- If a requirement is missing, add it as an open question
-  in `progress-tracker.md` before continuing
+- Do not invent product behavior not defined in context or docs
+- Do not invent hex colors — Sakura `#f97695` only; others TBD
+- Do not invent social URLs or email — TBD in siteSettings
+- Resolve conflicts by doc priority (see canon.md); flag persistent conflicts for human review
+- **Known conflict:** README motto "Play. Question. Create." vs company docs "Create. Play. Inspire." — use **Create. Play. Inspire.** on website
+
+---
 
 ## Protected Files
 
-Do not modify the following unless explicitly instructed:
+Do not modify unless explicitly instructed:
 
-- [e.g. components/ui/* — generated UI library components]
-- [e.g. Any third-party library internals]
+- `docs/**` — company canon
+- `context/CLAUDE.md` — agent read order (unless updating read order intentionally)
 
-## Keeping Docs in Sync
+Always update after implementation:
 
-Update the relevant context file whenever implementation
-changes:
+- `context/progress-tracker.md`
+- Relevant context file if architecture, scope, or conventions change
 
-- System architecture or boundaries
-- Storage model decisions
-- Code conventions or standards
-- Feature scope
+---
+
+## Website-Specific Constraints (v1)
+
+Enforce on every implementation pass:
+
+- **No contact forms** — Facebook, LinkedIn, mailto only
+- **No auth** — no Clerk, sessions, or admin routes in app
+- **No hardcoded copy** — CMS or typed fallbacks
+- **Seven sections** — Home, About, Services, Products, Portfolio, Community, Contact
+- **Headless CMS** — all page content externalized
+- **No blog/careers/press kit** in v1 (Vision items)
+
+---
 
 ## Before Moving to the Next Unit
 
-1. The current unit works end to end within its defined scope
-2. No invariant defined in `architecture.md` was violated
-3. `progress-tracker.md` reflects the completed work
-4. `npm run build` passes
+1. Current unit works end to end within its defined scope
+2. No invariant in `architecture.md` was violated
+3. `progress-tracker.md` reflects completed work and next steps
+4. `npm run build` passes (once build pipeline exists for that unit)
+5. No invented company facts introduced in code or fallbacks
+
+---
+
+## After Meaningful Changes
+
+Update `context/progress-tracker.md` with:
+
+- Completed items
+- Architecture decisions made
+- New open questions
+- Session notes for resumption
+
+If implementation changes architecture, scope, or standards, update the relevant context file before continuing.
