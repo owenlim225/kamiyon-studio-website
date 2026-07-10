@@ -7,7 +7,7 @@ describe("getCmsImageUrl", () => {
     vi.resetModules();
   });
 
-  it("returns null when the image has no asset reference", async () => {
+  it("returns null when the image has no asset reference or url", async () => {
     const { getCmsImageUrl } = await import("./image");
 
     expect(getCmsImageUrl({ alt: "no asset" })).toBeNull();
@@ -20,7 +20,15 @@ describe("getCmsImageUrl", () => {
     expect(getCmsImageUrl(undefined)).toBeNull();
   });
 
-  it("returns null when CMS_PROJECT_ID / CMS_DATASET are not configured", async () => {
+  it("returns the Payload media url when present", async () => {
+    const { getCmsImageUrl } = await import("./image");
+
+    expect(getCmsImageUrl({ url: "/api/media/file/hero.png", alt: "Hero" })).toBe(
+      "/api/media/file/hero.png"
+    );
+  });
+
+  it("returns null when CMS_PROJECT_ID / CMS_DATASET are not configured for legacy Sanity refs", async () => {
     const { getCmsImageUrl } = await import("./image");
 
     expect(
@@ -28,7 +36,7 @@ describe("getCmsImageUrl", () => {
     ).toBeNull();
   });
 
-  it("builds a servable URL when CMS env vars are configured", async () => {
+  it("builds a servable Sanity URL when CMS env vars are configured", async () => {
     vi.stubEnv("CMS_PROJECT_ID", "test-project");
     vi.stubEnv("CMS_DATASET", "production");
     vi.doMock("@sanity/image-url", () => ({

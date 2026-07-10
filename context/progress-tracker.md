@@ -26,11 +26,11 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**Sanity → Payload migration — Phase 1 (Payload install)** — Payload 3.85 + Postgres adapter installed beside existing Sanity stack. Route groups: `app/(frontend)` (public site), `app/(payload)` (`/admin`, REST/GraphQL API). Sanity still active until Phase 4.
+**Sanity → Payload migration — Phase 3 (swap `lib/cms`)** — `lib/cms` now reads via Payload Local API with adapters mapping Lexical → portable text and Payload media → `CmsImage.url`. Typed fallbacks preserved when Payload is unconfigured or collections/globals are empty. Sanity stack remains in repo until Phase 4.
 
 ## Current Goal
 
-Complete Phase 2 (Payload schema parity matching `lib/cms/types.ts`), then Phase 3 (swap `lib/cms` adapter). Operator must set `DATABASE_URL` + `PAYLOAD_SECRET` and run migrations before `/admin` is usable.
+Complete Phase 4 (delete Sanity deps/config/scripts), then Phase 5 (docs rewrite). Operator must set `DATABASE_URL` + `PAYLOAD_SECRET` and run migrations before `/admin` is usable; public site uses typed fallbacks until Payload content is published.
 
 ## In Progress
 
@@ -45,8 +45,8 @@ Complete Phase 2 (Payload schema parity matching `lib/cms/types.ts`), then Phase
 | **0** Inventory & mapping | ✅ Done | Sanity touchpoints inventoried; schema map in plan file |
 | **1** Install Payload beside app | ✅ Done | `payload.config.ts`, `(payload)` routes, `withPayload`, build/lint/test green |
 | **2** Schema parity | ✅ Done | 4 globals + 6 collections + shared fields; Lexical subset; empty CMS |
-| **3** Swap `lib/cms` | ⏳ Next | Payload Local API; keep fallbacks + public API |
-| **4** Delete Sanity | Pending | Remove all Sanity deps, configs, scripts, docs |
+| **3** Swap `lib/cms` | ✅ Done | Payload Local API + adapters; fallbacks + public API preserved; build/lint/test green |
+| **4** Delete Sanity | ⏳ Next | Remove all Sanity deps, configs, scripts, docs |
 | **5** Documentation | Pending | Rewrite context docs for Payload |
 | **6** Hardening | Pending | Security review + e2e smoke |
 
@@ -175,6 +175,7 @@ Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./
 | `lib/seo/og-image.tsx` excluded from coverage | Added to `coverage.exclude` alongside the pre-existing `lib/cms/types.ts`/`lib/cms/fallbacks/**` exclusions | It's a Satori (`next/og`) JSX-to-PNG renderer with no conditional logic; exercising it needs a real font-fetch/WASM runtime that `jsdom` can't provide, and there's no branch/logic value to test in isolation ? same category as the type-only/fallback-data files already excluded |
 | `lib/cms/client.ts` tested via `vi.mock("next-sanity")` + `vi.stubEnv`/`vi.resetModules` | New `lib/cms/client.test.ts` mocks `createClient` and re-imports the module per test to exercise the unconfigured/configured/cached/CDN-vs-token branches | `cmsProjectId`/`cmsDataset`/`sanityClient` are all read or cached at module-load time (module-level `let`/`const`), so branch coverage requires a fresh module instance per env combination ? same pattern already used by the Phase 9 `lib/seo/site-url.test.ts` (also added this phase) |
 | Portable text schema subset | `portableBody` allows only `normal`/`h2`/`h3` + `strong`/`em`; no lists or annotations | Matches `components/ui/PortableText.tsx` renderer and progress-tracker minimal PT decision; prevents editors from adding unrenderable list blocks |
+| Phase 3 Payload adapter | `lib/cms` queries use Payload Local API (`getPayload` + `unstable_cache` 1h); `lib/cms/adapters/*` maps Lexical → `PortableTextBlock[]`, Payload media → `CmsImage.url`, relationships → slug arrays | Preserves unchanged `lib/cms` public types/exports and `resolveWithFallback` behavior; empty collections return `null` (not `[]`) so fallbacks still apply; deprecated `isSanityConfigured`/`getSanityClient` aliases remain until Phase 4 |
 | Studio desk structure | Custom `sanity/structure.ts` groups Settings, Pages (singletons), Collections | Editors see singletons first with fixed document IDs matching seed; avoids duplicate home/about/contact docs |
 | Seed document IDs | `{type}-{slug}` root-path IDs (e.g. `product-eclipse`) | Sanity treats any `.` in `_id` as a private sub-path invisible to unauthenticated CDN/API; original `product.eclipse` seed IDs caused collection fetches to return `[]` while singletons (`homePage`) worked ? fixed in Phase 2 verification |
 | Phase 3 hero asset | `docs/assets/youtube-banner.png` as `homePage` hero image | Only landscape brand banner in canon assets suitable for hero; logo/brand-kit/kami-chan sheets are not hero photography |
@@ -194,3 +195,4 @@ Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./
 - **2026-07-10 (Phase 4 shell + preview):** Wired `getSiteSettings()` into async `PageShell` → `SiteHeader`/`SiteFooter`/`Logo` via `buildShellNavProps()` (site name, contact CTA, footer motto, social links; static nav unchanged). Added `sanity/presentation.ts`, Presentation plugin, `/api/draft-mode/enable`, and draft-aware `fetchCms`. `npm run studio:schema` deployed 1/1 schemas. Tests 208/208; `npm run build` exit 0. Preview blocked until operator sets `CMS_API_TOKEN`.
 - **2026-07-10 (open questions):** Operator answered Facebook (`https://www.facebook.com/kamiyonstudio`), LinkedIn (`https://www.linkedin.com/company/105066188/admin/dashboard/`), public email (`kamiyonstudio@gmail.com`), deployment target (Vercel). Phase 3 social/contact URL wiring unblocked; production CORS still needs `NEXT_PUBLIC_SITE_URL`.
 - **2026-07-10 (contact URL wiring):** Added `lib/contact/channels.ts` with Facebook, public LinkedIn (`/company/105066188/` — admin path stripped), and `kamiyonstudio@gmail.com`. Updated site-settings + contact fallbacks, static `SOCIAL_LINKS`, Organization JSON-LD. Re-seeded 30 docs + `studio:upload-assets` for hero. Tests 213/213.
+- **2026-07-10 (Payload Phase 3):** Swapped `lib/cms` from Sanity GROQ to Payload Local API. Added `lib/cms/adapters/{lexical,media,mappers}.ts`; `getCmsImageUrl` prefers Payload `url`; empty collections/globals return `null` for fallback resolution. Updated `scripts/verify-phase2-cms.ts` for Payload. Tests 216/216; `npm run build` exit 0. Sanity stack still present until Phase 4.

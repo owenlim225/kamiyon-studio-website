@@ -1,4 +1,9 @@
-export { getSanityClient, isSanityConfigured } from "./client";
+export {
+  getPayloadClient,
+  getSanityClient,
+  isPayloadConfigured,
+  isSanityConfigured,
+} from "./client";
 export {
   getAboutPage,
   getCaseStudies,

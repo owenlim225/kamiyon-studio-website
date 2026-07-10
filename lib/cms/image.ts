@@ -21,7 +21,15 @@ function getImageBuilder(): ImageUrlBuilder | null {
 
 /** Resolves a CMS image reference to a servable URL, or null when unconfigured. */
 export function getCmsImageUrl(image: CmsImage | undefined | null): string | null {
-  if (!image?.asset) {
+  if (!image) {
+    return null;
+  }
+
+  if (image.url) {
+    return image.url;
+  }
+
+  if (!image.asset) {
     return null;
   }
 

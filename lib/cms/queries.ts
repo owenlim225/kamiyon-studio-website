@@ -1,7 +1,18 @@
-import { groq } from "next-sanity";
-import { draftMode } from "next/headers";
+import { unstable_cache } from "next/cache";
 
-import { getSanityClient } from "./client";
+import {
+  mapAboutPage,
+  mapCaseStudy,
+  mapCommunityItem,
+  mapContactPage,
+  mapHomePage,
+  mapProduct,
+  mapService,
+  mapServiceCategory,
+  mapSiteSettings,
+  mapTeamMember,
+} from "./adapters/mappers";
+import { getPayloadClient } from "./client";
 import type {
   AboutPage,
   CaseStudy,
@@ -15,324 +26,259 @@ import type {
   TeamMember,
 } from "./types";
 
-export const imageProjection = groq`{
-  _key,
-  asset,
-  alt,
-  caption
-}`;
+/** Legacy projection identifiers kept for API stability after the Sanity → Payload swap. */
+export const imageProjection = "{ alt, caption, url, asset }" as const;
+export const seoProjection = "{ title, description, ogImage, noIndex }" as const;
 
-/** Reusable GROQ fragment for seoMetadata fields (embedded in singletons and collections). */
-export const seoProjection = groq`{
-  title,
-  description,
-  ogImage${imageProjection},
-  noIndex
-}`;
+const CMS_REVALIDATE_SECONDS = 3600;
 
-const productMediaProjection = groq`{
-  _key,
-  type,
-  alt,
-  caption,
-  asset${imageProjection}
-}`;
-
-const cmsFetchOptions = {
-  next: {
-    revalidate: 3600,
-  },
-};
-
-const cmsDraftFetchOptions = {
-  cache: "no-store" as const,
-};
-
-async function fetchCms<T>(
-  query: string,
-  params: Record<string, string> = {}
+async function fetchPayload<T>(
+  cacheKey: string,
+  loader: () => Promise<T | null>
 ): Promise<T | null> {
-  const client = getSanityClient();
+  const payload = await getPayloadClient();
 
-  if (!client) {
+  if (!payload) {
     return null;
   }
 
-  let activeClient = client;
-  let fetchOptions: typeof cmsFetchOptions | typeof cmsDraftFetchOptions = cmsFetchOptions;
-
   try {
-    const { isEnabled } = await draftMode();
-
-    if (isEnabled && process.env.CMS_API_TOKEN) {
-      activeClient = client.withConfig({
-        perspective: "previewDrafts",
-        useCdn: false,
-        stega: true,
-      });
-      fetchOptions = cmsDraftFetchOptions;
-    }
-  } catch {
-    // draftMode() is only available inside a request context.
-  }
-
-  try {
-    return await activeClient.fetch<T | null>(query, params, fetchOptions);
+    return await unstable_cache(loader, [cacheKey], {
+      revalidate: CMS_REVALIDATE_SECONDS,
+    })();
   } catch (error) {
-    console.error("Sanity CMS fetch failed; using typed fallback content.", error);
+    console.error("Payload CMS fetch failed; using typed fallback content.", error);
     return null;
   }
+}
+
+function nullIfEmpty<T>(items: T[]): T[] | null {
+  return items.length > 0 ? items : null;
 }
 
 export function getSiteSettings(): Promise<SiteSettings | null> {
-  return fetchCms<SiteSettings>(groq`*[_type == "siteSettings"][0]{
-    _type,
-    siteName,
-    tagline,
-    publicEmail,
-    socialLinks,
-    defaultSeo${seoProjection},
-    globalCtas,
-    footerText
-  }`);
+  return fetchPayload("payload:site-settings", async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const doc = await payload.findGlobal({
+      slug: "site-settings",
+      depth: 2,
+    });
+
+    return mapSiteSettings(doc as Record<string, unknown>);
+  });
 }
 
 export function getHomePage(): Promise<HomePage | null> {
-  return fetchCms<HomePage>(groq`*[_type == "homePage"][0]{
-    _type,
-    title,
-    blocks[]{
-      _type == "hero" => {
-        _type,
-        headline,
-        subheadline,
-        ctaLabel,
-        ctaHref,
-        image${imageProjection}
-      },
-      _type == "mission" => {
-        _type,
-        title,
-        body
-      },
-      _type == "featuredWork" => {
-        _type,
-        title,
-        body,
-        "featuredProductSlugs": featuredProducts[]->slug.current,
-        "featuredCaseStudySlugs": featuredCaseStudies[]->slug.current
-      },
-      _type == "highlights" => {
-        _type,
-        title,
-        items[]{
-          _key,
-          title,
-          description,
-          icon
-        }
-      },
-      _type == "ctaBanner" => {
-        _type,
-        title,
-        body,
-        ctaLabel,
-        ctaHref
-      }
-    },
-    seo${seoProjection}
-  }`);
+  return fetchPayload("payload:home-page", async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const doc = await payload.findGlobal({
+      slug: "home-page",
+      depth: 2,
+    });
+
+    return mapHomePage(doc as Record<string, unknown>);
+  });
 }
 
 export function getAboutPage(): Promise<AboutPage | null> {
-  return fetchCms<AboutPage>(groq`*[_type == "aboutPage"][0]{
-    _type,
-    title,
-    storySections,
-    mission,
-    vision,
-    motto,
-    values,
-    cultureSummary,
-    teamIntro,
-    seo${seoProjection}
-  }`);
+  return fetchPayload("payload:about-page", async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const doc = await payload.findGlobal({
+      slug: "about-page",
+      depth: 1,
+    });
+
+    return mapAboutPage(doc as Record<string, unknown>);
+  });
 }
 
 export function getContactPage(): Promise<ContactPage | null> {
-  return fetchCms<ContactPage>(groq`*[_type == "contactPage"][0]{
-    _type,
-    headline,
-    intro,
-    channels,
-    ctaNote,
-    faq,
-    seo${seoProjection}
-  }`);
+  return fetchPayload("payload:contact-page", async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const doc = await payload.findGlobal({
+      slug: "contact-page",
+      depth: 1,
+    });
+
+    return mapContactPage(doc as Record<string, unknown>);
+  });
 }
 
 export function getTeamMembers(): Promise<TeamMember[] | null> {
-  return fetchCms<TeamMember[]>(groq`*[_type == "teamMember"] | order(order asc) {
-    _type,
-    name,
-    role,
-    bio,
-    photo${imageProjection},
-    order,
-    isPlaceholder
-  }`);
+  return fetchPayload("payload:team-members", async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const result = await payload.find({
+      collection: "team-members",
+      depth: 2,
+      limit: 100,
+      sort: "order",
+    });
+
+    return nullIfEmpty(
+      result.docs.map((doc) => mapTeamMember(doc as Record<string, unknown>))
+    );
+  });
 }
 
 export function getServiceCategories(): Promise<ServiceCategory[] | null> {
-  return fetchCms<ServiceCategory[]>(
-    groq`*[_type == "serviceCategory"] | order(order asc) {
-      _type,
-      title,
-      slug,
-      description,
-      order
-    }`
-  );
+  return fetchPayload("payload:service-categories", async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const result = await payload.find({
+      collection: "service-categories",
+      depth: 0,
+      limit: 100,
+      sort: "order",
+    });
+
+    return nullIfEmpty(
+      result.docs.map((doc) => mapServiceCategory(doc as Record<string, unknown>))
+    );
+  });
 }
 
 export function getServices(): Promise<Service[] | null> {
-  return fetchCms<Service[]>(groq`*[_type == "service"] | order(order asc) {
-    _type,
-    title,
-    slug,
-    "categorySlug": category->slug.current,
-    summary,
-    body,
-    outcomes,
-    "relatedIndustries": coalesce(relatedIndustries, []),
-    icon,
-    order,
-    isPlaceholder,
-    seo${seoProjection}
-  }`);
+  return fetchPayload("payload:services", async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const result = await payload.find({
+      collection: "services",
+      depth: 2,
+      limit: 100,
+      sort: "order",
+    });
+
+    return nullIfEmpty(
+      result.docs.map((doc) => mapService(doc as Record<string, unknown>))
+    );
+  });
 }
 
 export function getServiceBySlug(slug: string): Promise<Service | null> {
-  return fetchCms<Service>(
-    groq`*[_type == "service" && slug.current == $slug][0] {
-      _type,
-      title,
-      slug,
-      "categorySlug": category->slug.current,
-      summary,
-      body,
-      outcomes,
-      "relatedIndustries": coalesce(relatedIndustries, []),
-      icon,
-      order,
-      isPlaceholder,
-      seo${seoProjection}
-    }`,
-    { slug }
-  );
+  return fetchPayload(`payload:service:${slug}`, async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const result = await payload.find({
+      collection: "services",
+      depth: 2,
+      limit: 1,
+      where: {
+        slug: {
+          equals: slug,
+        },
+      },
+    });
+
+    const doc = result.docs[0];
+    return doc ? mapService(doc as Record<string, unknown>) : null;
+  });
 }
 
 export function getProducts(): Promise<Product[] | null> {
-  return fetchCms<Product[]>(groq`*[_type == "product"] | order(order asc) {
-    _type,
-    title,
-    slug,
-    tagline,
-    genre,
-    status,
-    developmentStatus,
-    overview,
-    goals,
-    features,
-    platforms,
-    media[]${productMediaProjection},
-    trailerUrl,
-    isPlaceholder,
-    order,
-    seo${seoProjection}
-  }`);
+  return fetchPayload("payload:products", async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const result = await payload.find({
+      collection: "products",
+      depth: 2,
+      limit: 100,
+      sort: "order",
+    });
+
+    return nullIfEmpty(
+      result.docs.map((doc) => mapProduct(doc as Record<string, unknown>))
+    );
+  });
 }
 
 export function getProductBySlug(slug: string): Promise<Product | null> {
-  return fetchCms<Product>(
-    groq`*[_type == "product" && slug.current == $slug][0] {
-      _type,
-      title,
-      slug,
-      tagline,
-      genre,
-      status,
-      developmentStatus,
-      overview,
-      goals,
-      features,
-      platforms,
-      media[]${productMediaProjection},
-      trailerUrl,
-      isPlaceholder,
-      order,
-      seo${seoProjection}
-    }`,
-    { slug }
-  );
+  return fetchPayload(`payload:product:${slug}`, async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const result = await payload.find({
+      collection: "products",
+      depth: 2,
+      limit: 1,
+      where: {
+        slug: {
+          equals: slug,
+        },
+      },
+    });
+
+    const doc = result.docs[0];
+    return doc ? mapProduct(doc as Record<string, unknown>) : null;
+  });
 }
 
 export function getCaseStudies(): Promise<CaseStudy[] | null> {
-  return fetchCms<CaseStudy[]>(groq`*[_type == "caseStudy"] | order(featured desc, publishedAt desc) {
-    _type,
-    title,
-    slug,
-    clientName,
-    industry,
-    challenge,
-    solution,
-    impact,
-    lessonsLearned,
-    coverImage${imageProjection},
-    gallery[]${imageProjection},
-    featured,
-    isPlaceholder,
-    publishedAt,
-    seo${seoProjection}
-  }`);
+  return fetchPayload("payload:case-studies", async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const result = await payload.find({
+      collection: "case-studies",
+      depth: 2,
+      limit: 100,
+      sort: ["-featured", "-publishedAt"],
+    });
+
+    return nullIfEmpty(
+      result.docs.map((doc) => mapCaseStudy(doc as Record<string, unknown>))
+    );
+  });
 }
 
 export function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
-  return fetchCms<CaseStudy>(
-    groq`*[_type == "caseStudy" && slug.current == $slug][0] {
-      _type,
-      title,
-      slug,
-      clientName,
-      industry,
-      challenge,
-      solution,
-      impact,
-      lessonsLearned,
-      coverImage${imageProjection},
-      gallery[]${imageProjection},
-      featured,
-      isPlaceholder,
-      publishedAt,
-      seo${seoProjection}
-    }`,
-    { slug }
-  );
+  return fetchPayload(`payload:case-study:${slug}`, async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const result = await payload.find({
+      collection: "case-studies",
+      depth: 2,
+      limit: 1,
+      where: {
+        slug: {
+          equals: slug,
+        },
+      },
+    });
+
+    const doc = result.docs[0];
+    return doc ? mapCaseStudy(doc as Record<string, unknown>) : null;
+  });
 }
 
 export function getCommunityItems(): Promise<CommunityItem[] | null> {
-  return fetchCms<CommunityItem[]>(groq`*[_type == "communityItem"] | order(date desc, title asc) {
-    _type,
-    title,
-    slug,
-    type,
-    summary,
-    body,
-    date,
-    location,
-    coverImage${imageProjection},
-    externalUrl,
-    isPlaceholder,
-    seo${seoProjection}
-  }`);
+  return fetchPayload("payload:community-items", async () => {
+    const payload = await getPayloadClient();
+    if (!payload) return null;
+
+    const result = await payload.find({
+      collection: "community-items",
+      depth: 2,
+      limit: 100,
+      sort: ["-date", "title"],
+    });
+
+    return nullIfEmpty(
+      result.docs.map((doc) => mapCommunityItem(doc as Record<string, unknown>))
+    );
+  });
 }
