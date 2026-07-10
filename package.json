@@ -11,7 +11,12 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "knip": "knip"
+    "knip": "knip",
+    "studio": "sanity dev",
+    "studio:build": "sanity build",
+    "studio:deploy": "sanity deploy",
+    "studio:schema": "sanity schema deploy",
+    "studio:seed": "sanity exec sanity/scripts/seed-placeholder-docs.ts --with-user-token"
   },
   "dependencies": {
     "@sanity/image-url": "^2.1.1",
@@ -19,7 +24,8 @@
     "next-sanity": "^13.1.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "sanity": "^6.4.0"
+    "sanity": "^6.4.0",
+    "styled-components": "^6.4.3"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
@@ -33,6 +39,7 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.3",
     "@vitest/coverage-v8": "^4.1.10",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "jsdom": "^29.1.1",

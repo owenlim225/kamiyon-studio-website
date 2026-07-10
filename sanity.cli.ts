@@ -1,8 +1,17 @@
+import "./sanity/load-env";
+
 import { defineCliConfig } from "sanity/cli";
 
+function getEnvValue(name: string): string | undefined {
+  const value = process.env[name]?.trim();
+  return value ? value : undefined;
+}
+
 function getStudioProjectId(): string {
-  if (process.env.CMS_PROJECT_ID) {
-    return process.env.CMS_PROJECT_ID;
+  const projectId = getEnvValue("CMS_PROJECT_ID");
+
+  if (projectId) {
+    return projectId;
   }
 
   if (process.argv.some((argument) => argument.includes("sanity"))) {
@@ -13,7 +22,7 @@ function getStudioProjectId(): string {
 }
 
 const studioProjectId = getStudioProjectId();
-const studioDataset = process.env.CMS_DATASET ?? "production";
+const studioDataset = getEnvValue("CMS_DATASET") ?? "production";
 
 export default defineCliConfig({
   api: {
