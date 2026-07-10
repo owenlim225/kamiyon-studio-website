@@ -20,4 +20,13 @@ describe("SITE_URL", () => {
 
     expect(SITE_URL).toBe("https://kamiyon.studio");
   });
+
+  it("falls back to localhost when NEXT_PUBLIC_SITE_URL is empty", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
+    vi.resetModules();
+
+    const { SITE_URL } = await import("./site-url");
+
+    expect(SITE_URL).toBe("http://localhost:3000");
+  });
 });

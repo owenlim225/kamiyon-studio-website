@@ -64,7 +64,7 @@ describe("CaseStudy", () => {
 
   it("renders the resolved cover image with its own alt text when available", async () => {
     const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue("https://cdn.sanity.io/images/test/cover.png");
+    vi.mocked(getCmsImageUrl).mockReturnValue("/api/media/file/test.png");
 
     render(
       <CaseStudy
@@ -77,7 +77,7 @@ describe("CaseStudy", () => {
 
   it("falls back to the case study title for cover image alt text when unset", async () => {
     const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue("https://cdn.sanity.io/images/test/cover.png");
+    vi.mocked(getCmsImageUrl).mockReturnValue("/api/media/file/test.png");
 
     render(<CaseStudy caseStudy={{ ...baseCaseStudy, coverImage: {} }} />);
 

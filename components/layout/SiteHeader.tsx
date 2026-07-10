@@ -2,11 +2,17 @@
 
 import { useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { CONTACT_CTA, PRIMARY_NAV_ITEMS } from "@/lib/config/navigation";
+import type { NavItem } from "@/lib/config/navigation";
 import { Logo } from "./Logo";
 import { MainNav } from "./MainNav";
 
-export function SiteHeader() {
+type SiteHeaderProps = {
+  navItems: readonly NavItem[];
+  contactCta: NavItem;
+  siteName: string;
+};
+
+export function SiteHeader({ navItems, contactCta, siteName }: SiteHeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuId = useId();
 
@@ -30,18 +36,18 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border-default)] bg-[var(--bg-primary)]/95 shadow-[var(--shadow-sm)] backdrop-blur-sm">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        <Logo />
+        <Logo siteName={siteName} />
 
         <div className="hidden items-center gap-6 lg:flex">
-          <MainNav items={PRIMARY_NAV_ITEMS} orientation="horizontal" />
-          <Button href={CONTACT_CTA.href} variant="primary">
-            {CONTACT_CTA.label}
+          <MainNav items={navItems} orientation="horizontal" />
+          <Button href={contactCta.href} variant="primary">
+            {contactCta.label}
           </Button>
         </div>
 
         <div className="flex items-center gap-2 lg:hidden">
-          <Button href={CONTACT_CTA.href} variant="primary" className="hidden sm:inline-flex">
-            {CONTACT_CTA.label}
+          <Button href={contactCta.href} variant="primary" className="hidden sm:inline-flex">
+            {contactCta.label}
           </Button>
           <button
             type="button"
@@ -64,10 +70,10 @@ export function SiteHeader() {
           className="border-t border-[var(--border-default)] bg-[var(--bg-primary)] lg:hidden"
         >
           <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-            <MainNav items={PRIMARY_NAV_ITEMS} onNavigate={closeMenu} />
+            <MainNav items={navItems} onNavigate={closeMenu} />
             <div className="mt-4 sm:hidden">
-              <Button href={CONTACT_CTA.href} variant="primary" className="w-full">
-                {CONTACT_CTA.label}
+              <Button href={contactCta.href} variant="primary" className="w-full">
+                {contactCta.label}
               </Button>
             </div>
           </div>

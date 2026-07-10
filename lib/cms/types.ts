@@ -1,3 +1,5 @@
+/** Shared primitives */
+
 export type CtaVariant = "primary" | "secondary" | "ghost";
 
 export type Slug = {
@@ -6,15 +8,14 @@ export type Slug = {
 
 export type CmsImage = {
   _key?: string;
-  asset?: {
-    _ref: string;
-    _type: "reference";
-  };
+  /** Payload media URL when populated by the CMS adapter. */
+  url?: string;
   alt?: string | null;
   caption?: string | null;
 };
 
 export type PortableTextBlock = {
+  _key?: string;
   _type: "block";
   style?: string;
   children: Array<{
@@ -24,6 +25,8 @@ export type PortableTextBlock = {
   }>;
   markDefs?: Array<Record<string, unknown>>;
 };
+
+/** Spec 02 — seoMetadata, cta, socialLink */
 
 export type SeoMetadata = {
   title: string;
@@ -45,6 +48,8 @@ export type SocialLink = {
   isPlaceholder?: boolean;
 };
 
+/** Spec 02 — siteSettings (singleton) */
+
 export type SiteSettings = {
   _type: "siteSettings";
   siteName: string;
@@ -55,6 +60,8 @@ export type SiteSettings = {
   globalCtas: Cta[];
   footerText?: string;
 };
+
+/** Spec 03 — homePage blocks */
 
 export type HomeHero = {
   _type: "hero";
@@ -71,15 +78,17 @@ export type HomeMission = {
   body: string;
 };
 
+/** GROQ projects featuredProducts/featuredCaseStudies refs → slug arrays */
 export type HomeFeaturedWork = {
   _type: "featuredWork";
   title: string;
   body: string;
-  featuredProductSlugs: Array<string | null>;
-  featuredCaseStudySlugs: Array<string | null>;
+  featuredProductSlugs: string[];
+  featuredCaseStudySlugs: string[];
 };
 
 export type HomeHighlight = {
+  _key?: string;
   title: string;
   description: string;
   icon?: string;
@@ -113,6 +122,8 @@ export type HomePage = {
   seo: SeoMetadata;
 };
 
+/** Spec 03 — aboutPage embedded objects */
+
 export type StorySection = {
   title: string;
   body: string;
@@ -136,6 +147,32 @@ export type AboutPage = {
   seo: SeoMetadata;
 };
 
+/** Spec 03 — contactPage embedded objects */
+
+export type ContactChannel = {
+  type: "facebook" | "linkedin" | "email";
+  label: string;
+  value: string;
+  isPlaceholder?: boolean;
+};
+
+export type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+export type ContactPage = {
+  _type: "contactPage";
+  headline: string;
+  intro: string;
+  channels: ContactChannel[];
+  ctaNote?: string;
+  faq: FaqItem[];
+  seo: SeoMetadata;
+};
+
+/** Spec 04 — teamMember */
+
 export type TeamMember = {
   _type: "teamMember";
   name: string;
@@ -146,6 +183,8 @@ export type TeamMember = {
   isPlaceholder: boolean;
 };
 
+/** Spec 04 — serviceCategory, service */
+
 export type ServiceCategory = {
   _type: "serviceCategory";
   title: string;
@@ -154,6 +193,7 @@ export type ServiceCategory = {
   order: number;
 };
 
+/** GROQ projects category ref → categorySlug */
 export type Service = {
   _type: "service";
   title: string;
@@ -169,6 +209,10 @@ export type Service = {
   seo: SeoMetadata;
 };
 
+/** Spec 05 — productMedia, product */
+
+export type ProductStatus = "original-ip";
+
 export type ProductDevelopmentStatus =
   | "in-development"
   | "prototype"
@@ -176,6 +220,7 @@ export type ProductDevelopmentStatus =
   | "tbd";
 
 export type ProductMedia = {
+  _key?: string;
   type: "image" | "video";
   asset?: CmsImage;
   alt?: string | null;
@@ -188,7 +233,7 @@ export type Product = {
   slug: Slug;
   tagline: string;
   genre: string;
-  status: "original-ip";
+  status: ProductStatus;
   developmentStatus: ProductDevelopmentStatus;
   overview: string;
   goals: string[];
@@ -200,6 +245,8 @@ export type Product = {
   order: number;
   seo: SeoMetadata;
 };
+
+/** Spec 05 — caseStudy */
 
 export type CaseStudy = {
   _type: "caseStudy";
@@ -218,6 +265,8 @@ export type CaseStudy = {
   publishedAt?: string;
   seo: SeoMetadata;
 };
+
+/** Spec 05 — communityItem */
 
 export type CommunityItemType =
   | "workshop"
@@ -240,27 +289,5 @@ export type CommunityItem = {
   coverImage?: CmsImage;
   externalUrl?: string;
   isPlaceholder: boolean;
-  seo: SeoMetadata;
-};
-
-export type ContactChannel = {
-  type: "facebook" | "linkedin" | "email";
-  label: string;
-  value: string;
-  isPlaceholder?: boolean;
-};
-
-export type FaqItem = {
-  question: string;
-  answer: string;
-};
-
-export type ContactPage = {
-  _type: "contactPage";
-  headline: string;
-  intro: string;
-  channels: ContactChannel[];
-  ctaNote?: string;
-  faq: FaqItem[];
   seo: SeoMetadata;
 };

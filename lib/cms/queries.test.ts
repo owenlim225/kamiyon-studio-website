@@ -1,59 +1,91 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-const fetchMock = vi.fn();
+const findGlobalMock = vi.fn();
+const findMock = vi.fn();
+const getPayloadClientMock = vi.fn();
+
+vi.mock("next/cache", () => ({
+  unstable_cache: (loader: () => Promise<unknown>) => loader,
+}));
 
 vi.mock("./client", () => ({
-  getSanityClient: vi.fn(),
+  getPayloadClient: getPayloadClientMock,
 }));
 
 describe("CMS query functions", () => {
   afterEach(() => {
     vi.clearAllMocks();
+    vi.resetModules();
   });
 
-  it("returns null without calling the CMS client when Sanity is not configured", async () => {
-    const { getSanityClient } = await import("./client");
-    vi.mocked(getSanityClient).mockReturnValue(null);
+  it("returns null without calling Payload when CMS is not configured", async () => {
+    getPayloadClientMock.mockResolvedValue(null);
 
     const { getHomePage } = await import("./queries");
     const result = await getHomePage();
 
     expect(result).toBeNull();
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(findGlobalMock).not.toHaveBeenCalled();
   });
 
-  it("returns the typed CMS result when the client resolves successfully", async () => {
-    const { getSanityClient } = await import("./client");
-    const homePagePayload = { _type: "homePage", title: "Home", blocks: [], seo: {} };
-    fetchMock.mockResolvedValueOnce(homePagePayload);
-    vi.mocked(getSanityClient).mockReturnValue({ fetch: fetchMock } as never);
+  it("returns the typed CMS result when Payload resolves successfully", async () => {
+    getPayloadClientMock.mockResolvedValue({
+      findGlobal: findGlobalMock,
+      find: findMock,
+    });
+    findGlobalMock.mockResolvedValueOnce({
+      title: "Home",
+      blocks: [
+        {
+          blockType: "hero",
+          headline: "Create. Play. Inspire.",
+          subheadline: "Studio",
+          ctaLabel: "Contact",
+          ctaHref: "/contact",
+        },
+      ],
+      seo: { title: "Home", description: "Home page" },
+    });
 
     const { getHomePage } = await import("./queries");
     const result = await getHomePage();
 
-    expect(result).toEqual(homePagePayload);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(result?._type).toBe("homePage");
+    expect(result?.blocks[0]?._type).toBe("hero");
+    expect(findGlobalMock).toHaveBeenCalledWith({
+      slug: "home-page",
+      depth: 2,
+    });
   });
 
-  it("passes the slug param through to the CMS query for slug-based lookups", async () => {
-    const { getSanityClient } = await import("./client");
-    fetchMock.mockResolvedValueOnce(null);
-    vi.mocked(getSanityClient).mockReturnValue({ fetch: fetchMock } as never);
+  it("passes the slug through to Payload for slug-based lookups", async () => {
+    getPayloadClientMock.mockResolvedValue({
+      findGlobal: findGlobalMock,
+      find: findMock,
+    });
+    findMock.mockResolvedValueOnce({ docs: [] });
 
     const { getServiceBySlug } = await import("./queries");
     await getServiceBySlug("game-development");
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.any(String),
-      { slug: "game-development" },
-      expect.objectContaining({ next: { revalidate: 3600 } })
+    expect(findMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        collection: "services",
+        where: {
+          slug: {
+            equals: "game-development",
+          },
+        },
+      })
     );
   });
 
   it("swallows CMS fetch errors and returns null instead of throwing", async () => {
-    const { getSanityClient } = await import("./client");
-    fetchMock.mockRejectedValueOnce(new Error("network error"));
-    vi.mocked(getSanityClient).mockReturnValue({ fetch: fetchMock } as never);
+    getPayloadClientMock.mockResolvedValue({
+      findGlobal: findGlobalMock,
+      find: findMock,
+    });
+    findMock.mockRejectedValueOnce(new Error("database unavailable"));
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
 
     const { getCaseStudies } = await import("./queries");
@@ -66,8 +98,7 @@ describe("CMS query functions", () => {
   });
 
   it("resolves every collection query function to null when unconfigured (never throws)", async () => {
-    const { getSanityClient } = await import("./client");
-    vi.mocked(getSanityClient).mockReturnValue(null);
+    getPayloadClientMock.mockResolvedValue(null);
 
     const queries = await import("./queries");
 
@@ -84,5 +115,18 @@ describe("CMS query functions", () => {
     await expect(queries.getCaseStudyBySlug("x")).resolves.toBeNull();
     await expect(queries.getCommunityItems()).resolves.toBeNull();
     await expect(queries.getContactPage()).resolves.toBeNull();
+  });
+
+  it("returns null for empty collections so typed fallbacks still apply", async () => {
+    getPayloadClientMock.mockResolvedValue({
+      findGlobal: findGlobalMock,
+      find: findMock,
+    });
+    findMock.mockResolvedValueOnce({ docs: [] });
+
+    const { getProducts } = await import("./queries");
+    const result = await getProducts();
+
+    expect(result).toBeNull();
   });
 });

@@ -7,6 +7,16 @@ const staticRoutes = [
   "/products",
   "/portfolio",
   "/community",
+  "/blog",
+  "/contact",
+];
+
+const primaryNavRoutes = [
+  "/",
+  "/about",
+  "/services",
+  "/portfolio",
+  "/blog",
   "/contact",
 ];
 
@@ -45,12 +55,20 @@ test("renders a friendly 404 for an unknown route", async ({ page }) => {
 test("primary navigation links to every top-level section", async ({ page }) => {
   await page.goto("/");
 
-  for (const route of staticRoutes) {
+  for (const route of primaryNavRoutes) {
     const label = route === "/" ? "Home" : route.slice(1);
     await expect(
       page.getByRole("navigation").getByRole("link", { name: new RegExp(label, "i") }).first()
     ).toBeVisible();
   }
+});
+
+test("primary navigation excludes hidden sections", async ({ page }) => {
+  await page.goto("/");
+
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  await expect(nav.getByRole("link", { name: /products/i })).toHaveCount(0);
+  await expect(nav.getByRole("link", { name: /community/i })).toHaveCount(0);
 });
 
 test("skip-to-content link is keyboard accessible", async ({ page }) => {

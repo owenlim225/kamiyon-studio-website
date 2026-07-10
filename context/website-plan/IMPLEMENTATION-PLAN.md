@@ -1,9 +1,6 @@
 # Kamiyon Studio Website — Implementation Plan
 
-> **Status:** Planning complete. No feature code written yet. This document is the
-> bridge between the creative `website-plan/` specs (Parts 01–06) and the canon
-> build specs in `context/` (`project-overview.md`, `architecture.md`,
-> `ui-context.md`, `code-standards.md`, `ai-workflow-rules.md`).
+> **Status:** Historical planning doc (v1 Phase 0–10 executed). CMS is now **Payload** (Sanity → Payload migration Phases 0–5, 2026-07). Do not follow Sanity/`CMS_PROJECT_*` setup steps below — see `architecture.md` and `progress-tracker.md`.
 >
 > **Source-of-truth precedence** (from `ai-workflow-rules.md`): user task
 > instructions → `docs/` canon → `context/` build specs → CMS → assumptions.

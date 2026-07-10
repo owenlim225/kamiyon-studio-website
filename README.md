@@ -30,11 +30,11 @@ npm run test:e2e
 |---|---|---|
 | Framework | Next.js 16.2 (App Router) + TypeScript | Routing, SSG/ISR, metadata |
 | UI | React 19 + Tailwind CSS 4 | Components and styling |
-| Content | Sanity (headless CMS) | Page copy, media, structured entries |
+| Content | Payload CMS (Postgres) | Page copy, media, structured entries |
 | Fonts | Poppins (UI), Montserrat (headlines) | Marketing typography |
 | Deployment | TBD | Hosting and CI not yet defined |
 
-**No database, auth, or contact forms for v1. Contact is external links only (Facebook, LinkedIn, email).**
+**No auth or contact forms for v1. Contact is external links only (Facebook, LinkedIn, email). Payload stores CMS content in Postgres; the public site uses typed fallbacks until content is published.**
 
 ## Repository Structure
 
@@ -57,7 +57,7 @@ components/
 └── ui/                   # Button, Badge, Card, primitives
 
 lib/
-├── cms/                  # Sanity client, queries, types
+├── cms/                  # Payload client, adapters, types, fallbacks
 │   ├── client.ts
 │   ├── queries.ts
 │   ├── types.ts
@@ -72,7 +72,8 @@ context/                  # Build specifications for developers
 ├── ui-context.md         # Design tokens, typography, component rules
 ├── code-standards.md     # Implementation rules, patterns
 ├── ai-workflow-rules.md  # Workflow, scoping, delivery approach
-└── progress-tracker.md   # Current phase, completed work, open questions
+├── progress-tracker.md   # Active phase, next steps, open questions, architecture decisions
+└── completed-work.md     # Archived Phase 0–10 milestones and session notes
 
 docs/                     # Kamiyon canon (read-only)
 └── See `context/CLAUDE.md` for reading order
@@ -93,10 +94,9 @@ npm install
 Create a `.env.local` file:
 
 ```bash
-# Sanity CMS (optional; site renders with fallback content if unset)
-CMS_PROJECT_ID=your_sanity_project_id
-CMS_DATASET=production
-CMS_API_TOKEN=optional_api_token_for_draft_preview
+# Payload CMS + Postgres (optional for public site; required for /admin)
+PAYLOAD_SECRET=your_payload_secret
+DATABASE_URL=postgres://user:pass@localhost:5432/kamiyon
 
 # SEO / OG images (optional; localhost:3000 is default)
 NEXT_PUBLIC_SITE_URL=https://kamiyon.studio
@@ -116,12 +116,11 @@ Visit `http://localhost:3000`. The site will render with **fallback content** if
 
 | Variable | Required | Purpose | Default |
 |---|---|---|---|
-| `CMS_PROJECT_ID` | ✓ | Sanity project ID | — |
-| `CMS_DATASET` | ✓ | Sanity dataset (e.g. `production`) | — |
-| `CMS_API_TOKEN` | ✗ | Sanity API token for draft preview | — |
+| `DATABASE_URL` | ✓ for `/admin` | Postgres connection for Payload | — |
+| `PAYLOAD_SECRET` | ✓ for `/admin` | Payload encryption secret | — |
 | `NEXT_PUBLIC_SITE_URL` | ✗ | Canonical site URL for OG images, sitemap | `http://localhost:3000` |
 
-**Note:** The site is designed to work without CMS credentials during development. Missing env vars trigger fallback-first rendering from `lib/cms/fallbacks/*`. For CMS preview or live content, credentials are required.
+**Note:** The site is designed to work without CMS credentials during development. Missing env vars trigger fallback-first rendering from `lib/cms/fallbacks/*`. For `/admin` and live CMS content, `DATABASE_URL` and `PAYLOAD_SECRET` are required.
 
 ## Scripts
 
@@ -163,11 +162,11 @@ npm run test:coverage
 
 ### What is CMS?
 
-**CMS** = Sanity headless CMS for page content, media, structured blocks.
+**CMS** = Payload CMS (Postgres) for page content, media, structured blocks.
 
 - Marketing copy, hero headlines, service descriptions, case studies, community events
 - Placeholder-friendly: CMS documents can mark content as `isPlaceholder: true`
-- If CMS env vars are unset, the site renders from typed fallbacks in `lib/cms/fallbacks/*`
+- If `DATABASE_URL` / `PAYLOAD_SECRET` are unset, the site renders from typed fallbacks in `lib/cms/fallbacks/*`
 
 ### Development flow
 
@@ -179,7 +178,8 @@ npm run test:coverage
 ### Update progress
 
 After implementing a feature or phase:
-- Update `context/progress-tracker.md` with completed work, next steps, and open questions.
+- Update `context/progress-tracker.md` with next steps, open questions, and architecture decisions.
+- When closing a phase, append completed work and session notes to `context/completed-work.md`.
 - If architecture or scope changes, update the relevant `context/` file.
 
 ## First-Time Setup: Reading Order
@@ -191,18 +191,19 @@ After implementing a feature or phase:
 3. **`context/ui-context.md`** — Design tokens, typography, color palette, and component conventions
 4. **`context/code-standards.md`** — Implementation rules, patterns, error handling, immutability
 5. **`context/ai-workflow-rules.md`** — Development workflow, scoping rules, and delivery approach
-6. **`context/progress-tracker.md`** — Current phase, completed work, open questions, and architecture decisions
+6. **`context/progress-tracker.md`** — Current phase, next steps, open questions, and architecture decisions
+7. **`context/completed-work.md`** — Archived completed milestones and session notes (optional; read when tracing history)
 
 ## Current Phase
 
-**Phase 10 (Verification) — Complete.** All 11 phases (0–10) of the implementation roadmap are finished.
+**Payload CMS migration** — v1 website (Phase 0–10) complete; Sanity → Payload migration Phases 0–5 complete. See `context/completed-work.md` and `context/progress-tracker.md`.
 
+- ✅ All routes built with CMS + fallbacks
 - ✅ Test infrastructure (Vitest + Testing Library + Playwright)
 - ✅ 80%+ coverage on `lib/` and `components/sections/`
-- ✅ Full E2E smoke coverage of all 7 routes
-- ✅ 29 routes prerendered, build passing
+- ✅ Payload schema + Local API; Sanity deleted; context docs Payload-first
 
-**Status:** Ready for CMS provisioning and deployment. See `context/progress-tracker.md` → **Open Questions** for remaining pre-launch items.
+**Status:** Phase 6 hardening next. Set `DATABASE_URL` + `PAYLOAD_SECRET`, publish in `/admin`. See `context/progress-tracker.md`.
 
 ## Open Questions / TBDs
 
@@ -210,11 +211,11 @@ These items are **not blocking v1 launch** (the site renders with fallback conte
 
 | Item | Impact | Status |
 |---|---|---|
-| **Sanity project provisioning** | CMS credentialing | Pending |
-| **Deployment target** | Hosting environment | TBD (likely Vercel) |
-| **Facebook page URL** | Contact channels | Not in canon |
-| **LinkedIn URL** | Contact channels | Not in canon |
-| **Public email address** | Contact channels | Not in canon |
+| **Payload DB + secret** | CMS credentialing | Operator must set `DATABASE_URL` + `PAYLOAD_SECRET` |
+| **Deployment target** | Hosting environment | Vercel (confirmed); `NEXT_PUBLIC_SITE_URL` TBD at deploy |
+| **Facebook page URL** | Contact channels | Wired (operator-provided) |
+| **LinkedIn URL** | Contact channels | Wired (public company path) |
+| **Public email address** | Contact channels | Wired (`kamiyonstudio@gmail.com`) |
 | **Deep Indigo hex** | Design token | Brand kit doesn't show it; others extracted |
 | **Product dev status per title** | Product detail badges | Canon says "Original IP"; per-product status defaults to `tbd` |
 
@@ -248,7 +249,7 @@ See `context/progress-tracker.md` **Open Questions** section for the full list a
 
 ### I need to check what's implemented
 
-- `context/progress-tracker.md` → **Completed** section lists all 10 phases with file changes.
+- `context/completed-work.md` → **Completed (Phase 0–10)** lists all implementation phases with file changes.
 - `context/progress-tracker.md` → **Architecture Decisions** documents implementation choices and their rationale.
 - Run `npm run build` to see all 29 routes compile successfully.
 
@@ -256,7 +257,7 @@ See `context/progress-tracker.md` **Open Questions** section for the full list a
 
 - `context/progress-tracker.md` → **Architecture Decisions** table explains every major choice.
 - Search the relevant `context/` file for keywords (e.g. "fallback", "CMS", "placeholder").
-- Check the session notes under **Session Notes** in `progress-tracker.md` for phase-by-phase evolution.
+- Check the session notes under **Session Notes** in `completed-work.md` for phase-by-phase evolution.
 
 ## Troubleshooting
 
@@ -277,9 +278,9 @@ npm run test  # Check for test failures
 - Check `context/progress-tracker.md` for known issues or test scope notes.
 
 ### Missing CMS content
-- The site is designed to render from fallbacks if `CMS_PROJECT_ID` is unset.
+- The site is designed to render from fallbacks if `DATABASE_URL` / `PAYLOAD_SECRET` are unset.
 - Check `.env.local` for correct env var names (case-sensitive).
-- If CMS is provisioned, seed placeholder documents matching `context/architecture.md` → **CMS Content Model**.
+- If Payload is configured, publish content in `/admin` matching `context/architecture.md` → **CMS Content Model**.
 
 ## License
 
@@ -291,10 +292,10 @@ For internal team and agent development:
 1. Follow the reading order in **First-Time Setup** above.
 2. Refer to `context/code-standards.md` and `context/ai-workflow-rules.md` for contribution guidelines.
 3. Write tests first (TDD); target 80%+ coverage.
-4. Update `context/progress-tracker.md` after each phase.
+4. Update `context/progress-tracker.md` after each phase; archive completed milestones to `context/completed-work.md`.
 
 ---
 
-**Last Updated:** 2026-07-10  
-**Current Phase:** 10 (Verification — Complete)  
-**Status:** Ready for CMS provisioning and deployment
+**Last Updated:** 2026-07-11  
+**Current Phase:** Sanity → Payload migration (Phase 5 complete; Phase 6 hardening next)  
+**Status:** Docs Payload-first; operator env + content entry + hardening pending

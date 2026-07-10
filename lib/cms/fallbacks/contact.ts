@@ -1,31 +1,14 @@
 import type { ContactPage } from "../types";
+import { contactChannels } from "@/lib/contact/channels";
 
 // Sources: docs/branding/messaging.md, docs/ai/faq.md
+// Contact URLs: operator-provided 2026-07-10 (lib/contact/channels.ts)
 export const contactPageFallback: ContactPage = {
   _type: "contactPage",
   headline: "Let’s build something meaningful.",
   intro:
     "Whether you are exploring a client project, partnership, educational initiative, or original interactive experience, Kamiyon Studio would be glad to hear from you.",
-  channels: [
-    {
-      type: "facebook",
-      label: "Facebook",
-      value: "#",
-      isPlaceholder: true,
-    },
-    {
-      type: "linkedin",
-      label: "LinkedIn",
-      value: "#",
-      isPlaceholder: true,
-    },
-    {
-      type: "email",
-      label: "Email",
-      value: "#",
-      isPlaceholder: true,
-    },
-  ],
+  channels: contactChannels,
   faq: [
     {
       question: "What is Kamiyon Studio?",

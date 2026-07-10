@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { buildPageMetadata } from "./metadata";
 
@@ -50,34 +50,15 @@ describe("buildPageMetadata", () => {
     expect(metadata.robots).toEqual({ index: false, follow: false });
   });
 
-  it("resolves a CMS ogImage into the OpenGraph/Twitter image URLs when configured", async () => {
-    vi.stubEnv("CMS_PROJECT_ID", "test-project");
-    vi.stubEnv("CMS_DATASET", "production");
-    vi.doMock("@sanity/image-url", () => ({
-      createImageUrlBuilder: () => ({
-        image: () => ({ url: () => "https://cdn.sanity.io/images/test-project/og.png" }),
-      }),
-    }));
-    vi.resetModules();
-
-    const { buildPageMetadata: buildPageMetadataWithCms } = await import("./metadata");
-
-    const metadata = buildPageMetadataWithCms({
+  it("resolves a CMS ogImage into the OpenGraph/Twitter image URLs when present", () => {
+    const metadata = buildPageMetadata({
       title: "Case Study",
       description: "A case study.",
       path: "/portfolio/sample",
-      ogImage: { asset: { _ref: "image-abc-100x100-png", _type: "reference" } },
+      ogImage: { url: "/api/media/file/og.png" },
     });
 
-    expect(metadata.openGraph?.images).toEqual([
-      { url: "https://cdn.sanity.io/images/test-project/og.png" },
-    ]);
-    expect(metadata.twitter?.images).toEqual([
-      "https://cdn.sanity.io/images/test-project/og.png",
-    ]);
-
-    vi.unstubAllEnvs();
-    vi.doUnmock("@sanity/image-url");
-    vi.resetModules();
+    expect(metadata.openGraph?.images).toEqual([{ url: "/api/media/file/og.png" }]);
+    expect(metadata.twitter?.images).toEqual(["/api/media/file/og.png"]);
   });
 });

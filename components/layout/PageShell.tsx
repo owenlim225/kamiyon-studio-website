@@ -1,4 +1,8 @@
 import type { ReactNode } from "react";
+
+import { getSiteSettingsContent } from "@/lib/cms/site-settings-content";
+import { buildShellNavProps } from "@/lib/site-settings/shell-props";
+
 import { SiteFooter } from "./SiteFooter";
 import { SiteHeader } from "./SiteHeader";
 
@@ -6,7 +10,9 @@ type PageShellProps = {
   children: ReactNode;
 };
 
-export function PageShell({ children }: PageShellProps) {
+export async function PageShell({ children }: PageShellProps) {
+  const shellProps = buildShellNavProps(await getSiteSettingsContent());
+
   return (
     <>
       <a
@@ -15,11 +21,20 @@ export function PageShell({ children }: PageShellProps) {
       >
         Skip to content
       </a>
-      <SiteHeader />
+      <SiteHeader
+        navItems={shellProps.navItems}
+        contactCta={shellProps.contactCta}
+        siteName={shellProps.siteName}
+      />
       <main id="main-content" className="flex-1">
         {children}
       </main>
-      <SiteFooter />
+      <SiteFooter
+        navItems={shellProps.navItems}
+        socialLinks={shellProps.socialLinks}
+        siteName={shellProps.siteName}
+        footerMotto={shellProps.footerMotto}
+      />
     </>
   );
 }
