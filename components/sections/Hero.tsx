@@ -10,7 +10,7 @@ type HeroProps = {
 export function Hero({ hero }: HeroProps) {
   const heroSrc = "/assets/background.png";
   // #region agent log
-  const allowedLocalPatterns = ["/api/media/file/**"];
+  const allowedLocalPatterns = ["/api/media/file/**", "/assets/**"];
   const matchesAllowed = allowedLocalPatterns.some((p) => {
     const prefix = p.replace("/**", "/");
     return p.endsWith("/**")
@@ -25,7 +25,7 @@ export function Hero({ hero }: HeroProps) {
     },
     body: JSON.stringify({
       sessionId: "c8674a",
-      runId: "pre-fix",
+      runId: "post-fix",
       hypothesisId: "A",
       location: "Hero.tsx:render",
       message: "Hero Image src vs localPatterns whitelist",
