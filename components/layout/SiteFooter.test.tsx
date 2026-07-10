@@ -20,7 +20,7 @@ describe("SiteFooter", () => {
     expect(screen.getByRole("link", { name: "Services" })).toHaveAttribute("href", "/services");
   });
 
-  it("renders placeholder social links as 'Coming soon' text, never a fake URL", () => {
+  it("renders live social links as external anchors", () => {
     render(
       <SiteFooter
         navItems={testShellProps.navItems}
@@ -30,7 +30,39 @@ describe("SiteFooter", () => {
       />
     );
 
-    expect(screen.getAllByText("(Coming soon)").length).toBeGreaterThan(0);
+    expect(screen.queryByText("(Coming soon)")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Facebook" })).toHaveAttribute(
+      "href",
+      "https://www.facebook.com/kamiyonstudio"
+    );
+    expect(screen.getByRole("link", { name: "LinkedIn" })).toHaveAttribute(
+      "href",
+      "https://www.linkedin.com/company/105066188/"
+    );
+    expect(screen.getByRole("link", { name: "Email" })).toHaveAttribute(
+      "href",
+      "mailto:kamiyonstudio@gmail.com"
+    );
+  });
+
+  it("still renders placeholder social links as 'Coming soon' text when flagged", () => {
+    render(
+      <SiteFooter
+        navItems={testShellProps.navItems}
+        socialLinks={[
+          {
+            label: "Facebook",
+            href: "#",
+            comingSoon: true,
+            platform: "facebook",
+          },
+        ]}
+        siteName={testShellProps.siteName}
+        footerMotto={testShellProps.footerMotto}
+      />
+    );
+
+    expect(screen.getByText("(Coming soon)")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /Facebook/ })).not.toBeInTheDocument();
   });
 

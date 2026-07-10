@@ -1,32 +1,15 @@
 import type { SiteSettings } from "../types";
+import { PUBLIC_EMAIL, socialLinks } from "@/lib/contact/channels";
 
 // Sources: docs/company/overview.md, docs/branding/messaging.md, docs/marketing/positioning.md
+// Contact URLs: operator-provided 2026-07-10 (lib/contact/channels.ts)
 export const siteSettingsFallback: SiteSettings = {
   _type: "siteSettings",
   siteName: "Kamiyon Studio",
   tagline:
     "Kamiyon Studio creates games and interactive experiences that educate, inspire, and make a lasting impact.",
-  publicEmail: undefined,
-  socialLinks: [
-    {
-      platform: "facebook",
-      url: "#",
-      label: "Facebook coming soon",
-      isPlaceholder: true,
-    },
-    {
-      platform: "linkedin",
-      url: "#",
-      label: "LinkedIn coming soon",
-      isPlaceholder: true,
-    },
-    {
-      platform: "email",
-      url: "#",
-      label: "Public email coming soon",
-      isPlaceholder: true,
-    },
-  ],
+  publicEmail: PUBLIC_EMAIL,
+  socialLinks,
   defaultSeo: {
     title: "Kamiyon Studio",
     description:

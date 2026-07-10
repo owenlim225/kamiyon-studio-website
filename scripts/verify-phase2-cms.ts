@@ -315,7 +315,7 @@ async function main(): Promise<void> {
     },
     {
       route: "/contact",
-      markers: ["Facebook", "Coming soon"],
+      markers: ["Facebook", "kamiyonstudio@gmail.com"],
       label: "Contact channels",
     },
   ];

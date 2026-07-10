@@ -5,9 +5,24 @@ import type { ContactChannel } from "@/lib/cms/types";
 import { ContactMethods } from "./ContactMethods";
 
 const channels: ContactChannel[] = [
-  { type: "facebook", label: "Facebook", value: "#", isPlaceholder: true },
-  { type: "linkedin", label: "LinkedIn", value: "#", isPlaceholder: true },
-  { type: "email", label: "Email", value: "#", isPlaceholder: true },
+  {
+    type: "facebook",
+    label: "Facebook",
+    value: "https://www.facebook.com/kamiyonstudio",
+    isPlaceholder: false,
+  },
+  {
+    type: "linkedin",
+    label: "LinkedIn",
+    value: "https://www.linkedin.com/company/105066188/",
+    isPlaceholder: false,
+  },
+  {
+    type: "email",
+    label: "Email",
+    value: "kamiyonstudio@gmail.com",
+    isPlaceholder: false,
+  },
 ];
 
 describe("ContactMethods", () => {

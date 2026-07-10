@@ -18,7 +18,7 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 | Services | 4 categories, 10 service areas (`docs/services/services.md`) |
 | CMS types | `siteSettings`, `homePage`, `aboutPage`, `teamMember`, `serviceCategory`, `service`, `product`, `caseStudy`, `communityItem`, `contactPage`, `seoMetadata` ? see `architecture.md` |
 | Design tokens | Sakura `#f97695` (confirmed); Warm Ivory/Charcoal/Soft Gold extracted Phase 9; Deep Indigo TBD ? Fonts: Poppins (UI), Montserrat (headlines) |
-| Placeholder gaps | No social URLs, public email, named clients, or community events in canon ? never fabricate |
+| Placeholder gaps | Social URLs + public email **wired 2026-07-10** (operator-provided; not yet in canon docs); no named clients or community events in canon ? never fabricate |
 
 **Known conflicts:** README motto "Play. Question. Create." vs canon "Create. Play. Inspire." (website uses canon). `typography.md` / `consultation-process.md` are erroneous duplicates.
 
@@ -26,11 +26,11 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**Phase 4 — CMS shell wiring & preview (2026-07-10)** — `getSiteSettings()` drives header/footer (site name, contact CTA, footer motto, social links); Sanity Presentation tool + draft-mode API route; schema deployed to remote (no drift).
+**Phase 3 content unblock — contact URLs (2026-07-10)** — Operator Facebook / LinkedIn / email wired into fallbacks, seed, footer, contact cards, and Organization JSON-LD.
 
 ## Current Goal
 
-Hold for operator-provided social/email URLs and real team/product media (Phase 3 blocked items). Preview requires `CMS_API_TOKEN` + `NEXT_PUBLIC_SITE_URL` for Studio Presentation iframe.
+Add production CORS origin once `NEXT_PUBLIC_SITE_URL` is set for Vercel. Preview requires `CMS_API_TOKEN` + `NEXT_PUBLIC_SITE_URL` for Studio Presentation iframe. Optional: wire `siteSettings.defaultSeo` into root layout metadata.
 
 ## In Progress
 
@@ -38,9 +38,9 @@ Hold for operator-provided social/email URLs and real team/product media (Phase 
 
 ## Next Up
 
-- Replace `socialLink` / `contactChannel` `#` URLs when canon provides real values (blocked)
-- Production CORS origin when deployment target confirmed
+- Production CORS origin on Sanity + `NEXT_PUBLIC_SITE_URL` for Vercel deployment (host confirmed; domain TBD)
 - Optional: wire `siteSettings.defaultSeo` into root `app/layout.tsx` metadata (currently static SEO constants)
+- Replace LinkedIn public URL if a vanity company slug is published later (`/company/105066188/` is ID-based)
 
 ### Phase 1 ? Provision & seed (ops)
 
@@ -58,7 +58,7 @@ Hold for operator-provided social/email URLs and real team/product media (Phase 
 - [x] CORS origins (Manage ? API ? CORS origins; also `npx sanity cors list` / `cors add`):
   - [x] `http://localhost:3333` ? listed in project CORS; OPTIONS preflight returns `Access-Control-Allow-Origin: http://localhost:3333`; Studio HTTP 200 (2026-07-10)
   - [x] `http://localhost:3000` ? listed in project CORS; OPTIONS preflight returns `Access-Control-Allow-Origin: http://localhost:3000` (2026-07-10)
-  - [ ] Production domain ? add when deployment target + `NEXT_PUBLIC_SITE_URL` confirmed
+  - [ ] Production domain ? add when `NEXT_PUBLIC_SITE_URL` confirmed (deployment target: **Vercel**)
 - [x] Optional: **Viewer** read token ? `CMS_API_TOKEN` ? **not required** for v1: `.env.local` has empty `CMS_API_TOKEN`; `getHomePage()` succeeds via public CDN (`useCdn: true`); no token created or committed (2026-07-10)
 
 **Runtime steps (other agents / operator):**
@@ -72,14 +72,14 @@ Hold for operator-provided social/email URLs and real team/product media (Phase 
 - [x] `npm run dev` ? confirm CMS content replaces fallbacks on all 7 routes ? **2026-07-10:** `scripts/verify-phase2-cms.ts` exit 0; all routes HTTP 200; fetch layer returns non-null CMS data with Sanity `_id`s (singletons + collections); HTML renders CMS titles (e.g. Eclipse, Game Development, Sherwin Limosnero) not empty states
 - [x] Verify featured work refs on home page resolve (products + case study) ? `featuredProductSlugs` [eclipse, vocabu-wildlife-edition] + `featuredCaseStudySlugs` [sample-client-project-placeholder] resolve 2/2 + 1/1 against CMS `getProducts()`/`getCaseStudies()`
 - [x] Verify service category refs group correctly on `/services` ? 4 categories, 10 services; each service `categorySlug` matches its group; no orphans
-- [x] Confirm placeholder badges still show where `isPlaceholder: true` ? HTML markers: `/` Eclipse+Coming soon; `/about` Placeholder; `/services` Game Development+Placeholder; `/products` Eclipse+Coming soon; `/portfolio` Sample Client Project+Placeholder; `/community` Workshop+Coming soon; `/contact` Facebook+Coming soon
+- [x] Confirm placeholder badges still show where `isPlaceholder: true` ? HTML markers: `/` Eclipse+Coming soon; `/about` Placeholder; `/services` Game Development+Placeholder; `/products` Eclipse+Coming soon; `/portfolio` Sample Client Project+Placeholder; `/community` Workshop+Coming soon; `/contact` live channels (Facebook + email) as of 2026-07-10 URL wiring
 
 ### Phase 3 — Content entry (placeholder-first)
 
 - [x] Upload hero image to `homePage` block — **2026-07-10:** uploaded `docs/assets/youtube-banner.png` via `npm run studio:upload-assets`; patched `homePage` hero (`image-420f54e91bed33267242d7161e2c3051202f6bd0-2048x1152-png`, alt "Kamiyon Studio brand banner"). Re-run upload after any `studio:seed` (seed `createOrReplace` clears image refs).
 - [x] Upload team photos (or keep initials avatars) — **kept initials avatars**; no team headshots in `docs/assets/` or `public/`
 - [x] Upload product media placeholders — **kept empty media assets** (honest coming-soon UI); no Eclipse/Vocabu/Afterschool Cleanup screenshots in canon assets (brand/mascot art is not product media)
-- [ ] Replace `socialLink` / `contactChannel` `#` URLs when canon provides real values — **blocked:** Facebook, LinkedIn, and public email still absent from canon (`docs/company/`, `docs/marketing/`); left `#` + `isPlaceholder: true`
+- [x] Replace `socialLink` / `contactChannel` `#` URLs with operator-provided values — **2026-07-10:** `lib/contact/channels.ts` (Facebook, public LinkedIn `/company/105066188/`, `kamiyonstudio@gmail.com`); wired into site-settings + contact fallbacks, static `SOCIAL_LINKS`, Organization JSON-LD `email`/`sameAs`; re-seeded 30 docs + re-uploaded hero; `isPlaceholder: false`
 - [x] Polish service body portable text (subset: normal/h2/h3, strong/em only) — updated `lib/cms/fallbacks/services.ts` from `docs/services/services.md`; re-seeded 30 docs; `isPlaceholder: true` retained
 
 ### Phase 4 — CMS shell wiring & preview
@@ -93,10 +93,10 @@ Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./
 ## Open Questions
 
 - [ ] **Sanity schema sign-off** ? Confirm Phase 7 extensions (`contactPage.faq`, `socialLink.isPlaceholder`, per-collection `seo`) are accepted as v1 canon
-- [ ] **Facebook page URL** ? not in canon (placeholder until provided)
-- [ ] **LinkedIn URL** ? not in canon (placeholder until provided)
-- [ ] **Public email address** ? not in canon (placeholder until provided)
-- [ ] **Deployment target** ? Vercel assumed for Next.js; confirm host + `NEXT_PUBLIC_SITE_URL`
+- [x] **Facebook page URL** ? **answered 2026-07-10:** `https://www.facebook.com/kamiyonstudio` (operator placeholder; not yet in canon docs)
+- [x] **LinkedIn URL** ? **answered 2026-07-10:** operator admin URL given; site uses public `https://www.linkedin.com/company/105066188/` (admin path stripped)
+- [x] **Public email address** ? **answered 2026-07-10:** `kamiyonstudio@gmail.com`
+- [x] **Deployment target** ? **answered 2026-07-10:** Vercel; `NEXT_PUBLIC_SITE_URL` still TBD at deploy time
 - [ ] **Deep Indigo hex value** ? not in `brand-kit.png`; do not invent
 - [ ] **`/news` route** ? deferred/skipped for v1 (Vision item)
 - [ ] **Press Kit `/pres`** ? deferred post-v1
@@ -138,7 +138,7 @@ Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./
 | Featured work slug resolution | `FeaturedWork` cross-references `homePage.featuredWork` slugs against fetched `Product[]`/`CaseStudy[]` at render time (not stored denormalized) | Keeps `homePage` CMS content decoupled from product/case-study content; matches the reference-array shape already defined in `architecture.md`'s `homeBlock.featuredWork` |
 | CMS image resolution | Added `lib/cms/image.ts` using `@sanity/image-url` (new direct dependency) | Sanity image refs (`{_ref}`) are not directly usable as a `next/image` `src`; a URL builder is required. Added as an explicit dependency (was previously only a transitive dep of `sanity`) rather than relying on hoisting |
 | Phase 5 Portfolio IA (confirmed in code) | `/portfolio` + `/portfolio/[slug]` only ? no `/portfolio/[category]` route, no discipline filter chips | Re-confirms the Phase 0 canon override of `website-plan/03-PORTFOLIO...`'s 3-level category IA; `caseStudy.industry` is free text (not the spec's fixed 6-discipline enum), so a filter UI isn't backed by the existing schema ? would need a Phase 3 schema change, out of Phase 5 scope |
-| Breadcrumb JSON-LD URLs | Relative hrefs (`/portfolio/[slug]`) instead of absolute URLs | Deployment target is still TBD (open question); mirrors the existing `organization-jsonld.ts` precedent of omitting a fabricated absolute site URL |
+| Breadcrumb JSON-LD URLs | Relative hrefs (`/portfolio/[slug]`) instead of absolute URLs | `NEXT_PUBLIC_SITE_URL` still TBD at deploy time (Vercel confirmed); mirrors the existing `organization-jsonld.ts` precedent of omitting a fabricated absolute site URL |
 | Case study detail 404 handling | `getCaseStudyContent(slug)` checks CMS first, then linearly searches `caseStudiesFallback` by slug, then calls `notFound()` | Keeps the same CMS-then-fallback resolution order as everywhere else, while still producing a real 404 for genuinely unknown slugs (required by the Phase 5 validation criterion) |
 | About Hero content source | `AboutHero` reuses `aboutPage.motto` (headline) + `aboutPage.mission` (subheadline) instead of adding new `heroHeadline`/`heroSubheadline` fields | `aboutPage` has no dedicated hero block in the Phase 3 schema; motto/mission are the closest canon-backed marketing copy already in the model ? same "no new CMS fields" discipline as Phase 4's Hero secondary-link row |
 | Vision presentation (About) | Dedicated `VisionBand` section renders `aboutPage.vision` behind an explicit "Vision ? long-term aspiration" `Badge`, separate from the Mission text in the Hero | Directly satisfies the `architecture.md` invariant that Vision content is never presented as current fact; keeping it as its own labeled section (rather than folding it into Hero/Values copy) makes the distinction visually unambiguous |
@@ -166,6 +166,7 @@ Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./
 | Phase 3 asset upload script | `npm run studio:upload-assets` after seed | Seed `createOrReplace` clears image refs; upload script re-attaches hero without inventing stock photos |
 | Phase 4 shell CMS wiring | `PageShell` async-fetches `siteSettings`; `buildShellNavProps()` maps to header/footer props | Keeps client boundary minimal (`SiteHeader` only); nav IA remains static; social placeholders still render as non-links when `isPlaceholder: true` |
 | Phase 4 draft preview | Presentation tool + `/api/draft-mode/enable` + `fetchCms` draft branch | Preview secrets managed by Sanity (`@sanity/preview-url-secret`); requires `CMS_API_TOKEN` for draft reads; no visual-editing overlays in v1 |
+| Contact URLs (Phase 3 unblock) | Shared `lib/contact/channels.ts`; LinkedIn uses public `/company/105066188/` not admin dashboard | Single source for fallbacks, seed, nav, JSON-LD; admin URL is not visitor-safe; ID-based public path until vanity slug exists |
 
 ## Session notes
 
@@ -175,3 +176,5 @@ Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./
 - **2026-07-10 (Phase 2 CMS ? app verification):** Ran `scripts/verify-phase2-cms.ts` (exit 0). Found two blockers: (1) seed `_id`s used `type.slug` dotted paths ? private in Sanity, so public CDN returned only 4 singletons and collections fetched as `[]`; fixed `documentId()` to `type-slug` in `sanity/seed/placeholder-docs.ts` and re-seeded 30 docs. (2) GROQ `featuredProducts[]->slug.current[defined(@)]` returned `[null,…]` ? removed `[defined(@)]` filter in `lib/cms/queries.ts`. All 7 routes HTTP 200 with CMS fetch-layer `_id` proof + HTML content markers; featured-work 2 products + 1 case study resolve; services group under 4 categories (10 total); placeholder badges on team/services/products/portfolio/community/contact. **Phase 2 complete.**
 - **2026-07-10 (Phase 3 content entry):** Polished all 10 service bodies in `lib/cms/fallbacks/services.ts` (normal/h2/h3 + strong/em from `docs/services/services.md`); `npm run studio:seed` exit 0 (30 docs). Uploaded `docs/assets/youtube-banner.png` via `npm run studio:upload-assets` and patched `homePage` hero. Team photos: kept initials (no headshots). Product media: kept empty (no product screenshots; did not misuse kami-chan/logo). Social/contact URLs: still `#` — blocked, not in canon. Added `studio:upload-assets` script (re-run after seed).
 - **2026-07-10 (Phase 4 shell + preview):** Wired `getSiteSettings()` into async `PageShell` → `SiteHeader`/`SiteFooter`/`Logo` via `buildShellNavProps()` (site name, contact CTA, footer motto, social links; static nav unchanged). Added `sanity/presentation.ts`, Presentation plugin, `/api/draft-mode/enable`, and draft-aware `fetchCms`. `npm run studio:schema` deployed 1/1 schemas. Tests 208/208; `npm run build` exit 0. Preview blocked until operator sets `CMS_API_TOKEN`.
+- **2026-07-10 (open questions):** Operator answered Facebook (`https://www.facebook.com/kamiyonstudio`), LinkedIn (`https://www.linkedin.com/company/105066188/admin/dashboard/`), public email (`kamiyonstudio@gmail.com`), deployment target (Vercel). Phase 3 social/contact URL wiring unblocked; production CORS still needs `NEXT_PUBLIC_SITE_URL`.
+- **2026-07-10 (contact URL wiring):** Added `lib/contact/channels.ts` with Facebook, public LinkedIn (`/company/105066188/` — admin path stripped), and `kamiyonstudio@gmail.com`. Updated site-settings + contact fallbacks, static `SOCIAL_LINKS`, Organization JSON-LD. Re-seeded 30 docs + `studio:upload-assets` for hero. Tests 213/213.

@@ -1,3 +1,9 @@
+import {
+  FACEBOOK_PAGE_URL,
+  LINKEDIN_COMPANY_URL,
+  PUBLIC_EMAIL,
+} from "@/lib/contact/channels";
+
 export type NavItem = {
   label: string;
   href: string;
@@ -26,9 +32,9 @@ export type NavSocialLink = {
   platform?: "facebook" | "linkedin" | "email";
 };
 
-/** Placeholder social links until canon provides real URLs. */
+/** Static social links (shell prefers CMS `siteSettings.socialLinks`). */
 export const SOCIAL_LINKS: readonly NavSocialLink[] = [
-  { label: "Facebook", href: "#", comingSoon: true, platform: "facebook" },
-  { label: "LinkedIn", href: "#", comingSoon: true, platform: "linkedin" },
-  { label: "Email", href: "#", comingSoon: true, platform: "email" },
+  { label: "Facebook", href: FACEBOOK_PAGE_URL, platform: "facebook" },
+  { label: "LinkedIn", href: LINKEDIN_COMPANY_URL, platform: "linkedin" },
+  { label: "Email", href: `mailto:${PUBLIC_EMAIL}`, platform: "email" },
 ] as const;

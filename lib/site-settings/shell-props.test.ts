@@ -61,11 +61,11 @@ describe("buildShellNavProps", () => {
     ).toBe("Create. Play. Inspire.");
   });
 
-  it("maps placeholder social links as coming soon", () => {
+  it("maps live social links as active footer links", () => {
     expect(mapSocialLinksForShell(siteSettingsFallback.socialLinks)[0]).toEqual({
       label: "Facebook",
-      href: "#",
-      comingSoon: true,
+      href: "https://www.facebook.com/kamiyonstudio",
+      comingSoon: false,
       platform: "facebook",
     });
   });
