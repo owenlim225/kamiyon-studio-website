@@ -1,24 +1,39 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import {
-  PRIMARY_NAV_ITEMS,
-  SOCIAL_LINKS,
-} from "@/lib/config/navigation";
-import { SITE_MOTTO, SITE_NAME } from "@/lib/seo/constants";
+import type { NavItem, NavSocialLink } from "@/lib/config/navigation";
+import { STUDIO_LOCATION } from "@/lib/seo/constants";
 import { Logo } from "./Logo";
 
 const currentYear = new Date().getFullYear();
 
-export function SiteFooter() {
+type SiteFooterProps = {
+  navItems: readonly NavItem[];
+  socialLinks: readonly NavSocialLink[];
+  siteName: string;
+  footerMotto: string;
+};
+
+function getSocialHref(link: NavSocialLink): string {
+  if (link.platform === "email" && !link.href.startsWith("mailto:")) {
+    return `mailto:${link.href.replace(/^mailto:/, "")}`;
+  }
+
+  return link.href;
+}
+
+export function SiteFooter({
+  navItems,
+  socialLinks,
+  siteName,
+  footerMotto,
+}: SiteFooterProps) {
   return (
     <footer className="border-t border-[var(--border-default)] bg-[var(--bg-secondary)]">
       <Container className="py-12 md:py-16">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4">
-            <Logo />
-            <p className="max-w-xs text-sm text-[var(--text-secondary)]">
-              {SITE_MOTTO}
-            </p>
+            <Logo siteName={siteName} />
+            <p className="max-w-xs text-sm text-[var(--text-secondary)]">{footerMotto}</p>
           </div>
 
           <div>
@@ -27,7 +42,7 @@ export function SiteFooter() {
             </h2>
             <nav aria-label="Footer" className="mt-4">
               <ul className="space-y-2">
-                {PRIMARY_NAV_ITEMS.map((item) => (
+                {navItems.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
@@ -46,7 +61,7 @@ export function SiteFooter() {
               Connect
             </h2>
             <ul className="mt-4 space-y-2">
-              {SOCIAL_LINKS.map((link) => (
+              {socialLinks.map((link) => (
                 <li key={link.label}>
                   {link.comingSoon ? (
                     <span className="text-sm text-[var(--text-muted)]">
@@ -55,10 +70,10 @@ export function SiteFooter() {
                     </span>
                   ) : (
                     <a
-                      href={link.href}
+                      href={getSocialHref(link)}
                       className="text-sm text-[var(--text-secondary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2"
-                      rel="noopener noreferrer"
-                      target="_blank"
+                      rel={link.platform === "email" ? undefined : "noopener noreferrer"}
+                      target={link.platform === "email" ? undefined : "_blank"}
                     >
                       {link.label}
                     </a>
@@ -73,14 +88,13 @@ export function SiteFooter() {
               Studio
             </h2>
             <p className="mt-4 text-sm text-[var(--text-secondary)]">
-              Multidisciplinary interactive experience studio based in Biñan
-              City, Laguna, Philippines.
+              Multidisciplinary interactive experience studio based in {STUDIO_LOCATION}.
             </p>
           </div>
         </div>
 
         <div className="mt-10 border-t border-[var(--border-default)] pt-6 text-sm text-[var(--text-muted)]">
-          © {currentYear} {SITE_NAME}. All rights reserved.
+          © {currentYear} {siteName}. All rights reserved.
         </div>
       </Container>
     </footer>

@@ -26,11 +26,11 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**Phase 3 — Content entry (placeholder-first)** — Phase 2 complete (2026-07-10): all 7 routes verified CMS-sourced on `localhost:3000`; featured-work refs, service grouping, and placeholder badges pass.
+**Phase 4 — CMS shell wiring & preview (2026-07-10)** — `getSiteSettings()` drives header/footer (site name, contact CTA, footer motto, social links); Sanity Presentation tool + draft-mode API route; schema deployed to remote (no drift).
 
 ## Current Goal
 
-Upload hero/team/product media placeholders and polish portable text when canon provides real contact URLs.
+Hold for operator-provided social/email URLs and real team/product media (Phase 3 blocked items). Preview requires `CMS_API_TOKEN` + `NEXT_PUBLIC_SITE_URL` for Studio Presentation iframe.
 
 ## In Progress
 
@@ -38,7 +38,9 @@ Upload hero/team/product media placeholders and polish portable text when canon 
 
 ## Next Up
 
-Phase 3 content entry (hero image, team photos, product media, real social/email URLs when available).
+- Replace `socialLink` / `contactChannel` `#` URLs when canon provides real values (blocked)
+- Production CORS origin when deployment target confirmed
+- Optional: wire `siteSettings.defaultSeo` into root `app/layout.tsx` metadata (currently static SEO constants)
 
 ### Phase 1 ? Provision & seed (ops)
 
@@ -72,19 +74,19 @@ Phase 3 content entry (hero image, team photos, product media, real social/email
 - [x] Verify service category refs group correctly on `/services` ? 4 categories, 10 services; each service `categorySlug` matches its group; no orphans
 - [x] Confirm placeholder badges still show where `isPlaceholder: true` ? HTML markers: `/` Eclipse+Coming soon; `/about` Placeholder; `/services` Game Development+Placeholder; `/products` Eclipse+Coming soon; `/portfolio` Sample Client Project+Placeholder; `/community` Workshop+Coming soon; `/contact` Facebook+Coming soon
 
-### Phase 3 ? Content entry (placeholder-first)
+### Phase 3 — Content entry (placeholder-first)
 
-- [ ] Upload hero image to `homePage` block
-- [ ] Upload team photos (or keep initials avatars)
-- [ ] Upload product media placeholders
-- [ ] Replace `socialLink` / `contactChannel` `#` URLs when canon provides real values
-- [ ] Polish service body portable text (subset: normal/h2/h3, strong/em only)
+- [x] Upload hero image to `homePage` block — **2026-07-10:** uploaded `docs/assets/youtube-banner.png` via `npm run studio:upload-assets`; patched `homePage` hero (`image-420f54e91bed33267242d7161e2c3051202f6bd0-2048x1152-png`, alt "Kamiyon Studio brand banner"). Re-run upload after any `studio:seed` (seed `createOrReplace` clears image refs).
+- [x] Upload team photos (or keep initials avatars) — **kept initials avatars**; no team headshots in `docs/assets/` or `public/`
+- [x] Upload product media placeholders — **kept empty media assets** (honest coming-soon UI); no Eclipse/Vocabu/Afterschool Cleanup screenshots in canon assets (brand/mascot art is not product media)
+- [ ] Replace `socialLink` / `contactChannel` `#` URLs when canon provides real values — **blocked:** Facebook, LinkedIn, and public email still absent from canon (`docs/company/`, `docs/marketing/`); left `#` + `isPlaceholder: true`
+- [x] Polish service body portable text (subset: normal/h2/h3, strong/em only) — updated `lib/cms/fallbacks/services.ts` from `docs/services/services.md`; re-seeded 30 docs; `isPlaceholder: true` retained
 
-### Phase 4 ? Deferred (document, don't implement unless asked)
+### Phase 4 — CMS shell wiring & preview
 
-- [ ] Wire `getSiteSettings()` to header/footer (currently static `lib/config/navigation.ts`)
-- [ ] Sanity preview URLs / presentation tool (`CMS_PREVIEW_SECRET`)
-- [ ] `npm run studio:schema deploy` to remote if schema drift detected
+- [x] Wire `getSiteSettings()` to header/footer (site name, contact CTA from `globalCtas`, `footerText`/tagline motto, `socialLinks` with placeholder honesty) — **2026-07-10:** async `PageShell` fetches via `getSiteSettingsContent()`; pure `buildShellNavProps()` in `lib/site-settings/shell-props.ts`; static 7-link `PRIMARY_NAV_ITEMS` unchanged
+- [x] Sanity preview URLs / presentation tool — **2026-07-10:** `sanity/presentation.ts` + Presentation plugin in `sanity.config.ts`; preview routes for home/about/contact/services/products/portfolio/community; `/api/draft-mode/enable` via `next-sanity/draft-mode` (503 when `CMS_API_TOKEN` unset); `fetchCms` uses `previewDrafts` + `cache: no-store` when draft mode enabled
+- [x] `npm run studio:schema deploy` to remote — **2026-07-10:** exit 0, `Deployed 1/1 schemas` (no drift detected)
 
 Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./completed-work.md).
 
@@ -125,7 +127,7 @@ Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./
 | Contact mechanism | External links only (Facebook, LinkedIn, mailto) | Overrides `website-plan/` Google Form embed; canon invariant (no forms/auth) |
 | News + Press Kit | Deferred out of v1 | Vision items per project-overview.md; not built in v1 |
 | FAQ source | `docs/ai/faq.md` | `docs/services/consultation-process.md` is a known duplicate ? not a source |
-| Nav config (Phase 2) | Static `lib/config/navigation.ts` | CMS wiring deferred to Phase 3; shell uses static 7-section nav + placeholder social links |
+| Nav config (Phase 2 → Phase 4) | Static `PRIMARY_NAV_ITEMS`; shell copy from `getSiteSettings()` | IA stays canon 7-section static nav; site name, contact CTA, footer motto, and social links come from CMS with typed fallback |
 | Logo (Phase 2) | Text + sakura icon placeholder | Asset migration from `docs/assets/` deferred to Phase 9; no fake logo image |
 | Accessible sakura text tint (Phase 9) | Added `--color-sakura-ink` (`#c23a5e`) distinct from the raw `--color-sakura` brand token | Raw sakura on the ivory background measures ~2.6:1, failing WCAG AA's 4.5:1 text threshold; sakura-ink measures ~5.2:1 and passes. `--color-sakura` itself is left unchanged for use as a background/accent fill, where a different (3:1 non-text) threshold applies |
 | Satori OG image glyph (Phase 9) | Plain "K" monogram instead of the `?` sakura emoji | Satori's dynamic font loading for the emoji glyph failed during `next build` in this sandbox; a plain text glyph needs no extra font and renders identically across environments |
@@ -159,6 +161,11 @@ Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./
 | Portable text schema subset | `portableBody` allows only `normal`/`h2`/`h3` + `strong`/`em`; no lists or annotations | Matches `components/ui/PortableText.tsx` renderer and progress-tracker minimal PT decision; prevents editors from adding unrenderable list blocks |
 | Studio desk structure | Custom `sanity/structure.ts` groups Settings, Pages (singletons), Collections | Editors see singletons first with fixed document IDs matching seed; avoids duplicate home/about/contact docs |
 | Seed document IDs | `{type}-{slug}` root-path IDs (e.g. `product-eclipse`) | Sanity treats any `.` in `_id` as a private sub-path invisible to unauthenticated CDN/API; original `product.eclipse` seed IDs caused collection fetches to return `[]` while singletons (`homePage`) worked ? fixed in Phase 2 verification |
+| Phase 3 hero asset | `docs/assets/youtube-banner.png` as `homePage` hero image | Only landscape brand banner in canon assets suitable for hero; logo/brand-kit/kami-chan sheets are not hero photography |
+| Phase 3 media gaps | Keep team initials + empty product media; do not reuse mascot/logo as product screenshots | Seed rule: empty product media = honest coming-soon UI; no team headshots or product art in `docs/assets/` |
+| Phase 3 asset upload script | `npm run studio:upload-assets` after seed | Seed `createOrReplace` clears image refs; upload script re-attaches hero without inventing stock photos |
+| Phase 4 shell CMS wiring | `PageShell` async-fetches `siteSettings`; `buildShellNavProps()` maps to header/footer props | Keeps client boundary minimal (`SiteHeader` only); nav IA remains static; social placeholders still render as non-links when `isPlaceholder: true` |
+| Phase 4 draft preview | Presentation tool + `/api/draft-mode/enable` + `fetchCms` draft branch | Preview secrets managed by Sanity (`@sanity/preview-url-secret`); requires `CMS_API_TOKEN` for draft reads; no visual-editing overlays in v1 |
 
 ## Session notes
 
@@ -166,3 +173,5 @@ Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./
 - **2026-07-10 (Phase 1 re-seed):** User-requested idempotent re-run. Auth OK (`npx sanity debug --secrets`, GitHub; project c6ej1xoj / dataset production). `npm run studio:seed` exit **0**; log: *Seeded 30 placeholder documents to Sanity.* Singletons spot-checked via `npx sanity documents get`: siteSettings, homePage, aboutPage, contactPage (all present; _updatedAt 2026-07-10T08:08:22Z). No auth or seed errors.
 - **2026-07-10 (Phase 1 closure):** CORS verified ? `npx sanity cors list` shows `http://localhost:3333` and `http://localhost:3000`; OPTIONS preflight to `c6ej1xoj.api.sanity.io` allows both origins. Studio `:3333` and Next.js dev `:3000` HTTP 200. Server-side CMS fetch OK: `getHomePage()` returns `homePage` with 5 blocks (no token; CDN). `CMS_API_TOKEN` empty in `.env.local` ? omitted by design. Production CORS origin deferred (deployment TBD). **Phase 1 complete.**
 - **2026-07-10 (Phase 2 CMS ? app verification):** Ran `scripts/verify-phase2-cms.ts` (exit 0). Found two blockers: (1) seed `_id`s used `type.slug` dotted paths ? private in Sanity, so public CDN returned only 4 singletons and collections fetched as `[]`; fixed `documentId()` to `type-slug` in `sanity/seed/placeholder-docs.ts` and re-seeded 30 docs. (2) GROQ `featuredProducts[]->slug.current[defined(@)]` returned `[null,…]` ? removed `[defined(@)]` filter in `lib/cms/queries.ts`. All 7 routes HTTP 200 with CMS fetch-layer `_id` proof + HTML content markers; featured-work 2 products + 1 case study resolve; services group under 4 categories (10 total); placeholder badges on team/services/products/portfolio/community/contact. **Phase 2 complete.**
+- **2026-07-10 (Phase 3 content entry):** Polished all 10 service bodies in `lib/cms/fallbacks/services.ts` (normal/h2/h3 + strong/em from `docs/services/services.md`); `npm run studio:seed` exit 0 (30 docs). Uploaded `docs/assets/youtube-banner.png` via `npm run studio:upload-assets` and patched `homePage` hero. Team photos: kept initials (no headshots). Product media: kept empty (no product screenshots; did not misuse kami-chan/logo). Social/contact URLs: still `#` — blocked, not in canon. Added `studio:upload-assets` script (re-run after seed).
+- **2026-07-10 (Phase 4 shell + preview):** Wired `getSiteSettings()` into async `PageShell` → `SiteHeader`/`SiteFooter`/`Logo` via `buildShellNavProps()` (site name, contact CTA, footer motto, social links; static nav unchanged). Added `sanity/presentation.ts`, Presentation plugin, `/api/draft-mode/enable`, and draft-aware `fetchCms`. `npm run studio:schema` deployed 1/1 schemas. Tests 208/208; `npm run build` exit 0. Preview blocked until operator sets `CMS_API_TOKEN`.

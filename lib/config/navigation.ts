@@ -23,11 +23,12 @@ export type NavSocialLink = {
   label: string;
   href: string;
   comingSoon?: boolean;
+  platform?: "facebook" | "linkedin" | "email";
 };
 
 /** Placeholder social links until canon provides real URLs. */
 export const SOCIAL_LINKS: readonly NavSocialLink[] = [
-  { label: "Facebook", href: "#", comingSoon: true },
-  { label: "LinkedIn", href: "#", comingSoon: true },
-  { label: "Email", href: "#", comingSoon: true },
+  { label: "Facebook", href: "#", comingSoon: true, platform: "facebook" },
+  { label: "LinkedIn", href: "#", comingSoon: true, platform: "linkedin" },
+  { label: "Email", href: "#", comingSoon: true, platform: "email" },
 ] as const;

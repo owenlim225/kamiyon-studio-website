@@ -189,7 +189,7 @@ ISR: `revalidate: 3600` on all CMS fetches.
 
 ## Next steps after provisioning
 
-1. Upload real brand images to hero/product/team fields
+1. Upload real brand images to hero/product/team fields — hero: `npm run studio:upload-assets` (uses `docs/assets/youtube-banner.png`; re-run after every `studio:seed`)
 2. Replace placeholder contact URLs when canon provides them
 3. Set `NEXT_PUBLIC_SITE_URL` when deployment target confirmed
 4. Consider Sanity preview / presentation tool (see `06-registration-and-studio-structure.md`)

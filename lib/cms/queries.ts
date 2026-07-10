@@ -1,4 +1,5 @@
 import { groq } from "next-sanity";
+import { draftMode } from "next/headers";
 
 import { getSanityClient } from "./client";
 import type {
@@ -43,6 +44,10 @@ const cmsFetchOptions = {
   },
 };
 
+const cmsDraftFetchOptions = {
+  cache: "no-store" as const,
+};
+
 async function fetchCms<T>(
   query: string,
   params: Record<string, string> = {}
@@ -53,8 +58,26 @@ async function fetchCms<T>(
     return null;
   }
 
+  let activeClient = client;
+  let fetchOptions: typeof cmsFetchOptions | typeof cmsDraftFetchOptions = cmsFetchOptions;
+
   try {
-    return await client.fetch<T | null>(query, params, cmsFetchOptions);
+    const { isEnabled } = await draftMode();
+
+    if (isEnabled && process.env.CMS_API_TOKEN) {
+      activeClient = client.withConfig({
+        perspective: "previewDrafts",
+        useCdn: false,
+        stega: true,
+      });
+      fetchOptions = cmsDraftFetchOptions;
+    }
+  } catch {
+    // draftMode() is only available inside a request context.
+  }
+
+  try {
+    return await activeClient.fetch<T | null>(query, params, fetchOptions);
   } catch (error) {
     console.error("Sanity CMS fetch failed; using typed fallback content.", error);
     return null;

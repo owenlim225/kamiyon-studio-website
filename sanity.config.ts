@@ -3,6 +3,7 @@ import "./sanity/load-env";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 
+import { presentation } from "./sanity/presentation";
 import { schemaTypes } from "./sanity/schemaTypes";
 import { structure } from "./sanity/structure";
 
@@ -33,7 +34,7 @@ export default defineConfig({
   title: "Kamiyon Studio",
   projectId: studioProjectId,
   dataset: studioDataset,
-  plugins: [structureTool({ structure })],
+  plugins: [structureTool({ structure }), presentation],
   schema: {
     types: schemaTypes,
   },

@@ -16,7 +16,8 @@
     "studio:build": "sanity build",
     "studio:deploy": "sanity deploy",
     "studio:schema": "sanity schema deploy",
-    "studio:seed": "sanity exec sanity/scripts/seed-placeholder-docs.ts --with-user-token"
+    "studio:seed": "sanity exec sanity/scripts/seed-placeholder-docs.ts --with-user-token",
+    "studio:upload-assets": "sanity exec sanity/scripts/upload-phase3-assets.ts --with-user-token"
   },
   "dependencies": {
     "@sanity/image-url": "^2.1.1",
