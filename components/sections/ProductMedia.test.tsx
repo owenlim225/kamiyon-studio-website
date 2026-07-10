@@ -30,10 +30,10 @@ describe("ProductMedia", () => {
 
   it("renders resolved media images in a grid", async () => {
     const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue("https://cdn.sanity.io/images/test/screenshot.png");
+    vi.mocked(getCmsImageUrl).mockReturnValue("/api/media/file/screenshot.png");
 
     const media: ProductMediaItem[] = [
-      { type: "image", asset: { asset: { _ref: "image-a", _type: "reference" } }, alt: "Screenshot" },
+      { type: "image", asset: { url: "/api/media/file/screenshot.png" }, alt: "Screenshot" },
     ];
     render(<ProductMedia media={media} />);
 
@@ -42,14 +42,14 @@ describe("ProductMedia", () => {
 
   it("falls back to the caption, then an empty string, for alt text when unset", async () => {
     const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue("https://cdn.sanity.io/images/test/screenshot.png");
+    vi.mocked(getCmsImageUrl).mockReturnValue("/api/media/file/screenshot.png");
 
     render(
       <ProductMedia
         media={[
           {
             type: "image",
-            asset: { asset: { _ref: "image-a", _type: "reference" } },
+            asset: { url: "/api/media/file/screenshot.png" },
             caption: "Concept art",
           },
         ]}

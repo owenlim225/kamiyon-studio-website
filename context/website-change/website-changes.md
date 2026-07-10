@@ -2,7 +2,7 @@ Create a full comprehensive implementation plan (then stop for approval before c
 
 ## Project context (detected)
 - Repo: kamiyon-studio-website
-- Stack: Next.js 16.2, React 19, TypeScript, Tailwind CSS 4, Payload + Sanity CMS, Vitest, Playwright
+- Stack: Next.js 16.2, React 19, TypeScript, Tailwind CSS 4, Payload CMS, Vitest, Playwright
 - Read `node_modules/next/dist/docs/` before any Next.js API usage (AGENTS.md)
 - Brand/canon: do NOT invent client names, logos, awards, partnerships, or blog posts
 - Existing home: `app/(frontend)/page.tsx` currently renders Hero, Mission, FeaturedWork, Highlights, ContactCTA

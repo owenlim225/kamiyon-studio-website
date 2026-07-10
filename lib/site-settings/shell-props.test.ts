@@ -41,6 +41,15 @@ describe("buildShellNavProps", () => {
       comingSoon: false,
       platform: "facebook",
     });
+    expect(props.navItems).toHaveLength(6);
+    expect(props.navItems.map((item) => item.label)).toEqual([
+      "Home",
+      "About",
+      "Services",
+      "Portfolio",
+      "Blog",
+      "Contact",
+    ]);
   });
 
   it("falls back to static contact CTA when no /contact href exists", () => {

@@ -52,11 +52,4 @@ describe("CMS client", () => {
     expect(first).toBe(second);
     expect(getPayloadMock).toHaveBeenCalledTimes(1);
   });
-
-  it("exposes deprecated Sanity aliases for transitional callers", async () => {
-    const { isSanityConfigured, getSanityClient } = await import("./client");
-
-    expect(isSanityConfigured).toBe(false);
-    await expect(getSanityClient()).resolves.toBeNull();
-  });
 });

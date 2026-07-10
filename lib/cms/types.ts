@@ -10,10 +10,6 @@ export type CmsImage = {
   _key?: string;
   /** Payload media URL when populated by the CMS adapter. */
   url?: string;
-  asset?: {
-    _ref: string;
-    _type: "reference";
-  };
   alt?: string | null;
   caption?: string | null;
 };

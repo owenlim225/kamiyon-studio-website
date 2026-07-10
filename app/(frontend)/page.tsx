@@ -1,38 +1,50 @@
 import type { Metadata } from "next";
 
-import { ContactCTA } from "@/components/sections/ContactCTA";
-import { FeaturedWork } from "@/components/sections/FeaturedWork";
 import { Hero } from "@/components/sections/Hero";
-import { Highlights } from "@/components/sections/Highlights";
-import { Mission } from "@/components/sections/Mission";
+import { HomeContact } from "@/components/sections/HomeContact";
+import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
+import { ProjectsBento } from "@/components/sections/ProjectsBento";
+import {
+  ServicesCarousel,
+  type ServiceCarouselSlide,
+} from "@/components/sections/ServicesCarousel";
 import {
   caseStudiesFallback,
   homePageFallback,
-  productsFallback,
   resolveWithFallback,
+  serviceCategoriesFallback,
 } from "@/lib/cms/fallbacks";
-import { getCaseStudies, getHomePage, getProducts } from "@/lib/cms/queries";
+import { getCaseStudies, getHomePage, getServiceCategories } from "@/lib/cms/queries";
 import { buildPageMetadata } from "@/lib/seo/metadata";
-import type {
-  HomeCtaBanner,
-  HomeFeaturedWork,
-  HomeHero,
-  HomeHighlights,
-  HomeMission,
-} from "@/lib/cms/types";
+import type { HomeCtaBanner, HomeHero, ServiceCategory } from "@/lib/cms/types";
 
 async function getHomePageContent() {
-  const [home, products, caseStudies] = await Promise.all([
+  const [home, caseStudies, serviceCategories] = await Promise.all([
     getHomePage(),
-    getProducts(),
     getCaseStudies(),
+    getServiceCategories(),
   ]);
 
   return {
     home: resolveWithFallback(home, homePageFallback),
-    products: resolveWithFallback(products, productsFallback),
     caseStudies: resolveWithFallback(caseStudies, caseStudiesFallback),
+    serviceCategories: resolveWithFallback(
+      serviceCategories,
+      serviceCategoriesFallback
+    ),
   };
+}
+
+function toServiceCarouselSlides(
+  categories: ServiceCategory[]
+): ServiceCarouselSlide[] {
+  return categories.map((category) => ({
+    id: category.slug.current,
+    eyebrow: "Services",
+    title: category.title,
+    summary: category.description,
+    exploreHref: "/services",
+  }));
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -48,37 +60,70 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const { home, products, caseStudies } = await getHomePageContent();
+  const { home, caseStudies, serviceCategories } = await getHomePageContent();
+
+  // #region agent log
+  const { access } = await import("node:fs/promises");
+  const { join } = await import("node:path");
+  const assetPath = join(process.cwd(), "public", "assets", "background.png");
+  let assetExists = false;
+  try {
+    await access(assetPath);
+    assetExists = true;
+  } catch {
+    assetExists = false;
+  }
+  fetch("http://127.0.0.1:7808/ingest/5870b4a9-8a44-420f-bfd4-f6f4bc6fae2d", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "c8674a",
+    },
+    body: JSON.stringify({
+      sessionId: "c8674a",
+      runId: "pre-fix",
+      hypothesisId: "B",
+      location: "page.tsx:Home",
+      message: "Home render: asset existence + hero presence",
+      data: {
+        assetPath,
+        assetExists,
+        hasHero: Boolean(
+          home.blocks.find((block) => block._type === "hero")
+        ),
+        configuredLocalPatterns: ["/api/media/file/**"],
+        heroImageSrc: "/assets/background.png",
+      },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
 
   const hero = home.blocks.find((block) => block._type === "hero") as
     | HomeHero
-    | undefined;
-  const mission = home.blocks.find((block) => block._type === "mission") as
-    | HomeMission
-    | undefined;
-  const featuredWork = home.blocks.find(
-    (block) => block._type === "featuredWork"
-  ) as HomeFeaturedWork | undefined;
-  const highlights = home.blocks.find((block) => block._type === "highlights") as
-    | HomeHighlights
     | undefined;
   const ctaBanner = home.blocks.find((block) => block._type === "ctaBanner") as
     | HomeCtaBanner
     | undefined;
 
+  const contactDefaults = homePageFallback.blocks.find(
+    (block) => block._type === "ctaBanner"
+  ) as HomeCtaBanner;
+
+  const contact = ctaBanner ?? contactDefaults;
+
   return (
     <>
       {hero ? <Hero hero={hero} /> : null}
-      {mission ? <Mission mission={mission} /> : null}
-      {featuredWork ? (
-        <FeaturedWork
-          featuredWork={featuredWork}
-          products={products}
-          caseStudies={caseStudies}
-        />
-      ) : null}
-      {highlights ? <Highlights highlights={highlights} /> : null}
-      {ctaBanner ? <ContactCTA ctaBanner={ctaBanner} /> : null}
+      <PartnersMarquee eyebrow="Partners" />
+      <ProjectsBento caseStudies={caseStudies} />
+      <ServicesCarousel slides={toServiceCarouselSlides(serviceCategories)} />
+      <HomeContact
+        heading={contact.title}
+        body={contact.body}
+        ctaLabel={contact.ctaLabel}
+        ctaHref={contact.ctaHref}
+      />
     </>
   );
 }

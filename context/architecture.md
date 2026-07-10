@@ -6,40 +6,42 @@
 | --- | --- | --- |
 | Framework | Next.js 16.2 (App Router) + TypeScript | Routing, SSR/SSG, metadata |
 | UI | React 19 + Tailwind CSS 4 | Components and styling |
-| Content | Headless CMS (Sanity recommended — see below) | All page copy, media references, structured entries |
+| Content | Payload CMS (Postgres) | All page copy, media references, structured entries |
 | Fonts | Poppins, Montserrat (Google Fonts or self-hosted) | UI and marketing typography per visual identity |
-| Deployment | TBD | Hosting and CI not yet defined in canon |
+| Deployment | Vercel (confirmed) | Set `DATABASE_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SITE_URL` at deploy |
 
-No database, auth, or API backend for v1. Contact is external links only.
+No auth or contact-form backend for v1. Contact is external links only. Payload uses Postgres for CMS content; the public site still renders typed fallbacks when `DATABASE_URL` / `PAYLOAD_SECRET` are unset.
 
 > **Source:** Repo `package.json`, [`docs/technology/engineering-principles.md`](../docs/technology/engineering-principles.md)
 
 ---
 
-## CMS Recommendation
+## CMS
 
-**Recommended: Sanity** (final choice is an open question)
+**Chosen: Payload CMS 3** (Postgres via `@payloadcms/db-postgres`), embedded at `/admin`.
 
-| Criterion | Sanity | Contentful | Strapi |
-| --- | --- | --- | --- |
-| Next.js integration | Excellent (`next-sanity`) | Good | Good |
-| Draft / placeholder workflow | Built-in drafts | Built-in | Built-in |
-| Image CDN | Included | Included | Self-managed |
-| Ops burden | Low (hosted Studio) | Low | Higher (self-host) |
-| Fit for marketing blocks | Strong (portable text, objects) | Strong | Strong |
+| Criterion | Payload (chosen) |
+| --- | --- |
+| Next.js integration | First-class (`@payloadcms/next`) |
+| Draft / placeholder workflow | Drafts + `isPlaceholder` fields |
+| Media | Local `/api/media` (S3 optional later) |
+| Ops burden | Self-hosted with app; needs `DATABASE_URL` + `PAYLOAD_SECRET` |
+| Fit for marketing blocks | Strong (Lexical rich text, blocks, globals) |
 
-Rationale: Marketing site with modular page blocks, separate admin UI, and placeholder drafts aligns well with Sanity's content model and Next.js ecosystem. Document final choice in `progress-tracker.md` when decided.
+Rationale: Keeps CMS in-repo with the Next.js app, typed Local API for `lib/cms`, and empty-CMS cutover with typed fallbacks. Sanity was removed in migration Phase 4 (2026-07-11).
 
 ---
 
 ## System Boundaries
 
-- `app/` — Routes and page-level composition only; no hardcoded company facts
+- `app/(frontend)/` — Public routes and page-level composition; no hardcoded company facts
+- `app/(payload)/` — Payload admin UI and REST/GraphQL API routes
 - `components/` — Presentational and section components; receive typed content props
-- `lib/cms/` — CMS client, GROQ/fetch queries, TypeScript types, fallback stubs
+- `lib/cms/` — Payload Local API client, Lexical/media adapters, TypeScript types, fallback stubs
+- `collections/` + `globals/` — Payload schema definitions
 - `docs/` — Company canon (read-only for website repo unless explicitly asked)
 - `context/` — Build-time instructions for developers and AI agents
-- CMS Studio — Separate admin; not embedded in this app
+- CMS admin — Embedded at `/admin` (requires `DATABASE_URL` + `PAYLOAD_SECRET`)
 
 ---
 
@@ -47,38 +49,67 @@ Rationale: Marketing site with modular page blocks, separate admin UI, and place
 
 ```
 app/
-  layout.tsx                 # Root layout, fonts, default metadata
-  page.tsx                   # Home
-  about/page.tsx
-  services/page.tsx
-  services/[slug]/page.tsx
-  products/page.tsx
-  products/[slug]/page.tsx
-  portfolio/page.tsx
-  portfolio/[slug]/page.tsx
-  community/page.tsx
-  contact/page.tsx
+  (frontend)/
+    layout.tsx               # Public layout, fonts, PageShell, default metadata
+    page.tsx                 # Home
+    about/page.tsx
+    services/page.tsx
+    services/[slug]/page.tsx
+    products/page.tsx
+    products/[slug]/page.tsx
+    portfolio/page.tsx
+    portfolio/[slug]/page.tsx
+    community/page.tsx
+    contact/page.tsx
+    blog/page.tsx            # Coming-soon stub
+  (payload)/
+    admin/[[...segments]]/   # Payload admin UI
+    api/                     # Payload REST / GraphQL / media
 
 components/
   layout/                    # Header, Footer, Nav, PageShell
-  sections/                  # Hero, ServiceGrid, ProductCard, CaseStudy, etc.
+  sections/                  # Home + section components
   ui/                        # Buttons, cards, typography primitives
 
 lib/
   cms/
-    client.ts                # CMS SDK client
-    queries.ts               # Per-page/collection queries
-    types.ts                 # Shared content types
-    fallbacks/               # Placeholder content when CMS empty
-      home.ts
-      about.ts
-      services.ts
-      products.ts
-      portfolio.ts
-      community.ts
-      contact.ts
-      site-settings.ts
+    client.ts                # getPayloadClient / isPayloadConfigured
+    queries.ts               # Per-page/collection Local API loaders
+    image.ts                 # getCmsImageUrl (Payload media url)
+    types.ts                 # Shared content types (public API)
+    adapters/                # Lexical → PortableText, media, mappers
+    fallbacks/               # Placeholder content when CMS empty/unconfigured
+  config/                    # Static nav, etc.
+  contact/                   # Shared channel URLs
+  seo/                       # JSON-LD, metadata helpers
+
+collections/                 # Payload collections
+globals/                     # Payload globals (singletons)
+payload.config.ts
 ```
+
+---
+
+## Payload ↔ content model map
+
+Logical content shapes in `lib/cms/types.ts` map to Payload as follows:
+
+| Logical type | Payload target | Slug |
+| --- | --- | --- |
+| `siteSettings` | Global | `site-settings` |
+| `homePage` | Global | `home-page` |
+| `aboutPage` | Global | `about-page` |
+| `contactPage` | Global | `contact-page` |
+| `teamMember` | Collection | `team-members` |
+| `serviceCategory` | Collection | `service-categories` |
+| `service` | Collection | `services` |
+| `product` | Collection | `products` |
+| `caseStudy` | Collection | `case-studies` |
+| `communityItem` | Collection | `community-items` |
+| media assets | Collection | `media` |
+| admin users | Collection | `users` |
+
+Adapters in `lib/cms/adapters/` map Payload documents → public `lib/cms` types (Lexical → `PortableTextBlock[]`, relationships → slug arrays, media → `CmsImage.url`).
 
 ---
 
@@ -86,7 +117,7 @@ lib/
 
 All collections support a `isPlaceholder` boolean (or equivalent draft state) so the app can distinguish stub entries from published canon content.
 
-### `siteSettings` (singleton)
+### `siteSettings` (global `site-settings`)
 
 Global site configuration.
 
@@ -94,15 +125,15 @@ Global site configuration.
 | --- | --- | --- |
 | `siteName` | string | "Kamiyon Studio" |
 | `tagline` | string | From messaging.md |
-| `publicEmail` | string | mailto target — **TBD** until provided |
-| `socialLinks` | array | `{ platform, url, label }` — Facebook, LinkedIn — **URLs TBD** |
+| `publicEmail` | string | `kamiyonstudio@gmail.com` (operator-provided) |
+| `socialLinks` | array | `{ platform, url, label, isPlaceholder }` — Facebook, LinkedIn wired |
 | `defaultSeo` | object | `{ title, description, ogImage }` |
 | `globalCtas` | array | `{ label, href, variant }` |
 | `footerText` | text | Optional |
 
 **Section:** global / Contact
 
-### `homePage` (singleton) + `homeBlock` (embedded array)
+### `homePage` (global `home-page`) + `homeBlock` (embedded array)
 
 | Block type | Fields | Notes |
 | --- | --- | --- |
@@ -114,7 +145,7 @@ Global site configuration.
 
 **Section:** Home
 
-### `aboutPage` (singleton)
+### `aboutPage` (global `about-page`)
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -128,7 +159,7 @@ Global site configuration.
 
 **Section:** About
 
-### `teamMember`
+### `teamMember` (collection `team-members`)
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -154,7 +185,7 @@ Global site configuration.
 
 **Section:** About
 
-### `serviceCategory`
+### `serviceCategory` (collection `service-categories`)
 
 | Field | Type |
 | --- | --- |
@@ -165,7 +196,7 @@ Global site configuration.
 
 **Seed categories (canon):** Interactive Experience Development, Software Development, Creative & Design Services, Consulting & Technical Advisory
 
-### `service`
+### `service` (collection `services`)
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -173,7 +204,7 @@ Global site configuration.
 | `slug` | slug | |
 | `category` | reference → serviceCategory | |
 | `summary` | text | Outcome-focused |
-| `body` | portable text / blocks | Detail page |
+| `body` | Lexical rich text (adapted to portable-text blocks for UI) | Detail page |
 | `outcomes` | array of strings | What clients gain |
 | `relatedIndustries` | array of strings | Optional |
 | `icon` | string / image | |
@@ -186,7 +217,7 @@ Global site configuration.
 
 **Section:** Services
 
-### `product`
+### `product` (collection `products`)
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -211,7 +242,7 @@ Global site configuration.
 
 **Section:** Products
 
-### `caseStudy`
+### `caseStudy` (collection `case-studies`)
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -231,7 +262,7 @@ Global site configuration.
 
 **Section:** Portfolio
 
-### `communityItem`
+### `communityItem` (collection `community-items`)
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -250,7 +281,7 @@ Global site configuration.
 
 **Section:** Community
 
-### `contactPage` (singleton)
+### `contactPage` (global `contact-page`)
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -298,7 +329,7 @@ Prefer static generation for performance per website-guidelines. Use SSR only fo
 
 ```typescript
 // Pattern (illustrative)
-const home = (await fetchHomePage()) ?? homeFallback;
+const home = resolveWithFallback(await getHomePage(), homePageFallback);
 ```
 
 ---
@@ -306,11 +337,11 @@ const home = (await fetchHomePage()) ?? homeFallback;
 ## Invariants
 
 1. **No hardcoded company facts in components** — copy flows from CMS or typed fallbacks sourced from canon.
-2. **No contact forms, auth, or in-app admin** for v1.
+2. **No public contact forms or visitor auth** for v1 — Payload `/admin` is for editors only.
 3. **Canon vs Vision** — aspirations from roadmap/vision docs are never stated as current achievements.
 4. **Motto** — use **Create. Play. Inspire.** (README motto conflict flagged for canon update).
 5. **Contact** — Facebook + LinkedIn + mailto only; overrides website-guidelines "Book a consultation" CTAs for v1.
-6. **Images** — use placeholders until real assets uploaded to CMS; brand assets live in `docs/assets/` for reference.
+6. **Images** — use placeholders until real assets uploaded to Payload media; brand assets live in `docs/assets/` for reference.
 7. **Immutability** — content transformations return new objects; do not mutate fetched CMS data in place.
 
 ---
@@ -329,4 +360,4 @@ From [`docs/marketing/website-guidelines.md`](../docs/marketing/website-guidelin
 
 ## Deployment
 
-**Target: TBD.** Document host (likely Vercel for Next.js), environment variables (`CMS_*`), and preview URLs when decided.
+**Target: Vercel** (confirmed). Document `DATABASE_URL`, `PAYLOAD_SECRET`, and `NEXT_PUBLIC_SITE_URL` at deploy time.

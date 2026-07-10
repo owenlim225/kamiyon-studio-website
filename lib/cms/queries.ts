@@ -26,10 +26,6 @@ import type {
   TeamMember,
 } from "./types";
 
-/** Legacy projection identifiers kept for API stability after the Sanity → Payload swap. */
-export const imageProjection = "{ alt, caption, url, asset }" as const;
-export const seoProjection = "{ title, description, ogImage, noIndex }" as const;
-
 const CMS_REVALIDATE_SECONDS = 3600;
 
 async function fetchPayload<T>(

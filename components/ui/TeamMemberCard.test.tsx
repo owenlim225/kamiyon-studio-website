@@ -30,7 +30,7 @@ describe("TeamMemberCard", () => {
 
   it("renders the resolved photo when a CMS image URL resolves", async () => {
     const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue("https://cdn.sanity.io/images/test/photo.png");
+    vi.mocked(getCmsImageUrl).mockReturnValue("/api/media/file/test.png");
 
     render(<TeamMemberCard member={baseMember} />);
 

@@ -73,9 +73,10 @@ const page = (await getAboutPage()) ?? aboutPageFallback;
 
 ### Environment variables
 
-- `CMS_PROJECT_ID`, `CMS_DATASET`, `CMS_API_TOKEN` (or provider equivalents) in `.env.local`
-- Never commit secrets; document required vars in README when CMS is integrated
-- Validate required env vars at client initialization with clear error messages
+- `DATABASE_URL`, `PAYLOAD_SECRET` in `.env.local` (required for `/admin` and live CMS fetches)
+- `NEXT_PUBLIC_SITE_URL` for canonical/OG URLs
+- Never commit secrets; document required vars in README
+- Validate required env vars at client initialization with clear error messages; fall back to typed content when unset
 
 ---
 

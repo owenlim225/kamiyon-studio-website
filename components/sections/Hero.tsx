@@ -1,76 +1,77 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { getCmsImageUrl } from "@/lib/cms/image";
 import type { HomeHero } from "@/lib/cms/types";
-
-const SECONDARY_LINKS = [
-  { label: "View products", href: "/products" },
-  { label: "See our portfolio", href: "/portfolio" },
-  { label: "Contact us", href: "/contact" },
-] as const;
 
 type HeroProps = {
   hero: HomeHero;
 };
 
 export function Hero({ hero }: HeroProps) {
-  const heroImageUrl = getCmsImageUrl(hero.image);
-
+  const heroSrc = "/assets/background.png";
+  // #region agent log
+  const allowedLocalPatterns = ["/api/media/file/**"];
+  const matchesAllowed = allowedLocalPatterns.some((p) => {
+    const prefix = p.replace("/**", "/");
+    return p.endsWith("/**")
+      ? heroSrc.startsWith(prefix) || heroSrc.startsWith(p.slice(0, -3))
+      : heroSrc === p;
+  });
+  fetch("http://127.0.0.1:7808/ingest/5870b4a9-8a44-420f-bfd4-f6f4bc6fae2d", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "c8674a",
+    },
+    body: JSON.stringify({
+      sessionId: "c8674a",
+      runId: "pre-fix",
+      hypothesisId: "A",
+      location: "Hero.tsx:render",
+      message: "Hero Image src vs localPatterns whitelist",
+      data: {
+        heroSrc,
+        allowedLocalPatterns,
+        matchesAllowed,
+        fileExpectedAt: "public/assets/background.png",
+      },
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+  // #endregion
   return (
-    <section className="overflow-hidden bg-[var(--bg-primary)] py-16 md:py-24">
-      <Container className="grid items-center gap-10 lg:grid-cols-[3fr_2fr] lg:gap-16">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-sakura-ink">
-            Kamiyon Studio
+    <section className="relative min-h-[min(100svh,52rem)] overflow-hidden">
+      <div className="absolute inset-0" aria-hidden="true">
+        <Image
+          src={heroSrc}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[center_35%] motion-safe:animate-hero-ken-burns motion-reduce:animate-none"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-charcoal)]/65 via-[var(--color-charcoal)]/25 to-transparent" />
+      </div>
+
+      <Container className="relative z-10 flex min-h-[min(100svh,52rem)] items-center py-16 md:py-24">
+        <div
+          data-hero-copy
+          className="max-w-2xl motion-safe:animate-hero-fade-rise motion-reduce:animate-none"
+        >
+          <p className="text-sm font-semibold uppercase tracking-wide text-[var(--color-sakura)]">
+            Kamiyon
           </p>
-          <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-[var(--text-primary)] md:text-5xl lg:text-[var(--font-size-hero)]">
+          <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-[var(--color-ivory)] md:text-5xl lg:text-[var(--font-size-hero)]">
             {hero.headline}
           </h1>
-          <p className="mt-6 max-w-[680px] text-base text-[var(--text-secondary)] md:text-lg">
+          <p className="mt-6 max-w-[680px] text-base text-[var(--color-ivory)]/90 md:text-lg">
             {hero.subheadline}
           </p>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mt-8">
             <Button href={hero.ctaHref} variant="primary">
               {hero.ctaLabel}
             </Button>
-            <nav aria-label="Quick links" className="flex flex-wrap gap-4">
-              {SECONDARY_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-sakura-ink focus-visible:outline-offset-2"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
           </div>
-        </div>
-
-        <div className="relative">
-          {heroImageUrl ? (
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card-lg)] shadow-[var(--shadow-lg)]">
-              <Image
-                src={heroImageUrl}
-                alt={hero.image?.alt ?? ""}
-                fill
-                priority
-                className="object-cover"
-              />
-            </div>
-          ) : (
-            <div
-              className="relative flex aspect-[4/3] items-center justify-center rounded-[var(--radius-card-lg)] border border-[var(--border-default)] bg-[var(--bg-accent)] shadow-[var(--shadow-md)]"
-              aria-hidden="true"
-            >
-              <span className="text-6xl" aria-hidden="true">
-                🌸
-              </span>
-            </div>
-          )}
         </div>
       </Container>
     </section>

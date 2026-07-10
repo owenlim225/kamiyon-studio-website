@@ -69,6 +69,23 @@ describe("SiteHeader", () => {
     expect(screen.getByRole("button", { name: "Open menu" })).toBeInTheDocument();
   });
 
+  it("renders the six primary nav links and excludes hidden sections", () => {
+    render(
+      <SiteHeader
+        navItems={testShellProps.navItems}
+        contactCta={testShellProps.contactCta}
+        siteName={testShellProps.siteName}
+      />
+    );
+
+    for (const label of ["Home", "About", "Services", "Portfolio", "Blog", "Contact"]) {
+      expect(screen.getAllByRole("link", { name: label }).length).toBeGreaterThan(0);
+    }
+
+    expect(screen.queryByRole("link", { name: "Products" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Community" })).not.toBeInTheDocument();
+  });
+
   it("renders the Contact CTA linking to /contact", () => {
     render(
       <SiteHeader

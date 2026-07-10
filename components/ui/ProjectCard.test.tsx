@@ -45,7 +45,7 @@ describe("ProjectCard", () => {
 
   it("renders the cover image when a CMS image URL resolves", async () => {
     const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue("https://cdn.sanity.io/images/test/cover.png");
+    vi.mocked(getCmsImageUrl).mockReturnValue("/api/media/file/test.png");
 
     render(<ProjectCard caseStudy={baseCaseStudy} />);
 

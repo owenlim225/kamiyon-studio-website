@@ -1,9 +1,4 @@
-export {
-  getPayloadClient,
-  getSanityClient,
-  isPayloadConfigured,
-  isSanityConfigured,
-} from "./client";
+export { getPayloadClient, isPayloadConfigured } from "./client";
 export {
   getAboutPage,
   getCaseStudies,
@@ -18,7 +13,5 @@ export {
   getServices,
   getSiteSettings,
   getTeamMembers,
-  imageProjection,
-  seoProjection,
 } from "./queries";
 export type * from "./types";

@@ -2,31 +2,53 @@
 
 **Active tracker:** [`progress-tracker.md`](./progress-tracker.md)
 
-Last archived from tracker: 2026-07-10
+Last archived from tracker: 2026-07-11
 
 This file is the canonical archive for finished milestones. Update [`progress-tracker.md`](./progress-tracker.md) for active work; append completed phases and session notes here when closing a milestone.
 
 ---
 
-## Completed (Sanity Schema Plan)
+## Completed (Sanity → Payload migration — Phases 0–5)
 
-- [x] `context/sanity-plan/01-sanity-schema.md` — intro, conventions, portable text subset, object/document split
-- [x] `context/sanity-plan/02-site-settings-and-seo.md` — `siteSettings`, `seoMetadata`, `socialLink`, `cta`
-- [x] `context/sanity-plan/03-page-singletons.md` — `homePage` blocks, `aboutPage`, `contactPage`
-- [x] `context/sanity-plan/04-collections-team-services.md` — `teamMember`, `serviceCategory`, `service`
-- [x] `context/sanity-plan/05-collections-products-portfolio-community.md` — `product`, `caseStudy`, `communityItem`
-- [x] `context/sanity-plan/06-registration-and-studio-structure.md` — index order, desk structure, drift matrix (63 rows)
-- [x] `context/sanity-plan/07-seed-and-provisioning.md` — env vars, CORS, token, `npm run studio:seed` rules
-- [x] Schema reconciliation: `portableBody` aligned to renderer subset (removed lists; explicit `strong`/`em`)
-- [x] Added `sanity/structure.ts` desk structure (Settings / Pages / Collections)
-- [x] Restored `.env.example` with CMS + `NEXT_PUBLIC_SITE_URL` vars
+**Plan:** `.claude/plan/sanity-to-payload.md`  
+**Locked:** Postgres, empty CMS at cutover, typed fallbacks preserved, no Sanity content migration, draft/preview out of scope until follow-up.
+
+| Phase | Outcome |
+| --- | --- |
+| **0** | Inventory + Sanity→Payload schema map |
+| **1** | Payload beside app: `payload.config.ts`, `(payload)` routes, `withPayload` |
+| **2** | Schema parity: 4 globals + collections + Lexical subset; empty CMS |
+| **3** | `lib/cms` → Payload Local API + `adapters/{lexical,media,mappers}`; public API preserved |
+| **4** | Deleted Sanity deps/config/`sanity/`/studio scripts/draft-mode/`context/sanity-plan/**`; grep-clean; tests/build green |
+| **5** | Docs rewrite: Payload-first `progress-tracker.md`, `architecture.md`, README/env; Sanity history archived here |
+
+**Operator remaining:** Set `DATABASE_URL` + `PAYLOAD_SECRET`, migrate DB, create `/admin` user, publish content (public site uses fallbacks until then).
+
+**Phase 6 (active):** Security review + e2e smoke — see progress-tracker.
+
+### Historical Sanity provisioning (superseded)
+
+Prior Sanity Manage/CORS/seed/Studio/Presentation work (2026-07-10) is obsolete after Phase 4 deletion. Summary only:
+
+- Project `c6ej1xoj` / dataset `production`; 30 placeholder docs seeded; hero uploaded; contact URLs wired into fallbacks
+- Presentation + `/api/draft-mode/enable` existed briefly; removed in Phase 4
+- Full checklist detail lived in progress-tracker until Phase 5 archive (2026-07-11)
+
+---
+
+## Completed (Sanity Schema Plan) — superseded
+
+> **Superseded by Payload** (migration Phase 4 deleted `context/sanity-plan/**` and the Sanity stack). Kept as historical record of the pre-migration schema design.
+
+- [x] `context/sanity-plan/01`–`07` documentation series (deleted from tree in Phase 4)
+- [x] Desk structure, portable text subset, seed/provisioning rules (Sanity-era)
 - [x] Drift matrix: 58 PASS · 3 FIXED · 2 N/A
 
 ---
 
 ## Completed (Phase 0–10 — prior roadmap)
 
-Prior v1 website roadmap (Phase 0–10) is **complete**. All implementation phases finished; remaining work is CMS provisioning and deployment (see active tracker).
+Prior v1 website roadmap (Phase 0–10) is **complete**. CMS is now Payload (migration Phases 0–5 done); remaining work is operator DB/admin setup + Phase 6 hardening (see active tracker).
 
 - [x] Read and analyze all 43 `docs/` markdown files
 - [x] Produce canon analysis summary (see active tracker for abbreviated version)

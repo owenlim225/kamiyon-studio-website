@@ -58,14 +58,6 @@ describe("CMS query functions", () => {
     });
   });
 
-  it("exports reusable projection identifiers", async () => {
-    const { imageProjection, seoProjection } = await import("./queries");
-
-    expect(imageProjection).toContain("asset");
-    expect(seoProjection).toContain("ogImage");
-    expect(seoProjection).toContain("noIndex");
-  });
-
   it("passes the slug through to Payload for slug-based lookups", async () => {
     getPayloadClientMock.mockResolvedValue({
       findGlobal: findGlobalMock,

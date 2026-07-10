@@ -9,9 +9,6 @@ let payloadClient: Payload | null = null;
 
 export const isPayloadConfigured = Boolean(databaseUrl && payloadSecret);
 
-/** @deprecated Use `isPayloadConfigured` — removed in Phase 4. */
-export const isSanityConfigured = isPayloadConfigured;
-
 export async function getPayloadClient(): Promise<Payload | null> {
   if (!isPayloadConfigured) {
     if (!missingConfigLogged && process.env.NODE_ENV !== "test") {
@@ -30,9 +27,4 @@ export async function getPayloadClient(): Promise<Payload | null> {
 
   payloadClient = await getPayload({ config: configPromise });
   return payloadClient;
-}
-
-/** @deprecated Use `getPayloadClient` — removed in Phase 4. */
-export async function getSanityClient(): Promise<Payload | null> {
-  return getPayloadClient();
 }

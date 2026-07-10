@@ -1,12 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import type { HomeHero } from "@/lib/cms/types";
 import { Hero } from "./Hero";
-
-vi.mock("@/lib/cms/image", () => ({
-  getCmsImageUrl: vi.fn(),
-}));
 
 const baseHero: HomeHero = {
   _type: "hero",
@@ -17,58 +13,53 @@ const baseHero: HomeHero = {
 };
 
 describe("Hero", () => {
-  it("renders the headline, subheadline, and primary CTA", async () => {
-    const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue(null);
-
+  it("renders the Kamiyon brand eyebrow, headline, subheadline, and primary CTA", () => {
     render(<Hero hero={baseHero} />);
 
+    expect(screen.getByText("Kamiyon")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1, name: baseHero.headline })).toBeInTheDocument();
     expect(screen.getByText(baseHero.subheadline)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Get in touch" })).toHaveAttribute("href", "/contact");
   });
 
-  it("renders the secondary quick-link row (Products / Portfolio / Contact)", async () => {
-    const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue(null);
-
+  it("does not render secondary quick links including the products link", () => {
     render(<Hero hero={baseHero} />);
 
-    expect(screen.getByRole("link", { name: "View products" })).toHaveAttribute(
-      "href",
-      "/products"
-    );
-    expect(screen.getByRole("link", { name: "See our portfolio" })).toHaveAttribute(
-      "href",
-      "/portfolio"
-    );
+    expect(screen.queryByRole("link", { name: "View products" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "See our portfolio" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Contact us" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: "Quick links" })).not.toBeInTheDocument();
   });
 
-  it("shows the branded placeholder panel when no hero image resolves", async () => {
-    const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue(null);
+  it("uses a full-bleed static background image instead of a CMS inset card", () => {
+    const { container } = render(<Hero hero={baseHero} />);
 
-    render(<Hero hero={baseHero} />);
+    const section = container.querySelector("section");
+    expect(section).toHaveClass("relative");
 
-    expect(screen.getByText("🌸")).toBeInTheDocument();
-    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    const background = container.querySelector('img[src*="background.png"]');
+    expect(background).toBeInTheDocument();
+    expect(background).toHaveAttribute("alt", "");
+
+    expect(container.querySelector('[class*="rounded-[var(--radius-card-lg)]"]')).not.toBeInTheDocument();
+    expect(screen.queryByText("🌸")).not.toBeInTheDocument();
   });
 
-  it("renders the CMS hero image when a URL resolves", async () => {
-    const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue("https://cdn.sanity.io/images/test/hero.png");
+  it("layers a gradient scrim for text readability over the background", () => {
+    const { container } = render(<Hero hero={baseHero} />);
 
-    render(<Hero hero={{ ...baseHero, image: { alt: "Studio team" } }} />);
-
-    expect(screen.getByRole("img")).toHaveAttribute("alt", "Studio team");
+    expect(container.querySelector(".bg-gradient-to-r")).toBeInTheDocument();
   });
 
-  it("falls back to an empty alt when the CMS image has no alt text", async () => {
-    const { getCmsImageUrl } = await import("@/lib/cms/image");
-    vi.mocked(getCmsImageUrl).mockReturnValue("https://cdn.sanity.io/images/test/hero.png");
+  it("applies motion-safe animation classes with reduced-motion fallbacks", () => {
+    const { container } = render(<Hero hero={baseHero} />);
 
-    const { container } = render(<Hero hero={{ ...baseHero, image: {} }} />);
+    const background = container.querySelector('img[src*="background.png"]');
+    expect(background?.className).toMatch(/animate-hero-ken-burns/);
+    expect(background?.className).toMatch(/motion-reduce:animate-none/);
 
-    expect(container.querySelector("img")).toHaveAttribute("alt", "");
+    const copy = container.querySelector("[data-hero-copy]");
+    expect(copy?.className).toMatch(/animate-hero-fade-rise/);
+    expect(copy?.className).toMatch(/motion-reduce:animate-none/);
   });
 });
