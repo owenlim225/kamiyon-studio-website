@@ -48,6 +48,8 @@ export function useFadeIn<T extends HTMLElement = HTMLElement>(
       });
 
       mm.add(GSAP_ALLOW_MOTION, () => {
+        // immediateRender (default true): apply from-state when the tween is
+        // created so below-fold content stays hidden until ScrollTrigger plays.
         gsap.fromTo(
           el,
           { autoAlpha: 0, y: merged.y },
@@ -57,7 +59,6 @@ export function useFadeIn<T extends HTMLElement = HTMLElement>(
             duration: merged.duration,
             delay: merged.delay,
             ease: MOTION_EASE.out,
-            immediateRender: false,
             scrollTrigger: createScrollTriggerDefaults({
               trigger: merged.trigger ?? el,
               start: merged.start,

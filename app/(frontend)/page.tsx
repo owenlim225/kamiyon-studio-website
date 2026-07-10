@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { AnimatedSection } from "@/components/animation/AnimatedSection";
 import { Hero } from "@/components/sections/Hero";
 import { HomeContact } from "@/components/sections/HomeContact";
 import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
@@ -77,16 +78,25 @@ export default async function Home() {
 
   return (
     <>
+      {/* Hero keeps existing CSS motion; GSAP reveals start below the fold. */}
       {hero ? <Hero hero={hero} /> : null}
-      <PartnersMarquee eyebrow="Partners" />
-      <ProjectsBento caseStudies={caseStudies} />
-      <ServicesCarousel slides={toServiceCarouselSlides(serviceCategories)} />
-      <HomeContact
-        heading={contact.title}
-        body={contact.body}
-        ctaLabel={contact.ctaLabel}
-        ctaHref={contact.ctaHref}
-      />
+      <AnimatedSection as="div" distance={28}>
+        <PartnersMarquee eyebrow="Partners" />
+      </AnimatedSection>
+      <AnimatedSection as="div" distance={32}>
+        <ProjectsBento caseStudies={caseStudies} />
+      </AnimatedSection>
+      <AnimatedSection as="div" distance={32}>
+        <ServicesCarousel slides={toServiceCarouselSlides(serviceCategories)} />
+      </AnimatedSection>
+      <AnimatedSection as="div" distance={28}>
+        <HomeContact
+          heading={contact.title}
+          body={contact.body}
+          ctaLabel={contact.ctaLabel}
+          ctaHref={contact.ctaHref}
+        />
+      </AnimatedSection>
     </>
   );
 }

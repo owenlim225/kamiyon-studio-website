@@ -55,44 +55,46 @@ export function useHeroAnimation<T extends HTMLElement = HTMLElement>(
       });
 
       mm.add(GSAP_ALLOW_MOTION, () => {
+        // Set from-state before paint so the hero does not flash fully visible.
+        if (brand) {
+          gsap.set(brand, { autoAlpha: 0, y: 20 });
+        }
+        if (headline) {
+          gsap.set(headline, { autoAlpha: 0, y: 28 });
+        }
+        if (cta) {
+          gsap.set(cta, { autoAlpha: 0, y: 16 });
+        }
+
         const tl = gsap.timeline({ defaults: { ease: MOTION_EASE.soft } });
 
         if (brand) {
-          tl.fromTo(
-            brand,
-            { autoAlpha: 0, y: 20 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: MOTION_DURATION.base,
-              immediateRender: false,
-            },
-          );
+          tl.to(brand, {
+            autoAlpha: 1,
+            y: 0,
+            duration: MOTION_DURATION.base,
+          });
         }
 
         if (headline) {
-          tl.fromTo(
+          tl.to(
             headline,
-            { autoAlpha: 0, y: 28 },
             {
               autoAlpha: 1,
               y: 0,
               duration: MOTION_DURATION.hero,
-              immediateRender: false,
             },
             "-=0.35",
           );
         }
 
         if (cta) {
-          tl.fromTo(
+          tl.to(
             cta,
-            { autoAlpha: 0, y: 16 },
             {
               autoAlpha: 1,
               y: 0,
               duration: MOTION_DURATION.fast,
-              immediateRender: false,
             },
             "-=0.45",
           );

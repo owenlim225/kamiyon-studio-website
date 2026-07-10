@@ -17,6 +17,7 @@ When a task/phase is marked complete:
 
 | Date | Milestone | File |
 | --- | --- | --- |
+| 2026-07-11 | GSAP animation foundation + Home adoption | [`2026-07-11-gsap-animation-foundation.md`](./2026-07-11-gsap-animation-foundation.md) |
 | 2026-07-11 | Sanity → Payload migration (Phases 0–6) | [`2026-07-11-payload-migration-phases-0-6.md`](./2026-07-11-payload-migration-phases-0-6.md) |
 | 2026-07-11 | Homepage redesign (nav + home composition) | [`2026-07-11-homepage-redesign.md`](./2026-07-11-homepage-redesign.md) |
 | 2026-07-10 | Sanity schema plan (superseded by Payload) | [`2026-07-10-sanity-schema-plan-superseded.md`](./2026-07-10-sanity-schema-plan-superseded.md) |

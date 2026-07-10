@@ -32,6 +32,75 @@ function getReducedMotionServerSnapshot(): boolean {
   return true;
 }
 
+function focusHashTarget(hash: string): void {
+  if (!hash || hash === "#") {
+    return;
+  }
+
+  const el = document.querySelector(hash);
+  if (!(el instanceof HTMLElement)) {
+    return;
+  }
+
+  if (!el.hasAttribute("tabindex")) {
+    el.tabIndex = -1;
+  }
+
+  el.focus({ preventScroll: true });
+}
+
+/** Last in-page hash clicked — Lenis may finish scroll before location.hash settles. */
+let pendingAnchorHash: string | null = null;
+
+function rememberAnchorHash(event: MouseEvent): void {
+  const link = (event.target as Element | null)?.closest?.('a[href^="#"]');
+  if (!(link instanceof HTMLAnchorElement)) {
+    return;
+  }
+
+  const href = link.getAttribute("href");
+  if (!href || href === "#") {
+    return;
+  }
+
+  pendingAnchorHash = href;
+}
+
+/**
+ * When Lenis is off (reduced motion), restore skip-link / in-page anchor focus
+ * after the native hash scroll.
+ */
+function NativeHashFocus() {
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      rememberAnchorHash(event);
+      const href = pendingAnchorHash;
+      if (!href) {
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        focusHashTarget(href);
+        pendingAnchorHash = null;
+      });
+    };
+
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
+
+  return null;
+}
+
+function LenisAnchorFocusCapture() {
+  useEffect(() => {
+    document.addEventListener("click", rememberAnchorHash, true);
+    return () => document.removeEventListener("click", rememberAnchorHash, true);
+  }, []);
+
+  return null;
+}
+
 /**
  * Bridges an existing Lenis instance to GSAP ticker + ScrollTrigger.
  * Mounted only as a child of ReactLenis so useLenis() resolves.
@@ -93,7 +162,12 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
   );
 
   if (reducedMotion) {
-    return <>{children}</>;
+    return (
+      <>
+        <NativeHashFocus />
+        {children}
+      </>
+    );
   }
 
   return (
@@ -101,11 +175,18 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
       root
       options={{
         autoRaf: false,
-        anchors: true,
+        // Lenis intercepts hash links by default; enable + focus target for skip-link a11y.
+        anchors: {
+          onComplete: () => {
+            focusHashTarget(pendingAnchorHash ?? window.location.hash);
+            pendingAnchorHash = null;
+          },
+        },
         stopInertiaOnNavigate: true,
       }}
     >
       <LenisGsapBridge />
+      <LenisAnchorFocusCapture />
       {children}
     </ReactLenis>
   );

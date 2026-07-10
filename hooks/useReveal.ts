@@ -90,7 +90,6 @@ export function useReveal<T extends HTMLElement = HTMLElement>(
             duration: merged.duration,
             delay: merged.delay,
             ease: MOTION_EASE.soft,
-            immediateRender: false,
             scrollTrigger: createScrollTriggerDefaults({
               trigger: merged.trigger ?? el,
               start: merged.start,

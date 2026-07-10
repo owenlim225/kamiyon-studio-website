@@ -70,7 +70,6 @@ export function useStagger<T extends HTMLElement = HTMLElement>(
             delay: merged.delay,
             ease: MOTION_EASE.out,
             stagger: { each: merged.stagger, from: merged.from },
-            immediateRender: false,
             scrollTrigger: createScrollTriggerDefaults({
               trigger: merged.trigger ?? el,
               start: merged.start,

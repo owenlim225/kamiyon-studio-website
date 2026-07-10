@@ -36,27 +36,27 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**GSAP animation architecture** — foundation + `/motion-lab` demo in progress on `frontend`.
+**GSAP marketing adoption (remaining)** — foundation + Home below-fold done; About + delivery note open. Resume on `frontend`.
 
 ## Current Goal
 
-Ship reusable GSAP + Lenis + Framer Motion architecture for the marketing site (see `.claude/plan/gsap-animation-architecture.md`).
+Finish the GSAP plan close-out: light About adoption and a short delivery note (see `.claude/plan/gsap-animation-architecture.md`).
 
 ## In Progress
 
-- **GSAP animation architecture (W0–W7)** — deps, core, providers, hooks, components, `/motion-lab`, unit tests landed this session; dual-model audit / homepage adoption still open
+- _(paused 2026-07-11 — resume tomorrow)_ About `AnimatedSection` adoption + plan delivery note
 
-## Next Up
+## Next Up (resume here)
 
-- Dual review (a11y / hydration / Lenis skip-link) on `/motion-lab`
-- Optional: gradually adopt `AnimatedSection` on Home / About after Motion Lab sign-off
-- Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content (public site uses typed fallbacks until then)
-- Optional: draft/preview after cutover
-- Optional: Payload schema sign-off as v1 canon
-- Optional: set production `NEXT_PUBLIC_SITE_URL` at deploy
+1. Adopt `AnimatedSection` on About (same light below-fold pattern as Home; do not redesign)
+2. Write plan delivery note: files created, packages, hook/component usage, recommendations
+3. Optional: dual-model a11y/UX polish on motion stack
+4. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content (public site uses typed fallbacks until then)
+5. Optional: draft/preview after cutover; Payload schema sign-off as v1 canon; production `NEXT_PUBLIC_SITE_URL` at deploy
 
 **Done (pointers only):**
 
+- GSAP foundation + Home adoption 2026-07-11 — [`completed/2026-07-11-gsap-animation-foundation.md`](./completed/2026-07-11-gsap-animation-foundation.md)
 - Sanity → Payload Phases 0–6 — [`completed/2026-07-11-payload-migration-phases-0-6.md`](./completed/2026-07-11-payload-migration-phases-0-6.md)
 - Homepage redesign 2026-07-11 — [`completed/2026-07-11-homepage-redesign.md`](./completed/2026-07-11-homepage-redesign.md)
 - v1 website Phase 0–10 — [`completed/2026-07-09-v1-website-phases-0-10.md`](./completed/2026-07-09-v1-website-phases-0-10.md)

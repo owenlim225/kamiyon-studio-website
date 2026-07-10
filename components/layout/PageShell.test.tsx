@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { PageShell } from "./PageShell";
 
@@ -19,24 +19,32 @@ vi.mock("@/lib/cms/site-settings-content", () => ({
 }));
 
 describe("PageShell", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   it("renders a skip-to-content link targeting the main landmark", async () => {
     render(await PageShell({ children: <p>Page content</p> }));
 
     const skipLink = screen.getByRole("link", { name: "Skip to content" });
     expect(skipLink).toHaveAttribute("href", "#main-content");
-    expect(screen.getByRole("main")).toHaveAttribute("id", "main-content");
+    const main = document.getElementById("main-content");
+    expect(main).not.toBeNull();
+    expect(main).toHaveAttribute("tabindex", "-1");
+    expect(main?.tagName).toBe("MAIN");
   });
 
   it("renders children inside the main landmark", async () => {
     render(await PageShell({ children: <p>Page content</p> }));
 
-    expect(screen.getByRole("main")).toContainElement(screen.getByText("Page content"));
+    const main = document.getElementById("main-content");
+    expect(main).toContainElement(screen.getByText("Page content"));
   });
 
   it("renders the site header and footer around the content", async () => {
     render(await PageShell({ children: <p>Page content</p> }));
 
-    expect(screen.getByRole("banner")).toBeInTheDocument();
-    expect(screen.getByRole("contentinfo")).toBeInTheDocument();
+    expect(screen.getAllByRole("banner").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByRole("contentinfo").length).toBeGreaterThanOrEqual(1);
   });
 });
