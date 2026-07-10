@@ -2,6 +2,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 const fetchMock = vi.fn();
 
+vi.mock("next/headers", () => ({
+  draftMode: vi.fn().mockResolvedValue({ isEnabled: false }),
+}));
+
 vi.mock("./client", () => ({
   getSanityClient: vi.fn(),
 }));

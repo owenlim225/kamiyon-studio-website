@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "payload": "payload",
+    "generate:importmap": "payload generate:importmap",
+    "generate:types": "payload generate:types",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
@@ -20,12 +23,18 @@
     "studio:upload-assets": "sanity exec sanity/scripts/upload-phase3-assets.ts --with-user-token"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "^3.85.2",
+    "@payloadcms/next": "^3.85.2",
+    "@payloadcms/richtext-lexical": "^3.85.2",
     "@sanity/image-url": "^2.1.1",
+    "graphql": "^16.14.2",
     "next": "16.2.10",
     "next-sanity": "^13.1.1",
+    "payload": "^3.85.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sanity": "^6.4.0",
+    "sharp": "^0.35.3",
     "styled-components": "^6.4.3"
   },
   "devDependencies": {

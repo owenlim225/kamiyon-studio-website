@@ -18,29 +18,6 @@ type HeroProps = {
 export function Hero({ hero }: HeroProps) {
   const heroImageUrl = getCmsImageUrl(hero.image);
 
-  // #region agent log
-  fetch("http://127.0.0.1:7808/ingest/5870b4a9-8a44-420f-bfd4-f6f4bc6fae2d", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "99cd9c",
-    },
-    body: JSON.stringify({
-      sessionId: "99cd9c",
-      runId: "post-fix",
-      hypothesisId: "H1",
-      location: "components/sections/Hero.tsx:Hero",
-      message: "hero image url resolved",
-      data: {
-        heroImageUrl,
-        hostname: heroImageUrl ? new URL(heroImageUrl).hostname : null,
-        hasAsset: Boolean(hero.image?.asset),
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
-
   return (
     <section className="overflow-hidden bg-[var(--bg-primary)] py-16 md:py-24">
       <Container className="grid items-center gap-10 lg:grid-cols-[3fr_2fr] lg:gap-16">

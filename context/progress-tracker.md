@@ -26,21 +26,37 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**Phase 3 content unblock — contact URLs (2026-07-10)** — Operator Facebook / LinkedIn / email wired into fallbacks, seed, footer, contact cards, and Organization JSON-LD.
+**Sanity → Payload migration — Phase 1 (Payload install)** — Payload 3.85 + Postgres adapter installed beside existing Sanity stack. Route groups: `app/(frontend)` (public site), `app/(payload)` (`/admin`, REST/GraphQL API). Sanity still active until Phase 4.
 
 ## Current Goal
 
-Add production CORS origin once `NEXT_PUBLIC_SITE_URL` is set for Vercel. Preview requires `CMS_API_TOKEN` + `NEXT_PUBLIC_SITE_URL` for Studio Presentation iframe. Optional: wire `siteSettings.defaultSeo` into root layout metadata.
+Complete Phase 2 (Payload schema parity matching `lib/cms/types.ts`), then Phase 3 (swap `lib/cms` adapter). Operator must set `DATABASE_URL` + `PAYLOAD_SECRET` and run migrations before `/admin` is usable.
 
 ## In Progress
 
-- None
+- **Payload migration** — see `.claude/plan/sanity-to-payload.md`
 
 ## Next Up
 
-- Production CORS origin on Sanity + `NEXT_PUBLIC_SITE_URL` for Vercel deployment (host confirmed; domain TBD)
-- Optional: wire `siteSettings.defaultSeo` into root `app/layout.tsx` metadata (currently static SEO constants)
-- Replace LinkedIn public URL if a vanity company slug is published later (`/company/105066188/` is ID-based)
+### Payload migration phases (locked decisions)
+
+| Phase | Status | Goal |
+| --- | --- | --- |
+| **0** Inventory & mapping | ✅ Done | Sanity touchpoints inventoried; schema map in plan file |
+| **1** Install Payload beside app | ✅ Done | `payload.config.ts`, `(payload)` routes, `withPayload`, build/lint/test green |
+| **2** Schema parity | ✅ Done | 4 globals + 6 collections + shared fields; Lexical subset; empty CMS |
+| **3** Swap `lib/cms` | ⏳ Next | Payload Local API; keep fallbacks + public API |
+| **4** Delete Sanity | Pending | Remove all Sanity deps, configs, scripts, docs |
+| **5** Documentation | Pending | Rewrite context docs for Payload |
+| **6** Hardening | Pending | Security review + e2e smoke |
+
+**Operator steps (Phase 1+):** Set `DATABASE_URL` (Postgres) and `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user. Content starts empty — public site uses typed fallbacks until operators publish in admin.
+
+**Out of scope:** Sanity content export/migration; draft/preview (Sanity Presentation) — follow-up after cutover.
+
+### Prior roadmap (complete)
+
+- Production CORS origin on Sanity + `NEXT_PUBLIC_SITE_URL` for Vercel deployment — **superseded by Payload migration** (Sanity CORS removed in Phase 4)
 
 ### Phase 1 ? Provision & seed (ops)
 

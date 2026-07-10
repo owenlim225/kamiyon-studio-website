@@ -4,7 +4,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { DEFAULT_DESCRIPTION, SITE_NAME } from "@/lib/seo/constants";
 import { getOrganizationJsonLd } from "@/lib/seo/organization-jsonld";
 import { SITE_URL } from "@/lib/seo/site-url";
-import "./globals.css";
+import "../globals.css";
 
 const poppins = Poppins({
   variable: "--font-poppins",
