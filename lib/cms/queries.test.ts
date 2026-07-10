@@ -35,6 +35,14 @@ describe("CMS query functions", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it("exports reusable GROQ projection fragments", async () => {
+    const { imageProjection, seoProjection } = await import("./queries");
+
+    expect(String(imageProjection)).toContain("asset");
+    expect(String(seoProjection)).toContain("ogImage");
+    expect(String(seoProjection)).toContain("noIndex");
+  });
+
   it("passes the slug param through to the CMS query for slug-based lookups", async () => {
     const { getSanityClient } = await import("./client");
     fetchMock.mockResolvedValueOnce(null);

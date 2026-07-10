@@ -113,15 +113,4 @@ describe("FeaturedWork", () => {
     expect(screen.getByText("Featured work is coming soon.")).toBeInTheDocument();
   });
 
-  it("filters out null slugs from the featured slug arrays", () => {
-    render(
-      <FeaturedWork
-        featuredWork={{ ...baseFeaturedWork, featuredProductSlugs: [null, "eclipse"] }}
-        products={products}
-        caseStudies={[]}
-      />
-    );
-
-    expect(screen.getByRole("link", { name: /Eclipse/ })).toBeInTheDocument();
-  });
 });

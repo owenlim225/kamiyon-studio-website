@@ -13,5 +13,7 @@ export {
   getServices,
   getSiteSettings,
   getTeamMembers,
+  imageProjection,
+  seoProjection,
 } from "./queries";
 export type * from "./types";

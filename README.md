@@ -72,7 +72,8 @@ context/                  # Build specifications for developers
 ├── ui-context.md         # Design tokens, typography, component rules
 ├── code-standards.md     # Implementation rules, patterns
 ├── ai-workflow-rules.md  # Workflow, scoping, delivery approach
-└── progress-tracker.md   # Current phase, completed work, open questions
+├── progress-tracker.md   # Active phase, next steps, open questions, architecture decisions
+└── completed-work.md     # Archived Phase 0–10 milestones and session notes
 
 docs/                     # Kamiyon canon (read-only)
 └── See `context/CLAUDE.md` for reading order
@@ -179,7 +180,8 @@ npm run test:coverage
 ### Update progress
 
 After implementing a feature or phase:
-- Update `context/progress-tracker.md` with completed work, next steps, and open questions.
+- Update `context/progress-tracker.md` with next steps, open questions, and architecture decisions.
+- When closing a phase, append completed work and session notes to `context/completed-work.md`.
 - If architecture or scope changes, update the relevant `context/` file.
 
 ## First-Time Setup: Reading Order
@@ -191,18 +193,19 @@ After implementing a feature or phase:
 3. **`context/ui-context.md`** — Design tokens, typography, color palette, and component conventions
 4. **`context/code-standards.md`** — Implementation rules, patterns, error handling, immutability
 5. **`context/ai-workflow-rules.md`** — Development workflow, scoping rules, and delivery approach
-6. **`context/progress-tracker.md`** — Current phase, completed work, open questions, and architecture decisions
+6. **`context/progress-tracker.md`** — Current phase, next steps, open questions, and architecture decisions
+7. **`context/completed-work.md`** — Archived completed milestones and session notes (optional; read when tracing history)
 
 ## Current Phase
 
-**Phase 10 (Verification) — Complete.** All 11 phases (0–10) of the implementation roadmap are finished.
+**Sanity Schema Plan & Provisioning** — v1 website implementation (Phase 0–10) is complete. See `context/completed-work.md` for the full phase history.
 
+- ✅ All 7 routes built with CMS + fallbacks
 - ✅ Test infrastructure (Vitest + Testing Library + Playwright)
 - ✅ 80%+ coverage on `lib/` and `components/sections/`
-- ✅ Full E2E smoke coverage of all 7 routes
-- ✅ 29 routes prerendered, build passing
+- ✅ Sanity schema plan documented (`context/sanity-plan/`)
 
-**Status:** Ready for CMS provisioning and deployment. See `context/progress-tracker.md` → **Open Questions** for remaining pre-launch items.
+**Status:** Ready for CMS provisioning and seed. See `context/progress-tracker.md` → **Next Up** for the provisioning checklist.
 
 ## Open Questions / TBDs
 
@@ -248,7 +251,7 @@ See `context/progress-tracker.md` **Open Questions** section for the full list a
 
 ### I need to check what's implemented
 
-- `context/progress-tracker.md` → **Completed** section lists all 10 phases with file changes.
+- `context/completed-work.md` → **Completed (Phase 0–10)** lists all implementation phases with file changes.
 - `context/progress-tracker.md` → **Architecture Decisions** documents implementation choices and their rationale.
 - Run `npm run build` to see all 29 routes compile successfully.
 
@@ -256,7 +259,7 @@ See `context/progress-tracker.md` **Open Questions** section for the full list a
 
 - `context/progress-tracker.md` → **Architecture Decisions** table explains every major choice.
 - Search the relevant `context/` file for keywords (e.g. "fallback", "CMS", "placeholder").
-- Check the session notes under **Session Notes** in `progress-tracker.md` for phase-by-phase evolution.
+- Check the session notes under **Session Notes** in `completed-work.md` for phase-by-phase evolution.
 
 ## Troubleshooting
 
@@ -291,10 +294,10 @@ For internal team and agent development:
 1. Follow the reading order in **First-Time Setup** above.
 2. Refer to `context/code-standards.md` and `context/ai-workflow-rules.md` for contribution guidelines.
 3. Write tests first (TDD); target 80%+ coverage.
-4. Update `context/progress-tracker.md` after each phase.
+4. Update `context/progress-tracker.md` after each phase; archive completed milestones to `context/completed-work.md`.
 
 ---
 
 **Last Updated:** 2026-07-10  
-**Current Phase:** 10 (Verification — Complete)  
-**Status:** Ready for CMS provisioning and deployment
+**Current Phase:** Sanity Schema Plan & Provisioning  
+**Status:** Ready for CMS provisioning and seed

@@ -22,6 +22,7 @@ import {
 } from "./objects";
 
 export const schemaTypes = [
+  // 1. Shared objects (no dependencies)
   seoMetadata,
   cta,
   socialLink,
@@ -30,14 +31,16 @@ export const schemaTypes = [
   productMedia,
   contactChannel,
   faqItem,
+  // 2. Singleton documents
   siteSettings,
   homePage,
   aboutPage,
+  contactPage,
+  // 3. Collection documents
   teamMember,
   serviceCategory,
   service,
   product,
   caseStudy,
   communityItem,
-  contactPage,
 ];

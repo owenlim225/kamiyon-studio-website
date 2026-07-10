@@ -175,6 +175,7 @@ export const faqItem = defineType({
   ],
 });
 
+/** Minimal portable text subset — matches components/ui/PortableText.tsx */
 export const portableBody = [
   defineArrayMember({
     type: "block",
@@ -183,9 +184,13 @@ export const portableBody = [
       { title: "Heading", value: "h2" },
       { title: "Subheading", value: "h3" },
     ],
-    lists: [
-      { title: "Bullet", value: "bullet" },
-      { title: "Number", value: "number" },
-    ],
+    lists: [],
+    marks: {
+      decorators: [
+        { title: "Strong", value: "strong" },
+        { title: "Emphasis", value: "em" },
+      ],
+      annotations: [],
+    },
   }),
 ];

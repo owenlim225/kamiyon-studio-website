@@ -14,18 +14,27 @@ import type {
   TeamMember,
 } from "./types";
 
-const imageProjection = groq`{
+export const imageProjection = groq`{
   _key,
   asset,
   alt,
   caption
 }`;
 
-const seoProjection = groq`{
+/** Reusable GROQ fragment for seoMetadata fields (embedded in singletons and collections). */
+export const seoProjection = groq`{
   title,
   description,
   ogImage${imageProjection},
   noIndex
+}`;
+
+const productMediaProjection = groq`{
+  _key,
+  type,
+  alt,
+  caption,
+  asset${imageProjection}
 }`;
 
 const cmsFetchOptions = {
@@ -87,13 +96,18 @@ export function getHomePage(): Promise<HomePage | null> {
         _type,
         title,
         body,
-        "featuredProductSlugs": featuredProducts[]->slug.current,
-        "featuredCaseStudySlugs": featuredCaseStudies[]->slug.current
+        "featuredProductSlugs": featuredProducts[]->slug.current[defined(@)],
+        "featuredCaseStudySlugs": featuredCaseStudies[]->slug.current[defined(@)]
       },
       _type == "highlights" => {
         _type,
         title,
-        items
+        items[]{
+          _key,
+          title,
+          description,
+          icon
+        }
       },
       _type == "ctaBanner" => {
         _type,
@@ -118,6 +132,18 @@ export function getAboutPage(): Promise<AboutPage | null> {
     values,
     cultureSummary,
     teamIntro,
+    seo${seoProjection}
+  }`);
+}
+
+export function getContactPage(): Promise<ContactPage | null> {
+  return fetchCms<ContactPage>(groq`*[_type == "contactPage"][0]{
+    _type,
+    headline,
+    intro,
+    channels,
+    ctaNote,
+    faq,
     seo${seoProjection}
   }`);
 }
@@ -155,7 +181,7 @@ export function getServices(): Promise<Service[] | null> {
     summary,
     body,
     outcomes,
-    relatedIndustries,
+    "relatedIndustries": coalesce(relatedIndustries, []),
     icon,
     order,
     isPlaceholder,
@@ -173,7 +199,7 @@ export function getServiceBySlug(slug: string): Promise<Service | null> {
       summary,
       body,
       outcomes,
-      relatedIndustries,
+      "relatedIndustries": coalesce(relatedIndustries, []),
       icon,
       order,
       isPlaceholder,
@@ -196,7 +222,7 @@ export function getProducts(): Promise<Product[] | null> {
     goals,
     features,
     platforms,
-    media[]{..., asset${imageProjection}},
+    media[]${productMediaProjection},
     trailerUrl,
     isPlaceholder,
     order,
@@ -218,7 +244,7 @@ export function getProductBySlug(slug: string): Promise<Product | null> {
       goals,
       features,
       platforms,
-      media[]{..., asset${imageProjection}},
+      media[]${productMediaProjection},
       trailerUrl,
       isPlaceholder,
       order,
@@ -284,18 +310,6 @@ export function getCommunityItems(): Promise<CommunityItem[] | null> {
     coverImage${imageProjection},
     externalUrl,
     isPlaceholder,
-    seo${seoProjection}
-  }`);
-}
-
-export function getContactPage(): Promise<ContactPage | null> {
-  return fetchCms<ContactPage>(groq`*[_type == "contactPage"][0]{
-    _type,
-    headline,
-    intro,
-    channels,
-    ctaNote,
-    faq,
     seo${seoProjection}
   }`);
 }

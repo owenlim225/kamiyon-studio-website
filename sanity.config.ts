@@ -4,6 +4,7 @@ import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 
 import { schemaTypes } from "./sanity/schemaTypes";
+import { structure } from "./sanity/structure";
 
 function getEnvValue(name: string): string | undefined {
   const value = process.env[name]?.trim();
@@ -32,7 +33,7 @@ export default defineConfig({
   title: "Kamiyon Studio",
   projectId: studioProjectId,
   dataset: studioDataset,
-  plugins: [structureTool()],
+  plugins: [structureTool({ structure })],
   schema: {
     types: schemaTypes,
   },

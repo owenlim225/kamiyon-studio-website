@@ -14,10 +14,14 @@ or making any architectural decision:
 5. `context/ai-workflow-rules.md` — development workflow,
    scoping rules, and delivery approach
 6. `context/progress-tracker.md` — current phase,
-   completed work, open questions, and next steps
+   open questions, next steps, and architecture decisions
+7. `context/completed-work.md` — archived completed
+   milestones and session notes (read when tracing history)
 
 Update `context/progress-tracker.md` after each
-meaningful implementation change.
+meaningful implementation change. When closing a phase,
+append completed items and session notes to
+`context/completed-work.md`.
 
 If implementation changes the architecture, scope, or
 standards documented in the context files, update the

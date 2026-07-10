@@ -7,7 +7,12 @@ export const siteSettings = defineType({
   title: "Site Settings",
   type: "document",
   fields: [
-    defineField({ name: "siteName", title: "Site Name", type: "string" }),
+    defineField({
+      name: "siteName",
+      title: "Site Name",
+      type: "string",
+      initialValue: "Kamiyon Studio",
+    }),
     defineField({ name: "tagline", title: "Tagline", type: "text", rows: 3 }),
     defineField({ name: "publicEmail", title: "Public Email", type: "string" }),
     defineField({
@@ -173,7 +178,13 @@ export const serviceCategory = defineType({
   type: "document",
   fields: [
     defineField({ name: "title", title: "Title", type: "string" }),
-    defineField({ name: "slug", title: "Slug", type: "slug", options: { source: "title" } }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      options: { source: "title" },
+      validation: (rule) => rule.required(),
+    }),
     defineField({ name: "description", title: "Description", type: "text", rows: 3 }),
     defineField({ name: "order", title: "Order", type: "number" }),
   ],
@@ -186,7 +197,13 @@ export const service = defineType({
   type: "document",
   fields: [
     defineField({ name: "title", title: "Title", type: "string" }),
-    defineField({ name: "slug", title: "Slug", type: "slug", options: { source: "title" } }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      options: { source: "title" },
+      validation: (rule) => rule.required(),
+    }),
     defineField({
       name: "category",
       title: "Category",
@@ -222,10 +239,22 @@ export const product = defineType({
   type: "document",
   fields: [
     defineField({ name: "title", title: "Title", type: "string" }),
-    defineField({ name: "slug", title: "Slug", type: "slug", options: { source: "title" } }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      options: { source: "title" },
+      validation: (rule) => rule.required(),
+    }),
     defineField({ name: "tagline", title: "Tagline", type: "string" }),
     defineField({ name: "genre", title: "Genre", type: "string" }),
-    defineField({ name: "status", title: "Status", type: "string", options: { list: ["original-ip"] } }),
+    defineField({
+      name: "status",
+      title: "Status",
+      type: "string",
+      options: { list: ["original-ip"] },
+      initialValue: "original-ip",
+    }),
     defineField({
       name: "developmentStatus",
       title: "Development Status",
@@ -252,7 +281,13 @@ export const caseStudy = defineType({
   type: "document",
   fields: [
     defineField({ name: "title", title: "Title", type: "string" }),
-    defineField({ name: "slug", title: "Slug", type: "slug", options: { source: "title" } }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      options: { source: "title" },
+      validation: (rule) => rule.required(),
+    }),
     defineField({ name: "clientName", title: "Client Name", type: "string" }),
     defineField({ name: "industry", title: "Industry", type: "string" }),
     defineField({ name: "challenge", title: "Challenge", type: "text", rows: 4 }),
@@ -289,7 +324,13 @@ export const communityItem = defineType({
   type: "document",
   fields: [
     defineField({ name: "title", title: "Title", type: "string" }),
-    defineField({ name: "slug", title: "Slug", type: "slug", options: { source: "title" } }),
+    defineField({
+      name: "slug",
+      title: "Slug",
+      type: "slug",
+      options: { source: "title" },
+      validation: (rule) => rule.required(),
+    }),
     defineField({
       name: "type",
       title: "Type",
@@ -297,6 +338,7 @@ export const communityItem = defineType({
       options: {
         list: ["workshop", "hackathon", "game-jam", "speaking", "education", "partnership", "other"],
       },
+      validation: (rule) => rule.required(),
     }),
     defineField({ name: "summary", title: "Summary", type: "text", rows: 3 }),
     defineField({ name: "body", title: "Body", type: "array", of: portableBody }),

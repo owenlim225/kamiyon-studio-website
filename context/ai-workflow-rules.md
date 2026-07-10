@@ -83,6 +83,7 @@ Apply these when generating code, copy, or architecture for this repo:
 | Colors, fonts, layout, mascot | `context/ui-context.md` |
 | TypeScript, Next.js, CMS patterns | `context/code-standards.md` |
 | Current phase and next steps | `context/progress-tracker.md` |
+| Completed milestones and session history | `context/completed-work.md` |
 | Company mission, team, products | `docs/company/`, `docs/products/` |
 | Brand voice and visual rules | `docs/branding/`, `docs/design-system/` |
 | Website strategy | `docs/marketing/website-guidelines.md` |
@@ -165,7 +166,8 @@ Do not modify unless explicitly instructed:
 
 Always update after implementation:
 
-- `context/progress-tracker.md`
+- `context/progress-tracker.md` — active phase, next steps, open questions, new architecture decisions
+- `context/completed-work.md` — when closing a phase or archiving session notes
 - Relevant context file if architecture, scope, or conventions change
 
 ---
@@ -187,7 +189,7 @@ Enforce on every implementation pass:
 
 1. Current unit works end to end within its defined scope
 2. No invariant in `architecture.md` was violated
-3. `progress-tracker.md` reflects completed work and next steps
+3. `progress-tracker.md` reflects current phase and next steps; closed phases archived in `completed-work.md`
 4. `npm run build` passes (once build pipeline exists for that unit)
 5. No invented company facts introduced in code or fallbacks
 
@@ -197,9 +199,13 @@ Enforce on every implementation pass:
 
 Update `context/progress-tracker.md` with:
 
-- Completed items
 - Architecture decisions made
 - New open questions
+- Next steps and current phase
+
+When closing a phase, append to `context/completed-work.md`:
+
+- Completed checklist items
 - Session notes for resumption
 
 If implementation changes architecture, scope, or standards, update the relevant context file before continuing.

@@ -142,16 +142,16 @@ const seedDocumentsWithoutKeys: SeedDocument[] = [
     _id: "aboutPage",
     ...aboutPageFallback,
   },
+  {
+    _id: "contactPage",
+    ...contactPageFallback,
+  },
   ...teamDocuments,
   ...serviceCategoryDocuments,
   ...serviceDocuments,
   ...productDocuments,
   ...caseStudyDocuments,
   ...communityDocuments,
-  {
-    _id: "contactPage",
-    ...contactPageFallback,
-  },
 ];
 
 export const placeholderDocuments: SeedDocument[] = seedDocumentsWithoutKeys.map(

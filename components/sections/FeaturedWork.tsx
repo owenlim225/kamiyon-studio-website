@@ -12,8 +12,8 @@ type FeaturedCard = {
   isPlaceholder: boolean;
 };
 
-function toProductCards(products: Product[], slugs: Array<string | null>): FeaturedCard[] {
-  const wantedSlugs = new Set(slugs.filter((slug): slug is string => Boolean(slug)));
+function toProductCards(products: Product[], slugs: string[]): FeaturedCard[] {
+  const wantedSlugs = new Set(slugs);
 
   return products
     .filter((product) => wantedSlugs.has(product.slug.current))
@@ -27,8 +27,8 @@ function toProductCards(products: Product[], slugs: Array<string | null>): Featu
     }));
 }
 
-function toCaseStudyCards(caseStudies: CaseStudy[], slugs: Array<string | null>): FeaturedCard[] {
-  const wantedSlugs = new Set(slugs.filter((slug): slug is string => Boolean(slug)));
+function toCaseStudyCards(caseStudies: CaseStudy[], slugs: string[]): FeaturedCard[] {
+  const wantedSlugs = new Set(slugs);
 
   return caseStudies
     .filter((caseStudy) => wantedSlugs.has(caseStudy.slug.current))
