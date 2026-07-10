@@ -26,11 +26,11 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**Phase 2 ? CMS ? app verification** ? Phase 1 complete (2026-07-10): 30 docs on `c6ej1xoj`/`production`, dev CORS origins verified, server-side CMS fetches OK without `CMS_API_TOKEN`.
+**Phase 3 — Content entry (placeholder-first)** — Phase 2 complete (2026-07-10): all 7 routes verified CMS-sourced on `localhost:3000`; featured-work refs, service grouping, and placeholder badges pass.
 
 ## Current Goal
 
-Verify CMS content replaces fallbacks across all 7 routes (`npm run dev`), then confirm featured-work refs, service grouping, and placeholder badges.
+Upload hero/team/product media placeholders and polish portable text when canon provides real contact URLs.
 
 ## In Progress
 
@@ -38,7 +38,7 @@ Verify CMS content replaces fallbacks across all 7 routes (`npm run dev`), then 
 
 ## Next Up
 
-Phase 2 CMS ? app verification (all 7 routes, featured-work refs, service grouping, placeholder badges).
+Phase 3 content entry (hero image, team photos, product media, real social/email URLs when available).
 
 ### Phase 1 ? Provision & seed (ops)
 
@@ -67,10 +67,10 @@ Phase 2 CMS ? app verification (all 7 routes, featured-work refs, service groupi
 
 ### Phase 2 ? CMS ? app verification
 
-- [ ] `npm run dev` ? confirm CMS content replaces fallbacks on all 7 routes
-- [ ] Verify featured work refs on home page resolve (products + case study)
-- [ ] Verify service category refs group correctly on `/services`
-- [ ] Confirm placeholder badges still show where `isPlaceholder: true`
+- [x] `npm run dev` ? confirm CMS content replaces fallbacks on all 7 routes ? **2026-07-10:** `scripts/verify-phase2-cms.ts` exit 0; all routes HTTP 200; fetch layer returns non-null CMS data with Sanity `_id`s (singletons + collections); HTML renders CMS titles (e.g. Eclipse, Game Development, Sherwin Limosnero) not empty states
+- [x] Verify featured work refs on home page resolve (products + case study) ? `featuredProductSlugs` [eclipse, vocabu-wildlife-edition] + `featuredCaseStudySlugs` [sample-client-project-placeholder] resolve 2/2 + 1/1 against CMS `getProducts()`/`getCaseStudies()`
+- [x] Verify service category refs group correctly on `/services` ? 4 categories, 10 services; each service `categorySlug` matches its group; no orphans
+- [x] Confirm placeholder badges still show where `isPlaceholder: true` ? HTML markers: `/` Eclipse+Coming soon; `/about` Placeholder; `/services` Game Development+Placeholder; `/products` Eclipse+Coming soon; `/portfolio` Sample Client Project+Placeholder; `/community` Workshop+Coming soon; `/contact` Facebook+Coming soon
 
 ### Phase 3 ? Content entry (placeholder-first)
 
@@ -158,9 +158,11 @@ Prior v1 website roadmap (Phase 0?10) is complete ? see [`completed-work.md`](./
 | `lib/cms/client.ts` tested via `vi.mock("next-sanity")` + `vi.stubEnv`/`vi.resetModules` | New `lib/cms/client.test.ts` mocks `createClient` and re-imports the module per test to exercise the unconfigured/configured/cached/CDN-vs-token branches | `cmsProjectId`/`cmsDataset`/`sanityClient` are all read or cached at module-load time (module-level `let`/`const`), so branch coverage requires a fresh module instance per env combination ? same pattern already used by the Phase 9 `lib/seo/site-url.test.ts` (also added this phase) |
 | Portable text schema subset | `portableBody` allows only `normal`/`h2`/`h3` + `strong`/`em`; no lists or annotations | Matches `components/ui/PortableText.tsx` renderer and progress-tracker minimal PT decision; prevents editors from adding unrenderable list blocks |
 | Studio desk structure | Custom `sanity/structure.ts` groups Settings, Pages (singletons), Collections | Editors see singletons first with fixed document IDs matching seed; avoids duplicate home/about/contact docs |
+| Seed document IDs | `{type}-{slug}` root-path IDs (e.g. `product-eclipse`) | Sanity treats any `.` in `_id` as a private sub-path invisible to unauthenticated CDN/API; original `product.eclipse` seed IDs caused collection fetches to return `[]` while singletons (`homePage`) worked ? fixed in Phase 2 verification |
 
 ## Session notes
 
 - **2026-07-10 (Phase 1 seed):** Sanity CLI auth OK (GitHub). `npm run studio:seed` exit 0; **30** docs logged. Singleton `_id`s confirmed via authenticated `getCliClient` fetch. Bare `sanity documents query` returned `[]` for content filters (PowerShell quoting / default query path); use here-strings or `sanity exec` for GROQ spot-checks. No CORS/auth errors during seed.
 - **2026-07-10 (Phase 1 re-seed):** User-requested idempotent re-run. Auth OK (`npx sanity debug --secrets`, GitHub; project c6ej1xoj / dataset production). `npm run studio:seed` exit **0**; log: *Seeded 30 placeholder documents to Sanity.* Singletons spot-checked via `npx sanity documents get`: siteSettings, homePage, aboutPage, contactPage (all present; _updatedAt 2026-07-10T08:08:22Z). No auth or seed errors.
 - **2026-07-10 (Phase 1 closure):** CORS verified ? `npx sanity cors list` shows `http://localhost:3333` and `http://localhost:3000`; OPTIONS preflight to `c6ej1xoj.api.sanity.io` allows both origins. Studio `:3333` and Next.js dev `:3000` HTTP 200. Server-side CMS fetch OK: `getHomePage()` returns `homePage` with 5 blocks (no token; CDN). `CMS_API_TOKEN` empty in `.env.local` ? omitted by design. Production CORS origin deferred (deployment TBD). **Phase 1 complete.**
+- **2026-07-10 (Phase 2 CMS ? app verification):** Ran `scripts/verify-phase2-cms.ts` (exit 0). Found two blockers: (1) seed `_id`s used `type.slug` dotted paths ? private in Sanity, so public CDN returned only 4 singletons and collections fetched as `[]`; fixed `documentId()` to `type-slug` in `sanity/seed/placeholder-docs.ts` and re-seeded 30 docs. (2) GROQ `featuredProducts[]->slug.current[defined(@)]` returned `[null,…]` ? removed `[defined(@)]` filter in `lib/cms/queries.ts`. All 7 routes HTTP 200 with CMS fetch-layer `_id` proof + HTML content markers; featured-work 2 products + 1 case study resolve; services group under 4 categories (10 total); placeholder badges on team/services/products/portfolio/community/contact. **Phase 2 complete.**

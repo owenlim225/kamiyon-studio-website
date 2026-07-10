@@ -24,7 +24,8 @@ const ref = (_ref: string) => ({
   _ref,
 });
 
-const documentId = (type: string, slug: string) => `${type}.${slug}`;
+/** Root-path IDs only — Sanity treats any `.` in `_id` as a private sub-path (requires token). */
+const documentId = (type: string, slug: string) => `${type}-${slug}`;
 
 function isSeedRecord(value: unknown): value is SeedRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value);

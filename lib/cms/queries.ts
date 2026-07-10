@@ -96,8 +96,8 @@ export function getHomePage(): Promise<HomePage | null> {
         _type,
         title,
         body,
-        "featuredProductSlugs": featuredProducts[]->slug.current[defined(@)],
-        "featuredCaseStudySlugs": featuredCaseStudies[]->slug.current[defined(@)]
+        "featuredProductSlugs": featuredProducts[]->slug.current,
+        "featuredCaseStudySlugs": featuredCaseStudies[]->slug.current
       },
       _type == "highlights" => {
         _type,
