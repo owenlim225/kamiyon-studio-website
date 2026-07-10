@@ -166,7 +166,7 @@ Target file size: 200–400 lines typical; extract when a module exceeds ~400 li
 ## Documentation
 
 - Update `context/progress-tracker.md` after each meaningful implementation change (active phase, next steps, open questions, architecture decisions)
-- Append completed milestones and session notes to `context/completed-work.md` when closing a phase
+- When closing a phase: archive to `context/completed/YYYY-MM-DD-<slug>.md`, index in `completed/README.md`, slim the tracker
 - Update relevant context file when architecture, scope, or conventions change
 - Code comments only for non-obvious CMS quirks or canon source citations in fallbacks
 

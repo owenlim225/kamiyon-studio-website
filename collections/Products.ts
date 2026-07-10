@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { slugField } from "payload";
 
+import { anyone, authenticated } from "../access/authenticated";
 import { seoFieldGroup } from "../fields/seo";
 import { productMediaFields } from "../fields/shared";
 
@@ -12,7 +13,10 @@ export const Products: CollectionConfig = {
     defaultColumns: ["title", "developmentStatus", "order", "isPlaceholder"],
   },
   access: {
-    read: () => true,
+    read: anyone,
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   fields: [
     { name: "title", type: "text", required: true },

@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { anyone, authenticated } from "../access/authenticated";
+
 export const TeamMembers: CollectionConfig = {
   slug: "team-members",
   labels: { singular: "Team Member", plural: "Team Members" },
@@ -8,7 +10,10 @@ export const TeamMembers: CollectionConfig = {
     defaultColumns: ["name", "role", "order", "isPlaceholder"],
   },
   access: {
-    read: () => true,
+    read: anyone,
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   fields: [
     { name: "name", type: "text", required: true },

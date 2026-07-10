@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Montserrat } from "next/font/google";
 import { PageShell } from "@/components/layout/PageShell";
+import { AnimationProviders } from "@/components/providers/AnimationProviders";
 import { DEFAULT_DESCRIPTION, SITE_NAME } from "@/lib/seo/constants";
 import { getOrganizationJsonLd } from "@/lib/seo/organization-jsonld";
 import { SITE_URL } from "@/lib/seo/site-url";
@@ -59,7 +60,9 @@ export default async function RootLayout({
             __html: JSON.stringify(organizationJsonLd),
           }}
         />
-        <PageShell>{children}</PageShell>
+        <AnimationProviders>
+          <PageShell>{children}</PageShell>
+        </AnimationProviders>
       </body>
     </html>
   );

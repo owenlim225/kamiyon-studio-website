@@ -1,6 +1,8 @@
 import type { CollectionConfig } from "payload";
 import { slugField } from "payload";
 
+import { anyone, authenticated } from "../access/authenticated";
+
 export const ServiceCategories: CollectionConfig = {
   slug: "service-categories",
   labels: { singular: "Service Category", plural: "Service Categories" },
@@ -9,7 +11,10 @@ export const ServiceCategories: CollectionConfig = {
     defaultColumns: ["title", "order"],
   },
   access: {
-    read: () => true,
+    read: anyone,
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   fields: [
     { name: "title", type: "text", required: true },

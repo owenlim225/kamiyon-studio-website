@@ -62,46 +62,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   const { home, caseStudies, serviceCategories } = await getHomePageContent();
 
-  // #region agent log
-  const { access, appendFile } = await import("node:fs/promises");
-  const { join } = await import("node:path");
-  const assetPath = join(process.cwd(), "public", "assets", "background.png");
-  let assetExists = false;
-  try {
-    await access(assetPath);
-    assetExists = true;
-  } catch {
-    assetExists = false;
-  }
-  const debugPayload = {
-    sessionId: "c8674a",
-    runId: "post-fix",
-    hypothesisId: "A",
-    location: "page.tsx:Home",
-    message: "Home render after localPatterns fix",
-    data: {
-      assetPath,
-      assetExists,
-      hasHero: Boolean(home.blocks.find((block) => block._type === "hero")),
-      configuredLocalPatterns: ["/api/media/file/**", "/assets/**"],
-      heroImageSrc: "/assets/background.png",
-    },
-    timestamp: Date.now(),
-  };
-  fetch("http://127.0.0.1:7808/ingest/5870b4a9-8a44-420f-bfd4-f6f4bc6fae2d", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "c8674a",
-    },
-    body: JSON.stringify(debugPayload),
-  }).catch(() => {});
-  await appendFile(
-    join(process.cwd(), "debug-c8674a.log"),
-    `${JSON.stringify(debugPayload)}\n`
-  ).catch(() => {});
-  // #endregion
-
   const hero = home.blocks.find((block) => block._type === "hero") as
     | HomeHero
     | undefined;
