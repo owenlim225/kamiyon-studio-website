@@ -9,6 +9,7 @@ import {
   refreshScrollTrigger,
   ScrollTrigger,
 } from "@/lib/gsap";
+import { revealScrollTriggeredAncestors } from "@/lib/motion/hash-reveal";
 import { REDUCED_MOTION_QUERY } from "@/lib/motion/reduced-motion";
 
 import "lenis/dist/lenis.css";
@@ -41,6 +42,10 @@ function focusHashTarget(hash: string): void {
   if (!(el instanceof HTMLElement)) {
     return;
   }
+
+  // Hash CTAs (e.g. About #values / #team) may land inside AnimatedSection
+  // wrappers that start at autoAlpha:0 until ScrollTrigger plays.
+  revealScrollTriggeredAncestors(el);
 
   if (!el.hasAttribute("tabindex")) {
     el.tabIndex = -1;

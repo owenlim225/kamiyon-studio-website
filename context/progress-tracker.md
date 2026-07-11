@@ -36,26 +36,26 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**GSAP marketing adoption (remaining)** — foundation + Home below-fold done; About + delivery note open. Resume on `frontend`.
+**Post-GSAP / CMS ops** — GSAP plan closed; Payload operator setup and open questions remain.
 
 ## Current Goal
 
-Finish the GSAP plan close-out: light About adoption and a short delivery note (see `.claude/plan/gsap-animation-architecture.md`).
+Operator CMS cutover and remaining open questions (schema sign-off, Deep Indigo, deploy URL).
 
 ## In Progress
 
-- _(paused 2026-07-11 — resume tomorrow)_ About `AnimatedSection` adoption + plan delivery note
+- _(none)_
 
 ## Next Up (resume here)
 
-1. Adopt `AnimatedSection` on About (same light below-fold pattern as Home; do not redesign)
-2. Write plan delivery note: files created, packages, hook/component usage, recommendations
-3. Optional: dual-model a11y/UX polish on motion stack
-4. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content (public site uses typed fallbacks until then)
-5. Optional: draft/preview after cutover; Payload schema sign-off as v1 canon; production `NEXT_PUBLIC_SITE_URL` at deploy
+1. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content (public site uses typed fallbacks until then)
+2. Optional: draft/preview after cutover; Payload schema sign-off as v1 canon; production `NEXT_PUBLIC_SITE_URL` at deploy
+3. Optional: adopt `AnimatedSection` on remaining marketing pages (Services, Portfolio, Contact)
+4. Optional: dual-model a11y/UX polish on motion stack; evaluate `@gsap/react` `useGSAP`
 
 **Done (pointers only):**
 
+- GSAP close-out (About + delivery note) 2026-07-11 — [`completed/2026-07-11-gsap-animation-delivery.md`](./completed/2026-07-11-gsap-animation-delivery.md)
 - GSAP foundation + Home adoption 2026-07-11 — [`completed/2026-07-11-gsap-animation-foundation.md`](./completed/2026-07-11-gsap-animation-foundation.md)
 - Sanity → Payload Phases 0–6 — [`completed/2026-07-11-payload-migration-phases-0-6.md`](./completed/2026-07-11-payload-migration-phases-0-6.md)
 - Homepage redesign 2026-07-11 — [`completed/2026-07-11-homepage-redesign.md`](./completed/2026-07-11-homepage-redesign.md)
