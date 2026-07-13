@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { slugField } from "payload";
 
+import { anyone, authenticated } from "../access/authenticated";
 import { seoFieldGroup } from "../fields/seo";
 
 export const CaseStudies: CollectionConfig = {
@@ -11,7 +12,10 @@ export const CaseStudies: CollectionConfig = {
     defaultColumns: ["title", "clientName", "featured", "isPlaceholder"],
   },
   access: {
-    read: () => true,
+    read: anyone,
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   fields: [
     { name: "title", type: "text", required: true },

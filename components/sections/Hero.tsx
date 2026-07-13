@@ -8,42 +8,11 @@ type HeroProps = {
 };
 
 export function Hero({ hero }: HeroProps) {
-  const heroSrc = "/assets/background.png";
-  // #region agent log
-  const allowedLocalPatterns = ["/api/media/file/**", "/assets/**"];
-  const matchesAllowed = allowedLocalPatterns.some((p) => {
-    const prefix = p.replace("/**", "/");
-    return p.endsWith("/**")
-      ? heroSrc.startsWith(prefix) || heroSrc.startsWith(p.slice(0, -3))
-      : heroSrc === p;
-  });
-  fetch("http://127.0.0.1:7808/ingest/5870b4a9-8a44-420f-bfd4-f6f4bc6fae2d", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "c8674a",
-    },
-    body: JSON.stringify({
-      sessionId: "c8674a",
-      runId: "post-fix",
-      hypothesisId: "A",
-      location: "Hero.tsx:render",
-      message: "Hero Image src vs localPatterns whitelist",
-      data: {
-        heroSrc,
-        allowedLocalPatterns,
-        matchesAllowed,
-        fileExpectedAt: "public/assets/background.png",
-      },
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
   return (
     <section className="relative min-h-[min(100svh,52rem)] overflow-hidden">
       <div className="absolute inset-0" aria-hidden="true">
         <Image
-          src={heroSrc}
+          src="/assets/background.png"
           alt=""
           fill
           priority

@@ -73,7 +73,9 @@ context/                  # Build specifications for developers
 ├── code-standards.md     # Implementation rules, patterns
 ├── ai-workflow-rules.md  # Workflow, scoping, delivery approach
 ├── progress-tracker.md   # Active phase, next steps, open questions, architecture decisions
-└── completed-work.md     # Archived Phase 0–10 milestones and session notes
+├── completed/            # Archived milestones (one file per closed phase)
+│   └── README.md         # Index of completed work
+└── completed-work.md     # Stub → completed/README.md (legacy path)
 
 docs/                     # Kamiyon canon (read-only)
 └── See `context/CLAUDE.md` for reading order
@@ -179,7 +181,7 @@ npm run test:coverage
 
 After implementing a feature or phase:
 - Update `context/progress-tracker.md` with next steps, open questions, and architecture decisions.
-- When closing a phase, append completed work and session notes to `context/completed-work.md`.
+- When closing a phase, archive to `context/completed/YYYY-MM-DD-<slug>.md`, update `completed/README.md`, and slim the tracker.
 - If architecture or scope changes, update the relevant `context/` file.
 
 ## First-Time Setup: Reading Order
@@ -192,18 +194,19 @@ After implementing a feature or phase:
 4. **`context/code-standards.md`** — Implementation rules, patterns, error handling, immutability
 5. **`context/ai-workflow-rules.md`** — Development workflow, scoping rules, and delivery approach
 6. **`context/progress-tracker.md`** — Current phase, next steps, open questions, and architecture decisions
-7. **`context/completed-work.md`** — Archived completed milestones and session notes (optional; read when tracing history)
+7. **`context/completed/README.md`** — Archived completed milestones (optional; read when tracing history)
 
 ## Current Phase
 
-**Payload CMS migration** — v1 website (Phase 0–10) complete; Sanity → Payload migration Phases 0–5 complete. See `context/completed-work.md` and `context/progress-tracker.md`.
+**Operator onboarding** — v1 website (Phase 0–10) and Sanity → Payload migration (Phases 0–6) are complete. See `context/completed/README.md` and `context/progress-tracker.md`.
 
 - ✅ All routes built with CMS + fallbacks
 - ✅ Test infrastructure (Vitest + Testing Library + Playwright)
 - ✅ 80%+ coverage on `lib/` and `components/sections/`
 - ✅ Payload schema + Local API; Sanity deleted; context docs Payload-first
+- ✅ Phase 6 hardening complete
 
-**Status:** Phase 6 hardening next. Set `DATABASE_URL` + `PAYLOAD_SECRET`, publish in `/admin`. See `context/progress-tracker.md`.
+**Status:** Set `DATABASE_URL` + `PAYLOAD_SECRET`, publish in `/admin`. See `context/progress-tracker.md`.
 
 ## Open Questions / TBDs
 
@@ -249,7 +252,7 @@ See `context/progress-tracker.md` **Open Questions** section for the full list a
 
 ### I need to check what's implemented
 
-- `context/completed-work.md` → **Completed (Phase 0–10)** lists all implementation phases with file changes.
+- `context/completed/README.md` → milestone index; see `2026-07-09-v1-website-phases-0-10.md` for Phase 0–10 detail.
 - `context/progress-tracker.md` → **Architecture Decisions** documents implementation choices and their rationale.
 - Run `npm run build` to see all 29 routes compile successfully.
 
@@ -257,7 +260,7 @@ See `context/progress-tracker.md` **Open Questions** section for the full list a
 
 - `context/progress-tracker.md` → **Architecture Decisions** table explains every major choice.
 - Search the relevant `context/` file for keywords (e.g. "fallback", "CMS", "placeholder").
-- Check the session notes under **Session Notes** in `completed-work.md` for phase-by-phase evolution.
+- Check session notes in the relevant file under `context/completed/` for phase-by-phase evolution.
 
 ## Troubleshooting
 
@@ -292,10 +295,10 @@ For internal team and agent development:
 1. Follow the reading order in **First-Time Setup** above.
 2. Refer to `context/code-standards.md` and `context/ai-workflow-rules.md` for contribution guidelines.
 3. Write tests first (TDD); target 80%+ coverage.
-4. Update `context/progress-tracker.md` after each phase; archive completed milestones to `context/completed-work.md`.
+4. Update `context/progress-tracker.md` after each phase; archive completed milestones under `context/completed/`.
 
 ---
 
 **Last Updated:** 2026-07-11  
-**Current Phase:** Sanity → Payload migration (Phase 5 complete; Phase 6 hardening next)  
-**Status:** Docs Payload-first; operator env + content entry + hardening pending
+**Current Phase:** Sanity → Payload migration complete (Phases 0–6)  
+**Status:** Hardened; operator env + `/admin` content entry pending

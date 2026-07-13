@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { AnimatedSection } from "@/components/animation/AnimatedSection";
 import { AboutHero } from "@/components/sections/AboutHero";
 import { CultureClosing } from "@/components/sections/CultureClosing";
 import { OurStory } from "@/components/sections/OurStory";
@@ -43,12 +44,23 @@ export default async function AboutPage() {
 
   return (
     <>
+      {/* AboutHero keeps first-viewport presentation; GSAP reveals start below the fold. */}
       <AboutHero aboutPage={aboutPage} />
-      <OurStory storySections={aboutPage.storySections} />
-      <VisionBand vision={aboutPage.vision} />
-      <ValuesGrid values={aboutPage.values} />
-      <TeamGrid teamIntro={aboutPage.teamIntro} teamMembers={teamMembers} />
-      <CultureClosing cultureSummary={aboutPage.cultureSummary} />
+      <AnimatedSection as="div" distance={28}>
+        <OurStory storySections={aboutPage.storySections} />
+      </AnimatedSection>
+      <AnimatedSection as="div" distance={32}>
+        <VisionBand vision={aboutPage.vision} />
+      </AnimatedSection>
+      <AnimatedSection as="div" distance={32}>
+        <ValuesGrid values={aboutPage.values} />
+      </AnimatedSection>
+      <AnimatedSection as="div" distance={28}>
+        <TeamGrid teamIntro={aboutPage.teamIntro} teamMembers={teamMembers} />
+      </AnimatedSection>
+      <AnimatedSection as="div" distance={32}>
+        <CultureClosing cultureSummary={aboutPage.cultureSummary} />
+      </AnimatedSection>
     </>
   );
 }

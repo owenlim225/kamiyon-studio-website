@@ -1,5 +1,6 @@
 import type { GlobalConfig } from "payload";
 
+import { anyone, authenticated } from "../access/authenticated";
 import { seoFieldGroup } from "../fields/seo";
 import { coreValueFields, storySectionFields } from "../fields/shared";
 
@@ -7,7 +8,8 @@ export const AboutPage: GlobalConfig = {
   slug: "about-page",
   label: "About Page",
   access: {
-    read: () => true,
+    read: anyone,
+    update: authenticated,
   },
   fields: [
     { name: "title", type: "text", required: true },

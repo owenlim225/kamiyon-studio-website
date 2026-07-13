@@ -27,6 +27,15 @@ import { SiteSettings } from "./globals/SiteSettings";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+const databaseUrl = process.env.DATABASE_URL ?? "";
+const payloadSecret = process.env.PAYLOAD_SECRET ?? "";
+
+if (databaseUrl && !payloadSecret) {
+  throw new Error(
+    "PAYLOAD_SECRET is required when DATABASE_URL is set. Generate one with: openssl rand -base64 32"
+  );
+}
+
 /** Lexical subset matching PortableText renderer: p, h2, h3, strong, em */
 const bodyEditor = lexicalEditor({
   features: ({ defaultFeatures }) => [
@@ -63,13 +72,14 @@ export default buildConfig({
   ],
   globals: [SiteSettings, HomePage, AboutPage, ContactPage],
   editor: bodyEditor,
-  secret: process.env.PAYLOAD_SECRET || "",
+  // Placeholder only when CMS is unconfigured (no DATABASE_URL); never empty in production with DB.
+  secret: payloadSecret || "unused-when-cms-unconfigured",
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL || "",
+      connectionString: databaseUrl,
     },
   }),
   sharp,

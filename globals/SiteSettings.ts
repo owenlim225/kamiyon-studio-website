@@ -1,5 +1,6 @@
 import type { GlobalConfig } from "payload";
 
+import { anyone, authenticated } from "../access/authenticated";
 import { ctaFields } from "../fields/cta";
 import { seoFields } from "../fields/seo";
 import { socialLinkFields } from "../fields/socialLink";
@@ -8,7 +9,8 @@ export const SiteSettings: GlobalConfig = {
   slug: "site-settings",
   label: "Site Settings",
   access: {
-    read: () => true,
+    read: anyone,
+    update: authenticated,
   },
   fields: [
     {

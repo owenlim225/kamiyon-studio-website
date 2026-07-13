@@ -15,13 +15,27 @@ or making any architectural decision:
    scoping rules, and delivery approach
 6. `context/progress-tracker.md` — current phase,
    open questions, next steps, and architecture decisions
-7. `context/completed-work.md` — archived completed
-   milestones and session notes (read when tracing history)
+7. `context/completed/README.md` — index of archived
+   milestones (read when tracing history)
 
 Update `context/progress-tracker.md` after each
-meaningful implementation change. When closing a phase,
-append completed items and session notes to
-`context/completed-work.md`.
+meaningful implementation change.
+
+### Archival process (when closing a phase)
+
+When a task/phase is marked complete:
+
+1. Create `context/completed/YYYY-MM-DD-<slug>.md` with
+   the finished context (goal, decisions, checklist,
+   verification results, session notes)
+2. Add a row/link in `context/completed/README.md`
+3. Remove the bulky finished block from
+   `progress-tracker.md`; leave at most a one-line
+   “Done — see completed/…” pointer if needed
+4. Do not delete historical detail — relocate it
+
+`context/completed-work.md` is a stub that points at
+`context/completed/README.md` (legacy path only).
 
 If implementation changes the architecture, scope, or
 standards documented in the context files, update the
