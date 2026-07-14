@@ -5,6 +5,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SiteHeader } from "./SiteHeader";
 import { testShellProps } from "./test-shell-props";
 
+const { usePathnameMock } = vi.hoisted(() => ({
+  usePathnameMock: vi.fn(() => "/about"),
+}));
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => usePathnameMock(),
+}));
+
 vi.mock("@/lib/gsap", () => {
   let onReverseComplete: (() => void) | null = null;
 
@@ -35,6 +43,7 @@ vi.mock("@/lib/gsap", () => {
 
 describe("SiteHeader", () => {
   beforeEach(() => {
+    usePathnameMock.mockReturnValue("/about");
     Object.defineProperty(window, "matchMedia", {
       writable: true,
       value: vi.fn().mockImplementation((query: string) => ({
@@ -160,5 +169,21 @@ describe("SiteHeader", () => {
     expect(
       screen.getAllByRole("link", { name: "Get in touch" })[0],
     ).toHaveAttribute("href", "/contact");
+  });
+
+  it("collapses the home header spacer and uses transparent CardNav on /", () => {
+    usePathnameMock.mockReturnValue("/");
+    const { container } = render(
+      <SiteHeader
+        navItems={testShellProps.navItems}
+        contactCta={testShellProps.contactCta}
+        siteName={testShellProps.siteName}
+        socialLinks={testShellProps.socialLinks}
+      />,
+    );
+
+    const spacer = container.querySelector("header > div[aria-hidden='true']");
+    expect(spacer).toHaveClass("h-0");
+    expect(container.querySelector(".card-nav--transparent")).toBeInTheDocument();
   });
 });

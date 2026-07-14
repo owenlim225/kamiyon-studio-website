@@ -75,15 +75,6 @@ function mapHomeBlocks(blocks: Array<Record<string, unknown>> | null | undefined
       const blockType = typeof block.blockType === "string" ? block.blockType : null;
 
       switch (blockType) {
-        case "hero":
-          return {
-            _type: "hero",
-            headline: typeof block.headline === "string" ? block.headline : "",
-            subheadline: typeof block.subheadline === "string" ? block.subheadline : "",
-            ctaLabel: typeof block.ctaLabel === "string" ? block.ctaLabel : "",
-            ctaHref: typeof block.ctaHref === "string" ? block.ctaHref : "",
-            image: mapMediaToCmsImage(block.image),
-          };
         case "mission":
           return {
             _type: "mission",

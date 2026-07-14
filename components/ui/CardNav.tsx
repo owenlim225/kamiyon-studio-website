@@ -28,6 +28,8 @@ export type CardNavProps = {
   buttonTextColor?: string;
   ctaLabel?: string;
   ctaHref?: string;
+  /** Collapsed bar is see-through; expands to solid surface. */
+  transparent?: boolean;
 };
 
 function ArrowUpRightIcon({ className }: { className?: string }) {
@@ -73,9 +75,17 @@ export function CardNav({
   buttonTextColor = "var(--bg-primary)",
   ctaLabel = "Get in touch",
   ctaHref = "/contact",
+  transparent = false,
 }: CardNavProps) {
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const ghostCollapsed = transparent && !isExpanded;
+  const resolvedBaseColor = ghostCollapsed
+    ? "color-mix(in srgb, var(--color-charcoal) 18%, transparent)"
+    : baseColor;
+  const resolvedMenuColor = ghostCollapsed
+    ? "var(--color-ivory)"
+    : menuColor;
   const navRef = useRef<HTMLElement | null>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -230,8 +240,8 @@ export function CardNav({
     <div className={`card-nav-container ${className}`.trim()}>
       <nav
         ref={navRef}
-        className={`card-nav ${isExpanded ? "open" : ""}`}
-        style={{ backgroundColor: baseColor }}
+        className={`card-nav ${isExpanded ? "open" : ""} ${transparent ? "card-nav--transparent" : ""}`.trim()}
+        style={{ backgroundColor: resolvedBaseColor }}
         aria-label="Primary"
       >
         <div className="card-nav-top">
@@ -242,7 +252,7 @@ export function CardNav({
             onKeyDown={handleHamburgerKeyDown}
             aria-label={isExpanded ? "Close menu" : "Open menu"}
             aria-expanded={isExpanded}
-            style={{ color: menuColor }}
+            style={{ color: resolvedMenuColor }}
           >
             <div className="hamburger-line" />
             <div className="hamburger-line" />

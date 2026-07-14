@@ -12,37 +12,27 @@ import {
 import {
   caseStudiesFallback,
   homePageFallback,
-  productsFallback,
   resolveWithFallback,
   serviceCategoriesFallback,
 } from "@/lib/cms/fallbacks";
 import {
   getCaseStudies,
   getHomePage,
-  getProducts,
   getServiceCategories,
 } from "@/lib/cms/queries";
-import { buildOpeningItems } from "@/lib/home/opening-items";
 import { buildPageMetadata } from "@/lib/seo/metadata";
-import type {
-  HomeCtaBanner,
-  HomeFeaturedWork,
-  HomeHero,
-  ServiceCategory,
-} from "@/lib/cms/types";
+import type { HomeCtaBanner, ServiceCategory } from "@/lib/cms/types";
 
 async function getHomePageContent() {
-  const [home, caseStudies, products, serviceCategories] = await Promise.all([
+  const [home, caseStudies, serviceCategories] = await Promise.all([
     getHomePage(),
     getCaseStudies(),
-    getProducts(),
     getServiceCategories(),
   ]);
 
   return {
     home: resolveWithFallback(home, homePageFallback),
     caseStudies: resolveWithFallback(caseStudies, caseStudiesFallback),
-    products: resolveWithFallback(products, productsFallback),
     serviceCategories: resolveWithFallback(
       serviceCategories,
       serviceCategoriesFallback
@@ -75,15 +65,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const { home, caseStudies, products, serviceCategories } =
-    await getHomePageContent();
+  const { home, caseStudies, serviceCategories } = await getHomePageContent();
 
-  const hero = home.blocks.find((block) => block._type === "hero") as
-    | HomeHero
-    | undefined;
-  const featuredWork = home.blocks.find(
-    (block) => block._type === "featuredWork"
-  ) as HomeFeaturedWork | undefined;
   const ctaBanner = home.blocks.find((block) => block._type === "ctaBanner") as
     | HomeCtaBanner
     | undefined;
@@ -93,17 +76,11 @@ export default async function Home() {
   ) as HomeCtaBanner;
 
   const contact = ctaBanner ?? contactDefaults;
-  const openingItems = buildOpeningItems({
-    caseStudies,
-    products,
-    featuredCaseStudySlugs: featuredWork?.featuredCaseStudySlugs,
-    featuredProductSlugs: featuredWork?.featuredProductSlugs,
-  });
 
   return (
     <>
-      {/* Il Capo–inspired opening uses its own GSAP entrance; reveals continue below. */}
-      {hero ? <Hero hero={hero} openingItems={openingItems} /> : null}
+      {/* Opening stage uses its own GSAP entrance; reveals continue below. */}
+      <Hero />
       <AnimatedSection as="div" distance={28}>
         <PartnersMarquee eyebrow="Partners" />
       </AnimatedSection>

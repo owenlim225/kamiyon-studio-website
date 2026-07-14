@@ -23,6 +23,18 @@
   will-change: height;
 }
 
+/* Home hero overlay: stay readable but as transparent as possible when collapsed */
+.card-nav.card-nav--transparent:not(.open) {
+  border-color: color-mix(in srgb, var(--color-ivory) 28%, transparent);
+  box-shadow: none;
+  backdrop-filter: blur(8px);
+}
+
+.card-nav.card-nav--transparent.open {
+  border-color: color-mix(in srgb, var(--color-charcoal) 12%, transparent);
+  box-shadow: var(--shadow-md);
+}
+
 .card-nav-top {
   position: absolute;
   top: 0;

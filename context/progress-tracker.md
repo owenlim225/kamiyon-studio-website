@@ -48,6 +48,7 @@ Present home service categories via window-scroll `ScrollStack` (Lenis-compatibl
 - Fixed ScrollStack z-fight / clump: transform-invariant layout offsets (not getBoundingClientRect), ascending z-index, opaque card fills, rAF-throttled updates
 - Done this session: React Bits `TiltedCard` on all marketing cards (`components/ui/TiltedCard` + UI/section card wrappers)
 - Done this session: React Bits `CardNav` wired into `SiteHeader` (About / Work / Contact cards + GSAP expand)
+- Done this session: Home `HeroOpening` background — CSS Ken Burns replaced with GSAP `useParallax` ScrollTrigger scrub (motion-lab `ParallaxBand` pattern; scrims/curtain/copy unchanged)
 
 ## Next Up (resume here)
 

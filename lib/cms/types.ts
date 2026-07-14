@@ -63,15 +63,6 @@ export type SiteSettings = {
 
 /** Spec 03 — homePage blocks */
 
-export type HomeHero = {
-  _type: "hero";
-  headline: string;
-  subheadline: string;
-  ctaLabel: string;
-  ctaHref: string;
-  image?: CmsImage;
-};
-
 export type HomeMission = {
   _type: "mission";
   title: string;
@@ -109,7 +100,6 @@ export type HomeCtaBanner = {
 };
 
 export type HomeBlock =
-  | HomeHero
   | HomeMission
   | HomeFeaturedWork
   | HomeHighlights
