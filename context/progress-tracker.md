@@ -36,28 +36,29 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**Home services ScrollStack** — replace carousel with React Bits scroll-stack on `/`.
+**Site header restyle** — closed logo+burger; open top-right CardNav stack.
 
 ## Current Goal
 
-Present home service categories via window-scroll `ScrollStack` (Lenis-compatible) while preserving Kamiyon visual language and CMS/fallback content.
+Closed header: logo left + unequal 2-bar burger right (all breakpoints). Open: CardNav panel top-right with vertical About / Work / Contact; preserve home transparent overlay.
 
 ## In Progress
 
-- Done this session: `ServicesCarousel` → `ServicesStack` + `components/ui/ScrollStack` (`useWindowScroll`, no second root Lenis)
-- Fixed ScrollStack z-fight / clump: transform-invariant layout offsets (not getBoundingClientRect), ascending z-index, opaque card fills, rAF-throttled updates
-- Done this session: React Bits `TiltedCard` on all marketing cards (`components/ui/TiltedCard` + UI/section card wrappers)
-- Done this session: React Bits `CardNav` wired into `SiteHeader` (About / Work / Contact cards + GSAP expand)
-- Done this session: Home `HeroOpening` background — CSS Ken Burns replaced with GSAP `useParallax` ScrollTrigger scrub (motion-lab `ParallaxBand` pattern; scrims/curtain/copy unchanged)
+- Done this session: CardNav closed chrome (logo left / burger right, CTA hidden); open panel top-right vertical stack; Escape + focus trap; unit + e2e nav smoke updated
+- Done this session: Removed featured opening list from `HeroOpening`; static `/assets/background.png`; centered SplitText brand + `SITE_MOTTO` subtitle; dropped `openingItems` wiring from home page
+- Done prior: `WordPullUp` + `lib/utils` `cn`; home `ProjectsBento` / `ServicesStack` / `HomeContact` adopted; motion-lab demo; documented in `ui-context.md` / `code-standards.md`
+- Done prior: `ServicesCarousel` → `ServicesStack` + `ScrollStack`; `TiltedCard` on marketing cards; `CardNav` in `SiteHeader`; HeroOpening GSAP `useParallax` scrub
 
 ## Next Up (resume here)
 
-1. Visual QA on `/` services stack (desktop + mobile; Lenis on/off + reduced motion)
-2. Visual QA: CardNav over home `HeroOpening` + interior pages (spacer vs overlay polish)
-3. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content (public site uses typed fallbacks until then)
-4. Optional: draft/preview after cutover; Payload schema sign-off as v1 canon; production `NEXT_PUBLIC_SITE_URL` at deploy
-5. Optional: adopt `AnimatedSection` on remaining marketing pages (Services, Portfolio, Contact)
-6. Optional: dual-model a11y/UX polish on motion stack; evaluate `@gsap/react` `useGSAP`
+1. Visual QA: header closed/open + simplified hero on `/` and `/about` (desktop + mobile; reduced motion; Escape/focus)
+2. Visual QA: WordPullUp + body fade on `/` (desktop + mobile; reduced motion)
+3. Visual QA on `/` services stack (desktop + mobile; Lenis on/off + reduced motion)
+4. Roll WordPullUp + fade-in standard to About / Services / Portfolio / Contact page headings
+5. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content
+6. Optional: draft/preview after cutover; Payload schema sign-off; production `NEXT_PUBLIC_SITE_URL` at deploy
+7. Optional: dual-model a11y/UX polish on motion stack
+8. Optional: remove unused `lib/home/opening-items` if nothing else adopts it
 
 **Done (pointers only):**
 
@@ -105,11 +106,12 @@ Present home service categories via window-scroll `ScrollStack` (Lenis-compatibl
 | Secret validation | `PAYLOAD_SECRET` required if `DATABASE_URL` set | Fail closed when CMS enabled |
 | Unmatched public URLs | `(frontend)/[...notFound]` → branded `not-found` | Dual root layouts (frontend/payload) |
 | Shell nav | Home, About, Services, Portfolio, Blog, Contact | Products/Community routes kept, hidden from nav |
-| Home composition | HeroOpening → Partners → Projects → ServicesStack (ScrollStack) → Contact | 2026-07-15 services stack |
+| Home composition | HeroOpening (brand + motto) → Partners → Projects → ServicesStack → Contact | 2026-07-15 hero list removed |
 | Home services UI | React Bits ScrollStack (`useWindowScroll`); reuse site Lenis, no nested root Lenis | Avoid dual smooth-scroll instances |
-| Shell header | React Bits CardNav (GSAP) via SiteHeader; cards About / Work / Contact | 2026-07-15 |
+| Shell header | CardNav via SiteHeader — closed: logo+burger; open: top-right vertical About/Work/Contact; transparent on `/` | 2026-07-15 restyle |
 | Contact URLs | `lib/contact/channels.ts` | Single source for fallbacks/nav/JSON-LD |
 | Motion stack | GSAP + ScrollTrigger + Lenis; Framer Motion micro only | Frontend layout providers; Payload admin excluded |
 | Motion demo | `/motion-lab` (noIndex, hidden from nav) | Architecture showcase before marketing adoption |
+| Typography motion | Headings: `WordPullUp` (scroll); body: `AnimatedSection` fade; hero brand: `SplitText` | Differentiated entrance; reduced-motion passthrough |
 
 Historical decisions and session notes live in [`completed/README.md`](./completed/README.md).

@@ -1,8 +1,10 @@
 "use client";
 
+import { AnimatedSection } from "@/components/animation/AnimatedSection";
 import ScrollStack, { ScrollStackItem } from "@/components/ui/ScrollStack";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { WordPullUp } from "@/components/ui/WordPullUp";
 
 export type ServiceStackSlide = {
   id: string;
@@ -34,15 +36,17 @@ export function ServicesStack({ slides }: ServicesStackProps) {
     >
       <Container>
         <div className="max-w-[680px]">
-          <p className="text-sm font-semibold uppercase tracking-wide text-sakura-ink">
-            Services
-          </p>
-          <h2
+          <AnimatedSection as="div">
+            <p className="text-sm font-semibold uppercase tracking-wide text-sakura-ink">
+              Services
+            </p>
+          </AnimatedSection>
+          <WordPullUp
+            as="h2"
             id={sectionId}
-            className="mt-3 font-display text-2xl font-bold text-[var(--text-primary)] md:text-3xl"
-          >
-            What we build
-          </h2>
+            words="What we build"
+            className="mt-3 text-2xl md:text-3xl"
+          />
         </div>
 
         <ScrollStack

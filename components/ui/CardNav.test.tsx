@@ -56,7 +56,7 @@ describe("CardNav", () => {
   });
 
   it("renders logo, CTA, and menu toggle", () => {
-    render(
+    const { container } = render(
       <CardNav
         logo="/logo.svg"
         logoAlt="Kamiyon Studio"
@@ -69,7 +69,7 @@ describe("CardNav", () => {
     expect(
       screen.getByRole("link", { name: "Kamiyon Studio — Home" }),
     ).toHaveAttribute("href", "/");
-    expect(screen.getByRole("link", { name: "Get in touch" })).toHaveAttribute(
+    expect(container.querySelector(".card-nav-cta-button")).toHaveAttribute(
       "href",
       "/contact",
     );
@@ -113,5 +113,86 @@ describe("CardNav", () => {
     expect(screen.getByText("Work")).toBeInTheDocument();
     expect(screen.getByText("Contact")).toBeInTheDocument();
     expect(screen.queryByText("Extra")).not.toBeInTheDocument();
+  });
+
+  it("closed chrome shows logo and burger without primary route links or CTA", () => {
+    const { container } = render(
+      <CardNav
+        logo="/logo.svg"
+        logoAlt="Kamiyon Studio"
+        items={items}
+        ctaLabel="Get in touch"
+        ctaHref="/contact"
+      />,
+    );
+
+    const nav = screen.getByRole("navigation", { name: "Primary" });
+    expect(nav).not.toHaveClass("open");
+    expect(container.querySelector(".card-nav-top")).toHaveClass(
+      "card-nav-top--closed",
+    );
+    expect(container.querySelector(".hamburger-line--long")).toBeInTheDocument();
+    expect(container.querySelector(".hamburger-line--short")).toBeInTheDocument();
+    expect(container.querySelector(".card-nav-cta-button")).toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+    expect(screen.queryByRole("link", { name: "Studio" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Services" })).not.toBeInTheDocument();
+  });
+
+  it("opens a vertically stacked card panel with CTA and restores closed chrome", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <CardNav
+        logo="/logo.svg"
+        logoAlt="Kamiyon Studio"
+        items={items}
+        ctaLabel="Get in touch"
+        ctaHref="/contact"
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open menu" }));
+
+    const nav = screen.getByRole("navigation", { name: "Primary" });
+    expect(nav).toHaveClass("open");
+    expect(container.querySelector(".card-nav-content")).toHaveClass(
+      "card-nav-content--stack",
+    );
+    expect(container.querySelector(".card-nav-container")).toHaveClass(
+      "card-nav-container--open",
+    );
+    expect(container.querySelector(".card-nav-cta-button")).not.toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+    expect(screen.getByRole("link", { name: "Studio" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Services" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Close menu" }));
+
+    expect(nav).not.toHaveClass("open");
+    expect(container.querySelector(".card-nav-top")).toHaveClass(
+      "card-nav-top--closed",
+    );
+  });
+
+  it("closes on Escape and keeps focus management hooks", async () => {
+    const user = userEvent.setup();
+    render(
+      <CardNav logo="/logo.svg" logoAlt="Kamiyon Studio" items={items} />,
+    );
+
+    const toggle = screen.getByRole("button", { name: "Open menu" });
+    await user.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+
+    await user.keyboard("{Escape}");
+
+    expect(screen.getByRole("button", { name: "Open menu" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
   });
 });

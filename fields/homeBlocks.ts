@@ -1,5 +1,21 @@
 import type { Block } from "payload";
 
+export const heroBlock: Block = {
+  slug: "hero",
+  labels: { singular: "Hero", plural: "Hero Blocks" },
+  fields: [
+    { name: "headline", type: "text", required: true },
+    { name: "subheadline", type: "textarea", required: true },
+    { name: "ctaLabel", type: "text", required: true },
+    { name: "ctaHref", type: "text", required: true },
+    {
+      name: "image",
+      type: "upload",
+      relationTo: "media",
+    },
+  ],
+};
+
 export const missionBlock: Block = {
   slug: "mission",
   labels: { singular: "Mission", plural: "Mission Blocks" },
@@ -59,6 +75,7 @@ export const ctaBannerBlock: Block = {
 };
 
 export const homeBlocks = [
+  heroBlock,
   missionBlock,
   featuredWorkBlock,
   highlightsBlock,

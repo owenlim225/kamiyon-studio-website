@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import type { HomeHero } from "@/lib/cms/types";
+import { SITE_MOTTO } from "@/lib/seo/constants";
 import { Hero } from "./Hero";
 
 vi.mock("@/hooks/useOpeningAnimation", () => ({
@@ -21,31 +23,50 @@ vi.mock("@/components/ui/SplitText", () => ({
     tag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p";
     className?: string;
   }) => <Tag className={className}>{text}</Tag>,
+  default: ({
+    text,
+    tag: Tag = "p",
+    className,
+  }: {
+    text: string;
+    tag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p";
+    className?: string;
+  }) => <Tag className={className}>{text}</Tag>,
 }));
 
+const baseHero: HomeHero = {
+  _type: "hero",
+  headline: "Meaningful interactive experiences, built with purpose.",
+  subheadline: "A multidisciplinary interactive experience studio.",
+  ctaLabel: "Get in touch",
+  ctaHref: "/contact",
+};
+
 describe("Hero", () => {
-  it("renders centered KAMIYON STUDIO title only", () => {
-    render(<Hero />);
+  it("renders KAMIYON STUDIO and motto without CMS copy or CTA", () => {
+    render(<Hero hero={baseHero} />);
 
     expect(
       screen.getByRole("heading", { level: 1, name: "KAMIYON STUDIO" }),
     ).toBeInTheDocument();
+    expect(screen.getByText(SITE_MOTTO)).toBeInTheDocument();
     expect(screen.queryByText("Kamiyon")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /Explore/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("navigation", { name: "Featured work" })).not.toBeInTheDocument();
+    expect(screen.queryByText(baseHero.headline)).not.toBeInTheDocument();
+    expect(screen.queryByText(baseHero.subheadline)).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Get in touch" })).not.toBeInTheDocument();
   });
 
-  it("does not render corner portfolio/contact labels", () => {
-    render(<Hero />);
+  it("does not render secondary quick links including the products link", () => {
+    render(<Hero hero={baseHero} />);
 
-    expect(screen.queryByText("ccoonnttaaccttss")).not.toBeInTheDocument();
-    expect(screen.queryByText("ppoorrttffoolliioo")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Contacts" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Portfolio" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "View products" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "See our portfolio" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Contact us" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("navigation", { name: "Quick links" })).not.toBeInTheDocument();
   });
 
   it("uses a full-bleed stage image instead of a CMS inset card", () => {
-    const { container } = render(<Hero />);
+    const { container } = render(<Hero hero={baseHero} />);
 
     const section = container.querySelector("section");
     expect(section).toHaveClass("relative");
@@ -54,16 +75,17 @@ describe("Hero", () => {
     expect(background).toBeInTheDocument();
 
     expect(container.querySelector('[class*="rounded-[var(--radius-card-lg)]"]')).not.toBeInTheDocument();
+    expect(screen.queryByText("🌸")).not.toBeInTheDocument();
   });
 
   it("layers gradient scrims for text readability over the background", () => {
-    const { container } = render(<Hero />);
+    const { container } = render(<Hero hero={baseHero} />);
     expect(container.querySelector(".bg-gradient-to-b")).toBeInTheDocument();
     expect(container.querySelector(".bg-gradient-to-r")).toBeInTheDocument();
   });
 
   it("layers a parallax background wrapper and opening curtain", () => {
-    const { container } = render(<Hero />);
+    const { container } = render(<Hero hero={baseHero} />);
 
     const background = container.querySelector('img[src*="background.png"]');
     expect(background).toBeInTheDocument();

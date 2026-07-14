@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { SplitText as GSAPSplitText } from "gsap/SplitText";
 
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
 
 gsap.registerPlugin(ScrollTrigger, GSAPSplitText, useGSAP);
 
@@ -82,6 +83,13 @@ export function SplitText({
           /* noop */
         }
         el._rbsplitInstance = null;
+      }
+
+      if (prefersReducedMotion()) {
+        gsap.set(el, { autoAlpha: 1, clearProps: "willChange" });
+        animationCompletedRef.current = true;
+        onCompleteRef.current?.();
+        return;
       }
 
       const startPct = (1 - threshold) * 100;

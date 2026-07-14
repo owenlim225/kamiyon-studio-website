@@ -156,7 +156,30 @@ describe("SiteHeader", () => {
     expect(screen.queryByRole("link", { name: "Community" })).not.toBeInTheDocument();
   });
 
-  it("renders the Contact CTA linking to /contact", () => {
+  it("hides the Contact CTA in closed chrome and reveals it when open", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <SiteHeader
+        navItems={testShellProps.navItems}
+        contactCta={testShellProps.contactCta}
+        siteName={testShellProps.siteName}
+        socialLinks={testShellProps.socialLinks}
+      />,
+    );
+
+    const closedCta = container.querySelector(".card-nav-cta-button");
+    expect(closedCta).toHaveAttribute("href", "/contact");
+    expect(closedCta).toHaveAttribute("aria-hidden", "true");
+
+    await user.click(screen.getByRole("button", { name: "Open menu" }));
+
+    expect(container.querySelector(".card-nav-cta-button")).not.toHaveAttribute(
+      "aria-hidden",
+      "true",
+    );
+  });
+
+  it("does not expose primary card routes while the menu is closed", () => {
     render(
       <SiteHeader
         navItems={testShellProps.navItems}
@@ -166,9 +189,8 @@ describe("SiteHeader", () => {
       />,
     );
 
-    expect(
-      screen.getAllByRole("link", { name: "Get in touch" })[0],
-    ).toHaveAttribute("href", "/contact");
+    expect(screen.queryByRole("link", { name: "Studio" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Portfolio" })).not.toBeInTheDocument();
   });
 
   it("collapses the home header spacer and uses transparent CardNav on /", () => {

@@ -3,11 +3,42 @@ import { describe, expect, it, vi } from "vitest";
 
 import { caseStudiesFallback } from "@/lib/cms/fallbacks";
 import type { CaseStudy } from "@/lib/cms/types";
-import { ProjectsBento } from "./ProjectsBento";
 
 vi.mock("@/lib/cms/image", () => ({
   getCmsImageUrl: vi.fn(() => null),
 }));
+
+vi.mock("@/components/ui/WordPullUp", () => ({
+  WordPullUp: ({
+    words,
+    as: Tag = "h1",
+    id,
+    className,
+  }: {
+    words: string;
+    as?: keyof HTMLElementTagNameMap;
+    id?: string;
+    className?: string;
+  }) => (
+    <Tag id={id} className={className}>
+      {words}
+    </Tag>
+  ),
+}));
+
+vi.mock("@/components/animation/AnimatedSection", () => ({
+  AnimatedSection: ({
+    children,
+    as: Tag = "div",
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: keyof HTMLElementTagNameMap;
+    className?: string;
+  }) => <Tag className={className}>{children}</Tag>,
+}));
+
+import { ProjectsBento } from "./ProjectsBento";
 
 function makeCaseStudy(overrides: Partial<CaseStudy> & { slug: string }): CaseStudy {
   const { slug, ...rest } = overrides;

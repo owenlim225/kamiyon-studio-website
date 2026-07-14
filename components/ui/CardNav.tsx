@@ -60,8 +60,20 @@ function isExternalHref(href: string): boolean {
   );
 }
 
+function getFocusableElements(root: HTMLElement): HTMLElement[] {
+  const nodes = root.querySelectorAll<HTMLElement>(
+    'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+  );
+  return Array.from(nodes).filter((el) => {
+    if (el.getAttribute("aria-hidden") === "true") return false;
+    if (el.closest('[aria-hidden="true"]')) return false;
+    return true;
+  });
+}
+
 /**
  * React Bits CardNav — expandable card menu with GSAP height + stagger.
+ * Closed chrome: logo left + 2-bar burger right. Open: top-right vertical stack.
  */
 export function CardNav({
   logo,
@@ -89,40 +101,37 @@ export function CardNav({
   const navRef = useRef<HTMLElement | null>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const toggleRef = useRef<HTMLButtonElement | null>(null);
 
   const calculateHeight = () => {
     const navEl = navRef.current;
     if (!navEl) return 260;
 
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    if (isMobile) {
-      const contentEl = navEl.querySelector<HTMLElement>(".card-nav-content");
-      if (contentEl) {
-        const wasVisible = contentEl.style.visibility;
-        const wasPointerEvents = contentEl.style.pointerEvents;
-        const wasPosition = contentEl.style.position;
-        const wasHeight = contentEl.style.height;
+    const contentEl = navEl.querySelector<HTMLElement>(".card-nav-content");
+    if (!contentEl) return 260;
 
-        contentEl.style.visibility = "visible";
-        contentEl.style.pointerEvents = "auto";
-        contentEl.style.position = "static";
-        contentEl.style.height = "auto";
+    const wasVisible = contentEl.style.visibility;
+    const wasPointerEvents = contentEl.style.pointerEvents;
+    const wasPosition = contentEl.style.position;
+    const wasHeight = contentEl.style.height;
 
-        contentEl.offsetHeight;
+    contentEl.style.visibility = "visible";
+    contentEl.style.pointerEvents = "auto";
+    contentEl.style.position = "static";
+    contentEl.style.height = "auto";
 
-        const topBar = 60;
-        const padding = 16;
-        const contentHeight = contentEl.scrollHeight;
+    contentEl.offsetHeight;
 
-        contentEl.style.visibility = wasVisible;
-        contentEl.style.pointerEvents = wasPointerEvents;
-        contentEl.style.position = wasPosition;
-        contentEl.style.height = wasHeight;
+    const topBar = 60;
+    const padding = 16;
+    const contentHeight = contentEl.scrollHeight;
 
-        return topBar + contentHeight + padding;
-      }
-    }
-    return 260;
+    contentEl.style.visibility = wasVisible;
+    contentEl.style.pointerEvents = wasPointerEvents;
+    contentEl.style.position = wasPosition;
+    contentEl.style.height = wasHeight;
+
+    return topBar + contentHeight + padding;
   };
 
   const createTimeline = () => {
@@ -145,7 +154,13 @@ export function CardNav({
 
     tl.to(
       cards,
-      { y: 0, opacity: 1, duration, ease, stagger: prefersReducedMotion() ? 0 : 0.08 },
+      {
+        y: 0,
+        opacity: 1,
+        duration,
+        ease,
+        stagger: prefersReducedMotion() ? 0 : 0.08,
+      },
       "-=0.1",
     );
 
@@ -202,11 +217,43 @@ export function CardNav({
         setIsHamburgerOpen(false);
         tl.eventCallback("onReverseComplete", () => setIsExpanded(false));
         tl.reverse();
+        toggleRef.current?.focus();
       }
     };
 
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
+  }, [isExpanded]);
+
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    const navEl = navRef.current;
+    if (!navEl) return;
+
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+
+      const focusable = getFocusableElements(navEl);
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      if (event.shiftKey) {
+        if (active === first || !navEl.contains(active)) {
+          event.preventDefault();
+          last.focus();
+        }
+      } else if (active === last || !navEl.contains(active)) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isExpanded]);
 
   const toggleMenu = () => {
@@ -235,17 +282,27 @@ export function CardNav({
   };
 
   const visibleItems = (items || []).slice(0, 3);
+  const containerClass = [
+    "card-nav-container",
+    isExpanded ? "card-nav-container--open" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div className={`card-nav-container ${className}`.trim()}>
+    <div className={containerClass}>
       <nav
         ref={navRef}
         className={`card-nav ${isExpanded ? "open" : ""} ${transparent ? "card-nav--transparent" : ""}`.trim()}
         style={{ backgroundColor: resolvedBaseColor }}
         aria-label="Primary"
       >
-        <div className="card-nav-top">
+        <div
+          className={`card-nav-top ${isExpanded ? "" : "card-nav-top--closed"}`.trim()}
+        >
           <button
+            ref={toggleRef}
             type="button"
             className={`hamburger-menu ${isHamburgerOpen ? "open" : ""}`}
             onClick={toggleMenu}
@@ -254,8 +311,8 @@ export function CardNav({
             aria-expanded={isExpanded}
             style={{ color: resolvedMenuColor }}
           >
-            <div className="hamburger-line" />
-            <div className="hamburger-line" />
+            <div className="hamburger-line hamburger-line--long" />
+            <div className="hamburger-line hamburger-line--short" />
           </button>
 
           <div className="logo-container">
@@ -273,6 +330,8 @@ export function CardNav({
           <Link
             href={ctaHref}
             className="card-nav-cta-button"
+            tabIndex={isExpanded ? undefined : -1}
+            aria-hidden={!isExpanded}
             style={
               {
                 backgroundColor: buttonBgColor,
@@ -284,7 +343,10 @@ export function CardNav({
           </Link>
         </div>
 
-        <div className="card-nav-content" aria-hidden={!isExpanded}>
+        <div
+          className="card-nav-content card-nav-content--stack"
+          aria-hidden={!isExpanded}
+        >
           {visibleItems.map((item, idx) => (
             <div
               key={`${item.label}-${idx}`}
@@ -304,6 +366,7 @@ export function CardNav({
                       className="nav-card-link"
                       href={lnk.href}
                       aria-label={lnk.ariaLabel}
+                      tabIndex={isExpanded ? undefined : -1}
                       {...(lnk.href.startsWith("http")
                         ? { target: "_blank", rel: "noopener noreferrer" }
                         : {})}
@@ -317,6 +380,7 @@ export function CardNav({
                       className="nav-card-link"
                       href={lnk.href}
                       aria-label={lnk.ariaLabel}
+                      tabIndex={isExpanded ? undefined : -1}
                     >
                       <ArrowUpRightIcon className="nav-card-link-icon" />
                       {lnk.label}

@@ -2,14 +2,27 @@
 
 import Image from "next/image";
 
+import { Container } from "@/components/ui/Container";
 import { SplitText } from "@/components/ui/SplitText";
 import { useOpeningAnimation } from "@/hooks/useOpeningAnimation";
 import { useParallax } from "@/hooks/useParallax";
+import type { HomeHero } from "@/lib/cms/types";
+import { SITE_MOTTO } from "@/lib/seo/constants";
 
-const HERO_TITLE = "KAMIYON STUDIO";
+import { PartnersMarquee } from "./PartnersMarquee";
+
+type HeroOpeningProps = {
+  hero: HomeHero;
+};
+
 const HERO_BACKGROUND = "/assets/background.png";
 
-export function HeroOpening() {
+/**
+ * Full-bleed opening stage: brand title + motto over atmospheric background,
+ * with partners overlaid at the base and a soft fade into the next section.
+ * CMS headline/subheadline/CTA stay on the hero prop for typing — not rendered.
+ */
+export function HeroOpening({ hero: _hero }: HeroOpeningProps) {
   const rootRef = useOpeningAnimation<HTMLElement>();
   const parallaxRef = useParallax<HTMLDivElement>({ speed: 100 });
 
@@ -33,7 +46,7 @@ export function HeroOpening() {
             className="object-cover object-[center_35%] opacity-90"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-charcoal)]/75 via-[var(--color-charcoal)]/45 to-[var(--color-charcoal)]/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-charcoal)]/75 via-[var(--color-charcoal)]/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-charcoal)]/55 via-transparent to-[var(--color-charcoal)]/40" />
       </div>
 
@@ -43,22 +56,39 @@ export function HeroOpening() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 flex min-h-[100svh] flex-col items-center justify-center px-4">
-        <SplitText
-          tag="h1"
-          text={HERO_TITLE}
-          className="font-display text-[clamp(2.5rem,8vw,6rem)] font-bold tracking-tight text-[var(--color-ivory)]"
-          delay={80}
-          duration={0.6}
-          ease="power3.out"
-          splitType="chars"
-          from={{ opacity: 0, y: 40 }}
-          to={{ opacity: 1, y: 0 }}
-          threshold={0.1}
-          rootMargin="-100px"
-          textAlign="center"
-        />
+      <div className="relative z-10 flex min-h-[100svh] flex-col">
+        <Container className="relative flex flex-1 flex-col py-10 md:py-14">
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <SplitText
+              tag="h1"
+              text="KAMIYON STUDIO"
+              className="font-display text-[clamp(2.5rem,8vw,6rem)] font-bold tracking-tight text-[var(--color-ivory)]"
+              delay={80}
+              duration={0.6}
+              ease="power3.out"
+              splitType="chars"
+              from={{ opacity: 0, y: 40 }}
+              to={{ opacity: 1, y: 0 }}
+              threshold={0.1}
+              rootMargin="-100px"
+              textAlign="center"
+            />
+            <p className="mt-4 font-sans text-sm tracking-[0.22em] text-[var(--color-ivory)]/70 uppercase md:mt-5 md:text-base">
+              {SITE_MOTTO}
+            </p>
+          </div>
+        </Container>
+
+        <div className="relative z-20 pb-2 md:pb-4">
+          <PartnersMarquee eyebrow="Partners" variant="overlay" />
+        </div>
       </div>
+
+      <div
+        data-hero-blend
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[15] h-40 bg-gradient-to-b from-transparent via-[var(--bg-primary)]/55 to-[var(--bg-primary)] md:h-52"
+        aria-hidden="true"
+      />
     </section>
   );
 }

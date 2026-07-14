@@ -6,6 +6,14 @@ export const homePageFallback: HomePage = {
   title: "Home",
   blocks: [
     {
+      _type: "hero",
+      headline: "Meaningful interactive experiences, built with purpose.",
+      subheadline:
+        "Kamiyon Studio creates games, educational technologies, gamified platforms, and digital solutions that educate, inspire, and make a lasting impact.",
+      ctaLabel: "Explore our services",
+      ctaHref: "/services",
+    },
+    {
       _type: "mission",
       title: "Our mission",
       body: "We create games and interactive experiences that educate, inspire, and make a lasting impact.",

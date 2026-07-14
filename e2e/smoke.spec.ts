@@ -11,15 +11,6 @@ const staticRoutes = [
   "/contact",
 ];
 
-const primaryNavRoutes = [
-  "/",
-  "/about",
-  "/services",
-  "/portfolio",
-  "/blog",
-  "/contact",
-];
-
 const dynamicRoutes = [
   "/services/game-development",
   "/products/eclipse",
@@ -56,11 +47,19 @@ test("renders a friendly 404 for an unknown route", async ({ page }) => {
 test("primary navigation links to every top-level section", async ({ page }) => {
   await page.goto("/");
 
-  for (const route of primaryNavRoutes) {
-    const label = route === "/" ? "Home" : route.slice(1);
-    await expect(
-      page.getByRole("navigation").getByRole("link", { name: new RegExp(label, "i") }).first()
-    ).toBeVisible();
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  await nav.getByRole("button", { name: /open menu/i }).click();
+
+  // CardNav IA: About → Home/Studio; Work → Services/Portfolio/Blog; Contact CTA
+  for (const label of [
+    "Home",
+    "Studio",
+    "Services",
+    "Portfolio",
+    "Blog",
+    "Get in touch",
+  ]) {
+    await expect(nav.getByRole("link", { name: label }).first()).toBeVisible();
   }
 });
 
@@ -68,6 +67,7 @@ test("primary navigation excludes hidden sections", async ({ page }) => {
   await page.goto("/");
 
   const nav = page.getByRole("navigation", { name: "Primary" });
+  await nav.getByRole("button", { name: /open menu/i }).click();
   await expect(nav.getByRole("link", { name: /products/i })).toHaveCount(0);
   await expect(nav.getByRole("link", { name: /community/i })).toHaveCount(0);
 });

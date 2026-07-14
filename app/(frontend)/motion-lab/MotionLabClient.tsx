@@ -8,6 +8,7 @@ import { AnimatedSection } from "@/components/animation/AnimatedSection";
 import { AnimatedText } from "@/components/animation/AnimatedText";
 import { MotionButton } from "@/components/animation/MotionButton";
 import { Container } from "@/components/ui/Container";
+import { WordPullUp } from "@/components/ui/WordPullUp";
 import { useGsapContext } from "@/hooks/useGsapContext";
 import { useHeroAnimation } from "@/hooks/useHeroAnimation";
 import { useParallax } from "@/hooks/useParallax";
@@ -176,21 +177,22 @@ export function MotionLabClient() {
     <div className="bg-[var(--bg-base)] text-[var(--text-primary)]">
       <MotionLabHero />
 
-      <AnimatedSection
-        id="fade-sections"
-        className="py-20"
-        delay={0.05}
-      >
+      <section id="fade-sections" className="py-20">
         <Container>
-          <h2 className="font-display text-3xl font-bold tracking-tight">
-            Fade-up sections
-          </h2>
-          <p className="mt-3 max-w-2xl text-[var(--text-muted)]">
-            AnimatedSection uses useFadeIn with ScrollTrigger. Content stays
-            readable without JS; motion enhances after mount.
-          </p>
+          <WordPullUp
+            as="h2"
+            words="Word pull-up headings"
+            className="text-3xl tracking-tight md:text-4xl"
+          />
+          <AnimatedSection as="div" delay={0.08}>
+            <p className="mt-3 max-w-2xl text-[var(--text-muted)]">
+              Standard: headings use WordPullUp; body copy fades via
+              AnimatedSection / useFadeIn (ScrollTrigger). Prefer this pairing
+              over wrapping an entire section in one fade.
+            </p>
+          </AnimatedSection>
         </Container>
-      </AnimatedSection>
+      </section>
 
       <AnimatedSection className="border-t border-[var(--border-default)] py-20">
         <Container>

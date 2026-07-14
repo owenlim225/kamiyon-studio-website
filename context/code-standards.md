@@ -108,6 +108,7 @@ components/
 - UI primitives wrap tokens and variants; no page-specific copy inside primitives
 - Images always use `next/image` with width, height, and alt
 - Links to external contact channels use `<a>` with appropriate `href`; internal use `next/link`
+- **Headings:** use `WordPullUp` for marketing `h1`/`h2` entrances; fade body/supporting text with `AnimatedSection` (see `ui-context.md` Typography motion standard)
 
 ### Naming
 

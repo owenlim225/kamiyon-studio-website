@@ -21,7 +21,11 @@ import {
   getServiceCategories,
 } from "@/lib/cms/queries";
 import { buildPageMetadata } from "@/lib/seo/metadata";
-import type { HomeCtaBanner, ServiceCategory } from "@/lib/cms/types";
+import type {
+  HomeCtaBanner,
+  HomeHero,
+  ServiceCategory,
+} from "@/lib/cms/types";
 
 async function getHomePageContent() {
   const [home, caseStudies, serviceCategories] = await Promise.all([
@@ -65,8 +69,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const { home, caseStudies, serviceCategories } = await getHomePageContent();
+  const { home, caseStudies, serviceCategories } =
+    await getHomePageContent();
 
+  const hero = home.blocks.find((block) => block._type === "hero") as
+    | HomeHero
+    | undefined;
   const ctaBanner = home.blocks.find((block) => block._type === "ctaBanner") as
     | HomeCtaBanner
     | undefined;
@@ -79,24 +87,21 @@ export default async function Home() {
 
   return (
     <>
-      {/* Opening stage uses its own GSAP entrance; reveals continue below. */}
-      <Hero />
+      {/* Brand-first opening uses its own GSAP entrance; section titles use WordPullUp. */}
+      {hero ? <Hero hero={hero} /> : null}
       <AnimatedSection as="div" distance={28}>
         <PartnersMarquee eyebrow="Partners" />
       </AnimatedSection>
-      <AnimatedSection as="div" distance={32}>
-        <ProjectsBento caseStudies={caseStudies} />
-      </AnimatedSection>
+      {/* ProjectsBento / HomeContact animate heading (WordPullUp) + body fade in-section. */}
+      <ProjectsBento caseStudies={caseStudies} />
       {/* ScrollStack pins against window scroll — skip AnimatedSection wrapper. */}
       <ServicesStack slides={toServiceStackSlides(serviceCategories)} />
-      <AnimatedSection as="div" distance={28}>
-        <HomeContact
-          heading={contact.title}
-          body={contact.body}
-          ctaLabel={contact.ctaLabel}
-          ctaHref={contact.ctaHref}
-        />
-      </AnimatedSection>
+      <HomeContact
+        heading={contact.title}
+        body={contact.body}
+        ctaLabel={contact.ctaLabel}
+        ctaHref={contact.ctaHref}
+      />
     </>
   );
 }

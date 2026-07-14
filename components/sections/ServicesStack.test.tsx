@@ -14,6 +14,36 @@ vi.mock("lenis/react", () => ({
   useLenis: () => undefined,
 }));
 
+vi.mock("@/components/ui/WordPullUp", () => ({
+  WordPullUp: ({
+    words,
+    as: Tag = "h1",
+    id,
+    className,
+  }: {
+    words: string;
+    as?: keyof HTMLElementTagNameMap;
+    id?: string;
+    className?: string;
+  }) => (
+    <Tag id={id} className={className}>
+      {words}
+    </Tag>
+  ),
+}));
+
+vi.mock("@/components/animation/AnimatedSection", () => ({
+  AnimatedSection: ({
+    children,
+    as: Tag = "div",
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: keyof HTMLElementTagNameMap;
+    className?: string;
+  }) => <Tag className={className}>{children}</Tag>,
+}));
+
 import { ServicesStack, type ServiceStackSlide } from "./ServicesStack";
 
 const slides: ServiceStackSlide[] = [

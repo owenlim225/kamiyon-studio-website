@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import type { HomeHero } from "@/lib/cms/types";
+import { SITE_MOTTO } from "@/lib/seo/constants";
 import { HeroOpening } from "./HeroOpening";
 
 vi.mock("@/hooks/useOpeningAnimation", () => ({
@@ -21,34 +23,51 @@ vi.mock("@/components/ui/SplitText", () => ({
     tag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p";
     className?: string;
   }) => <Tag className={className}>{text}</Tag>,
+  default: ({
+    text,
+    tag: Tag = "p",
+    className,
+  }: {
+    text: string;
+    tag?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p";
+    className?: string;
+  }) => <Tag className={className}>{text}</Tag>,
 }));
 
+const baseHero: HomeHero = {
+  _type: "hero",
+  headline: "Meaningful interactive experiences, built with purpose.",
+  subheadline: "A multidisciplinary interactive experience studio.",
+  ctaLabel: "Explore our services",
+  ctaHref: "/services",
+};
+
 describe("HeroOpening", () => {
-  it("renders only the KAMIYON STUDIO title", () => {
-    render(<HeroOpening />);
+  it("renders centered KAMIYON STUDIO brand and motto without CMS copy, CTA, or featured list", () => {
+    render(<HeroOpening hero={baseHero} />);
 
     expect(
       screen.getByRole("heading", { level: 1, name: "KAMIYON STUDIO" }),
     ).toBeInTheDocument();
+    expect(screen.getByText(SITE_MOTTO)).toBeInTheDocument();
+
     expect(screen.queryByText("Kamiyon")).not.toBeInTheDocument();
-    expect(screen.queryByText(/Meaningful interactive/i)).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /services/i })).not.toBeInTheDocument();
-  });
-
-  it("does not render doubled corner labels or featured work list", () => {
-    render(<HeroOpening />);
-
-    expect(screen.queryByText("ccoonnttaaccttss")).not.toBeInTheDocument();
-    expect(screen.queryByText("ppoorrttffoolliioo")).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Contacts" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Portfolio" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("navigation", { name: "Featured work" })).not.toBeInTheDocument();
+    expect(screen.queryByText(baseHero.headline)).not.toBeInTheDocument();
+    expect(screen.queryByText(baseHero.subheadline)).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Explore our services" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("navigation", { name: "Featured work" }),
+    ).not.toBeInTheDocument();
     expect(screen.queryByText("Eclipse")).not.toBeInTheDocument();
   });
 
-  it("includes a curtain layer and parallax background wrapper", () => {
-    const { container } = render(<HeroOpening />);
+  it("includes a full-bleed stage, curtain layer, and parallax background wrapper", () => {
+    const { container } = render(<HeroOpening hero={baseHero} />);
 
+    const section = container.querySelector("section[aria-label='Studio opening']");
+    expect(section).toHaveClass("min-h-[100svh]");
     expect(container.querySelector("[data-opening-curtain]")).toBeInTheDocument();
 
     const stage = container.querySelector('img[src*="background.png"]');
@@ -58,5 +77,23 @@ describe("HeroOpening", () => {
     const parallaxWrapper = stage?.parentElement;
     expect(parallaxWrapper).toHaveClass("will-change-transform");
     expect(parallaxWrapper?.className).toMatch(/inset-\[-20%\]/);
+
+    const bleed = stage?.closest("[aria-hidden='true']");
+    expect(bleed).toHaveClass("absolute", "inset-0");
+  });
+
+  it("embeds partners above the stage with a transparent overlay", () => {
+    const { container } = render(<HeroOpening hero={baseHero} />);
+
+    expect(screen.getByRole("region", { name: "Partners" })).toBeInTheDocument();
+    expect(container.querySelector("[data-hero-partners]")).toHaveClass(
+      "bg-transparent",
+    );
+  });
+
+  it("fades the hero bottom into the following page background", () => {
+    const { container } = render(<HeroOpening hero={baseHero} />);
+
+    expect(container.querySelector("[data-hero-blend]")).toBeInTheDocument();
   });
 });
