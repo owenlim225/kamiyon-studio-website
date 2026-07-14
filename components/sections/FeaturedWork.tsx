@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Container } from "@/components/ui/Container";
+import { TiltedCard, marketingCardTiltProps } from "@/components/ui/TiltedCard";
 import type { CaseStudy, HomeFeaturedWork, Product } from "@/lib/cms/types";
 
 type FeaturedCard = {
@@ -69,27 +70,28 @@ export function FeaturedWork({ featuredWork, products, caseStudies }: FeaturedWo
         {cards.length > 0 ? (
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {cards.map((card) => (
-              <Link
-                key={card.key}
-                href={card.href}
-                className="group flex flex-col rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-sm)] transition-shadow hover:shadow-[var(--shadow-md)] focus-visible:outline-offset-2"
-              >
-                {card.isPlaceholder ? (
-                  <Badge variant="placeholder" className="mb-4 self-start">
-                    Coming soon
-                  </Badge>
-                ) : null}
-                <p className="text-sm font-medium uppercase tracking-wide text-sakura-ink">
-                  {card.eyebrow}
-                </p>
-                <h3 className="mt-2 font-display text-lg font-semibold text-[var(--text-primary)]">
-                  {card.title}
-                </h3>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">{card.description}</p>
-                <span className="mt-4 text-sm font-medium text-sakura-ink transition-colors group-hover:opacity-80">
-                  Learn more →
-                </span>
-              </Link>
+              <TiltedCard key={card.key} {...marketingCardTiltProps}>
+                <Link
+                  href={card.href}
+                  className="group flex h-full flex-col rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-sm)] transition-shadow hover:shadow-[var(--shadow-md)] focus-visible:outline-offset-2"
+                >
+                  {card.isPlaceholder ? (
+                    <Badge variant="placeholder" className="mb-4 self-start">
+                      Coming soon
+                    </Badge>
+                  ) : null}
+                  <p className="text-sm font-medium uppercase tracking-wide text-sakura-ink">
+                    {card.eyebrow}
+                  </p>
+                  <h3 className="mt-2 font-display text-lg font-semibold text-[var(--text-primary)]">
+                    {card.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-[var(--text-secondary)]">{card.description}</p>
+                  <span className="mt-4 text-sm font-medium text-sakura-ink transition-colors group-hover:opacity-80">
+                    Learn more →
+                  </span>
+                </Link>
+              </TiltedCard>
             ))}
           </div>
         ) : (

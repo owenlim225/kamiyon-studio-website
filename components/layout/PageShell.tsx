@@ -25,6 +25,7 @@ export async function PageShell({ children }: PageShellProps) {
         navItems={shellProps.navItems}
         contactCta={shellProps.contactCta}
         siteName={shellProps.siteName}
+        socialLinks={shellProps.socialLinks}
       />
       <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
         {children}

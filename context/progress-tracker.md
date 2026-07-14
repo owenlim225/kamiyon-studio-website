@@ -36,22 +36,35 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**Post-GSAP / CMS ops** — GSAP plan closed; Payload operator setup and open questions remain.
+**Home section navigation** — React Bits LineSidebar on `/`.
 
 ## Current Goal
 
-Operator CMS cutover and remaining open questions (schema sign-off, Deep Indigo, deploy URL).
+Fixed left rail on desktop listing home sections (Hero → Contact) with smooth scroll + scroll-spy active state.
 
 ## In Progress
 
-- _(none)_
+- Done this session: Motion blur on scroll reveals (`useFadeIn` / `useReveal` / `useStagger` + `AnimatedSection`) — soft enter blur + velocity blur while elements pass through viewport; `lib/motion/motion-blur` + `attach-velocity-blur`; reduced-motion / coarse-pointer safe
+- Done this session: `LineSidebar` + `HomeLineSidebar` on `/` (desktop-only fixed left rail); `lib/home/section-nav` anchors; section `id`s + `scroll-mt` on hero/partners/projects/services/contact; scroll-spy via `IntersectionObserver`; unit tests for sidebar + wiring
+- Done this session: Restored `PartnersMarquee` as its own home section (reverted brief hero-overlay experiment); removed overlay/variant tests
+- Done prior (committed): CardNav closed chrome (logo left / burger right, CTA hidden); open panel top-right vertical About/Work/Contact; Escape + focus trap; unit + e2e nav smoke
+- Done prior (committed): HeroOpening brand-first (static `/assets/background.png`, SplitText + `SITE_MOTTO`); dropped featured opening list / `openingItems` from home page
+- Done prior: `WordPullUp` + `lib/utils` `cn`; home `ProjectsBento` / `ServicesStack` / `HomeContact` adopted; motion-lab demo; documented in `ui-context.md` / `code-standards.md`
+- Done prior: `ServicesCarousel` → `ServicesStack` + `ScrollStack`; `TiltedCard` on marketing cards; `CardNav` in `SiteHeader`; HeroOpening GSAP `useParallax` scrub
 
 ## Next Up (resume here)
 
-1. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content (public site uses typed fallbacks until then)
-2. Optional: draft/preview after cutover; Payload schema sign-off as v1 canon; production `NEXT_PUBLIC_SITE_URL` at deploy
-3. Optional: adopt `AnimatedSection` on remaining marketing pages (Services, Portfolio, Contact)
-4. Optional: dual-model a11y/UX polish on motion stack; evaluate `@gsap/react` `useGSAP`
+1. Visual QA: motion blur on `/` and `/motion-lab` (desktop scroll speed → soft blur; stops when idle; reduced motion / touch unchanged)
+2. Visual QA: LineSidebar on `/` (desktop rail; hidden below `lg`; click → smooth scroll; scroll-spy active; reduced motion; Lenis on/off)
+3. Visual QA: partners as standalone section again (not hero overlay) + full home scroll path Hero → Contact
+4. Visual QA: header closed/open + simplified hero on `/` and `/about` (desktop + mobile; reduced motion; Escape/focus)
+5. Visual QA: WordPullUp + body fade on `/`; services stack (Lenis on/off + reduced motion)
+6. Document LineSidebar in `ui-context.md` when phase closes
+7. Roll WordPullUp + fade-in standard to About / Services / Portfolio / Contact page headings
+8. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content
+9. Optional: draft/preview after cutover; Payload schema sign-off; production `NEXT_PUBLIC_SITE_URL` at deploy
+10. Optional: dual-model a11y/UX polish on motion stack
+11. Optional: remove unused `lib/home/opening-items` if nothing else adopts it
 
 **Done (pointers only):**
 
@@ -99,9 +112,14 @@ Operator CMS cutover and remaining open questions (schema sign-off, Deep Indigo,
 | Secret validation | `PAYLOAD_SECRET` required if `DATABASE_URL` set | Fail closed when CMS enabled |
 | Unmatched public URLs | `(frontend)/[...notFound]` → branded `not-found` | Dual root layouts (frontend/payload) |
 | Shell nav | Home, About, Services, Portfolio, Blog, Contact | Products/Community routes kept, hidden from nav |
-| Home composition | Hero → Partners → Projects → Services → Contact | 2026-07-11 redesign |
+| Home composition | HeroOpening (brand + motto) → Partners → Projects → ServicesStack → Contact | 2026-07-15: list removed; partners overlay trial reverted |
+| Home section nav | React Bits LineSidebar (`HomeLineSidebar`); desktop-only (`lg+`) fixed left rail; `HOME_SECTION_NAV` + scroll-spy | 2026-07-15 |
+| Home services UI | React Bits ScrollStack (`useWindowScroll`); reuse site Lenis, no nested root Lenis | Avoid dual smooth-scroll instances |
+| Shell header | CardNav via SiteHeader — closed: logo+burger; open: top-right vertical About/Work/Contact; transparent on `/` | 2026-07-15 restyle |
 | Contact URLs | `lib/contact/channels.ts` | Single source for fallbacks/nav/JSON-LD |
 | Motion stack | GSAP + ScrollTrigger + Lenis; Framer Motion micro only | Frontend layout providers; Payload admin excluded |
 | Motion demo | `/motion-lab` (noIndex, hidden from nav) | Architecture showcase before marketing adoption |
+| Typography motion | Headings: `WordPullUp` (scroll); body: `AnimatedSection` fade + motion blur; hero brand: `SplitText` | Differentiated entrance; reduced-motion passthrough |
+| Scroll motion blur | Enter blur → sharp; velocity blur while on-screen (`lib/motion/motion-blur`); fine pointer only | Realism on desktop scroll; opt-out via `motionBlur={false}` |
 
 Historical decisions and session notes live in [`completed/README.md`](./completed/README.md).

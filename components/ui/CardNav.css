@@ -1,0 +1,295 @@
+.card-nav-container {
+  position: fixed;
+  top: 1.2em;
+  left: 1.25rem;
+  right: 1.25rem;
+  z-index: 99;
+  box-sizing: border-box;
+  pointer-events: auto;
+  display: flex;
+  justify-content: stretch;
+}
+
+.card-nav-container--open {
+  justify-content: flex-end;
+}
+
+.card-nav {
+  display: block;
+  width: 100%;
+  height: 96px;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  position: relative;
+  overflow: hidden;
+  will-change: height;
+}
+
+/* Panel surface only when the menu is open */
+.card-nav.open {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-md);
+}
+
+.card-nav-container--open .card-nav {
+  width: min(100%, 22rem);
+  max-width: 22rem;
+}
+
+.card-nav-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.25rem;
+  z-index: 2;
+}
+
+/* Closed: logo left, burger right, no CTA */
+.card-nav-top--closed {
+  justify-content: space-between;
+}
+
+.card-nav-top--closed .logo-container {
+  position: static;
+  transform: none;
+  order: 1;
+}
+
+.card-nav-top--closed .hamburger-menu {
+  order: 2;
+  margin-left: auto;
+}
+
+.card-nav-top--closed .card-nav-cta-button {
+  display: none;
+  pointer-events: none;
+}
+
+/* Open: X left | logo center | CTA right */
+.card-nav.open .card-nav-top:not(.card-nav-top--closed) .logo-container,
+.card-nav-top:not(.card-nav-top--closed) .logo-container {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hamburger-menu {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  cursor: pointer;
+  gap: 16px;
+  background: none;
+  border: none;
+  padding: 0.35rem;
+  color: inherit;
+}
+
+.hamburger-menu:hover .hamburger-line {
+  opacity: 0.75;
+}
+
+.hamburger-menu:focus-visible {
+  outline: 2px solid var(--color-sakura-ink);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.hamburger-line {
+  height: 5px;
+  background-color: currentColor;
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease,
+    width 0.25s ease,
+    margin 0.3s ease;
+  transform-origin: 50% 50%;
+}
+
+.hamburger-line--long {
+  width: 72px;
+}
+
+.hamburger-line--short {
+  width: 44px;
+}
+
+.hamburger-menu.open {
+  align-items: center;
+}
+
+.hamburger-menu.open .hamburger-line--long,
+.hamburger-menu.open .hamburger-line--short {
+  width: 56px;
+}
+
+.hamburger-menu.open .hamburger-line:first-child {
+  transform: translateY(10.5px) rotate(45deg);
+}
+
+.hamburger-menu.open .hamburger-line:last-child {
+  transform: translateY(-10.5px) rotate(-45deg);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.card-nav-logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.card-nav-logo-link:focus-visible {
+  outline: 2px solid var(--color-sakura-ink);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.card-nav-logo {
+  height: 80px;
+  width: auto;
+}
+
+.card-nav-cta-button {
+  background-color: var(--color-charcoal);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: calc(var(--radius-card) - 0.35rem);
+  padding: 0 1rem;
+  height: 100%;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+}
+
+.card-nav-cta-button:hover {
+  background-color: color-mix(in srgb, var(--color-charcoal) 85%, white);
+}
+
+.card-nav-cta-button:focus-visible {
+  outline: 2px solid var(--color-sakura-ink);
+  outline-offset: 2px;
+}
+
+.card-nav-cta-button[aria-hidden="true"] {
+  visibility: hidden;
+}
+
+.card-nav-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 96px;
+  bottom: 0;
+  padding: 0.5rem;
+  display: flex;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-nav-content--stack {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.card-nav.open .card-nav-content {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.nav-card {
+  height: auto;
+  flex: 0 0 auto;
+  min-width: 0;
+  min-height: 60px;
+  border-radius: calc(var(--radius-card) - 0.2rem);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  gap: 8px;
+  user-select: none;
+}
+
+.nav-card-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+}
+
+.nav-card-links {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-card-link {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-card-link:hover {
+  opacity: 0.75;
+}
+
+.nav-card-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.nav-card-link-icon {
+  flex-shrink: 0;
+}
+
+@media (min-width: 769px) {
+  .card-nav-container {
+    top: 2em;
+    left: 2rem;
+    right: 2rem;
+  }
+
+  .nav-card-label {
+    font-size: 20px;
+  }
+
+  .nav-card-link {
+    font-size: 16px;
+  }
+}

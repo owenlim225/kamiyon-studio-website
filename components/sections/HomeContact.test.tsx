@@ -1,7 +1,38 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { homePageFallback } from "@/lib/cms/fallbacks/home";
+
+vi.mock("@/components/ui/WordPullUp", () => ({
+  WordPullUp: ({
+    words,
+    as: Tag = "h1",
+    id,
+    className,
+  }: {
+    words: string;
+    as?: keyof HTMLElementTagNameMap;
+    id?: string;
+    className?: string;
+  }) => (
+    <Tag id={id} className={className}>
+      {words}
+    </Tag>
+  ),
+}));
+
+vi.mock("@/components/animation/AnimatedSection", () => ({
+  AnimatedSection: ({
+    children,
+    as: Tag = "div",
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: keyof HTMLElementTagNameMap;
+    className?: string;
+  }) => <Tag className={className}>{children}</Tag>,
+}));
+
 import { HomeContact } from "./HomeContact";
 
 const ctaBanner = homePageFallback.blocks.find((block) => block._type === "ctaBanner");

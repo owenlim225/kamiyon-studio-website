@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/Badge";
+import { TiltedCard, marketingCardTiltProps } from "@/components/ui/TiltedCard";
 import type { ContactChannel } from "@/lib/cms/types";
 
 const CHANNEL_LABELS: Record<ContactChannel["type"], string> = {
@@ -26,7 +27,7 @@ function getHref(channel: ContactChannel): string {
 }
 
 const cardClasses =
-  "flex flex-col items-center gap-3 rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 text-center shadow-[var(--shadow-sm)] transition-shadow hover:shadow-[var(--shadow-md)] focus-visible:outline-offset-2";
+  "flex h-full flex-col items-center gap-3 rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 text-center shadow-[var(--shadow-sm)] transition-shadow hover:shadow-[var(--shadow-md)] focus-visible:outline-offset-2";
 
 export function ContactCard({ channel }: ContactCardProps) {
   const isPlaceholder = Boolean(channel.isPlaceholder);
@@ -54,23 +55,27 @@ export function ContactCard({ channel }: ContactCardProps) {
 
   if (isPlaceholder) {
     return (
-      <span
-        className={`${cardClasses} cursor-not-allowed opacity-70`}
-        aria-disabled="true"
-      >
-        {content}
-      </span>
+      <TiltedCard {...marketingCardTiltProps}>
+        <span
+          className={`${cardClasses} cursor-not-allowed opacity-70`}
+          aria-disabled="true"
+        >
+          {content}
+        </span>
+      </TiltedCard>
     );
   }
 
   return (
-    <a
-      href={getHref(channel)}
-      target={channel.type === "email" ? undefined : "_blank"}
-      rel={channel.type === "email" ? undefined : "noopener noreferrer"}
-      className={cardClasses}
-    >
-      {content}
-    </a>
+    <TiltedCard {...marketingCardTiltProps}>
+      <a
+        href={getHref(channel)}
+        target={channel.type === "email" ? undefined : "_blank"}
+        rel={channel.type === "email" ? undefined : "noopener noreferrer"}
+        className={cardClasses}
+      >
+        {content}
+      </a>
+    </TiltedCard>
   );
 }

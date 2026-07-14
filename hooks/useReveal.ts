@@ -8,11 +8,16 @@ import {
   GSAP_ALLOW_MOTION,
   GSAP_REDUCE_MOTION,
 } from "@/lib/gsap";
+import { attachScrollVelocityBlur } from "@/lib/motion/attach-velocity-blur";
 import {
   MOTION_DISTANCE,
   MOTION_DURATION,
   MOTION_EASE,
 } from "@/lib/motion/constants";
+import {
+  MOTION_BLUR,
+  formatBlurFilter,
+} from "@/lib/motion/motion-blur";
 import type {
   MotionElementRef,
   RevealDirection,
@@ -24,7 +29,13 @@ import { useGsapContext } from "./useGsapContext";
 const defaults: Required<
   Pick<
     RevealOptions,
-    "delay" | "duration" | "direction" | "once" | "disabled"
+    | "delay"
+    | "duration"
+    | "direction"
+    | "once"
+    | "disabled"
+    | "motionBlur"
+    | "enterBlur"
   >
 > = {
   delay: 0,
@@ -32,6 +43,8 @@ const defaults: Required<
   direction: "up",
   once: true,
   disabled: false,
+  motionBlur: true,
+  enterBlur: MOTION_BLUR.enter,
 };
 
 function offsetForDirection(direction: RevealDirection): {
@@ -68,12 +81,25 @@ export function useReveal<T extends HTMLElement = HTMLElement>(
 
       const from = offsetForDirection(merged.direction);
       const mm = gsap.matchMedia();
+      const trigger = merged.trigger ?? el;
 
       mm.add(GSAP_REDUCE_MOTION, () => {
-        gsap.set(el, { autoAlpha: 1, x: 0, y: 0, clipPath: "none" });
+        gsap.set(el, {
+          autoAlpha: 1,
+          x: 0,
+          y: 0,
+          clipPath: "none",
+          clearProps: "filter",
+        });
       });
 
       mm.add(GSAP_ALLOW_MOTION, () => {
+        const blurEnabled = merged.motionBlur;
+        const enterFilter = blurEnabled
+          ? formatBlurFilter(merged.enterBlur)
+          : undefined;
+        const clearFilter = blurEnabled ? formatBlurFilter(0) : undefined;
+
         gsap.fromTo(
           el,
           {
@@ -81,23 +107,31 @@ export function useReveal<T extends HTMLElement = HTMLElement>(
             x: from.x,
             y: from.y,
             clipPath: "inset(8% 8% 8% 8%)",
+            ...(enterFilter ? { filter: enterFilter } : {}),
           },
           {
             autoAlpha: 1,
             x: 0,
             y: 0,
             clipPath: "inset(0% 0% 0% 0%)",
+            ...(clearFilter ? { filter: clearFilter } : {}),
             duration: merged.duration,
             delay: merged.delay,
             ease: MOTION_EASE.soft,
             scrollTrigger: createScrollTriggerDefaults({
-              trigger: merged.trigger ?? el,
+              trigger,
               start: merged.start,
               once: merged.once,
             }),
           },
         );
       });
+
+      if (merged.motionBlur) {
+        mm.add(`${GSAP_ALLOW_MOTION} and (pointer: fine)`, () => {
+          attachScrollVelocityBlur(el, trigger);
+        });
+      }
     },
     [
       merged.delay,
@@ -107,6 +141,8 @@ export function useReveal<T extends HTMLElement = HTMLElement>(
       merged.disabled,
       merged.start,
       merged.trigger,
+      merged.motionBlur,
+      merged.enterBlur,
     ],
   );
 

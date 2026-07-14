@@ -1,6 +1,10 @@
+"use client";
+
+import { AnimatedSection } from "@/components/animation/AnimatedSection";
 import { BentoProjectCard } from "@/components/ui/BentoProjectCard";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
+import { WordPullUp } from "@/components/ui/WordPullUp";
 import { partitionBentoLayout } from "@/lib/home/bento-layout";
 import type { CaseStudy } from "@/lib/cms/types";
 
@@ -23,23 +27,32 @@ export function ProjectsBento({ caseStudies }: ProjectsBentoProps) {
   const smallRows = chunkSlots(small, 3);
 
   return (
-    <section className="bg-[var(--bg-primary)] py-16 md:py-24">
+    <section
+      id="home-projects"
+      className="scroll-mt-4 bg-[var(--bg-primary)] py-16 md:py-24"
+    >
       <Container>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-[680px]">
-            <p className="text-sm font-semibold uppercase tracking-wide text-sakura-ink">
-              Portfolio
-            </p>
-            <h2 className="mt-3 font-display text-2xl font-bold text-[var(--text-primary)] md:text-3xl">
-              Recent Projects
-            </h2>
+            <AnimatedSection as="div">
+              <p className="text-sm font-semibold uppercase tracking-wide text-sakura-ink">
+                Portfolio
+              </p>
+            </AnimatedSection>
+            <WordPullUp
+              as="h2"
+              words="Recent Projects"
+              className="mt-3 text-2xl md:text-3xl"
+            />
           </div>
-          <Button href="/portfolio" variant="ghost">
-            View portfolio
-          </Button>
+          <AnimatedSection as="div" delay={0.08}>
+            <Button href="/portfolio" variant="ghost">
+              View portfolio
+            </Button>
+          </AnimatedSection>
         </div>
 
-        <div className="mt-10 flex flex-col gap-6">
+        <AnimatedSection as="div" className="mt-10 flex flex-col gap-8" delay={0.12}>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2" data-bento-row="large">
             {large.map((slot, index) => (
               <BentoProjectCard
@@ -65,7 +78,7 @@ export function ProjectsBento({ caseStudies }: ProjectsBentoProps) {
               ))}
             </div>
           ))}
-        </div>
+        </AnimatedSection>
       </Container>
     </section>
   );

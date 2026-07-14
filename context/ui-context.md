@@ -171,7 +171,7 @@ Marketing site patterns — full-width heroes, constrained content columns.
 
 ### Global shell
 
-- **Header:** Sticky or static top nav; logo left; 7 section links; primary CTA (Contact) right; mobile hamburger menu
+- **Header:** Fixed CardNav chrome — closed: logo left + 2-bar burger right (no route links / CTA hidden); open: top-right stacked About / Work / Contact cards with X | logo | Get in touch; ghost/transparent over home hero
 - **Footer:** Logo, nav repeat, social links (Facebook, LinkedIn, email), copyright, optional motto
 - **Content width:** `max-w-6xl` or `max-w-7xl` centered; generous horizontal padding
 
@@ -203,6 +203,18 @@ Animations should communicate delight, not distraction:
 - Elastic button hover states (subtle)
 - Optional floating sakura petal decoration on hero (performance-safe, `prefers-reduced-motion` respected)
 - Avoid fast, harsh, or decorative-only animation
+
+### Typography motion standard
+
+| Element | Pattern | Component |
+| --- | --- | --- |
+| Section / page headings (`h1`–`h2`) | Word pull-up stagger on scroll into view | `components/ui/WordPullUp` |
+| Body copy, eyebrows, supporting text | Fade + slight rise on scroll; soft enter blur + velocity blur while scrolling past (desktop / fine pointer) | `AnimatedSection` / `useFadeIn` |
+| Full-bleed opening hero brand | Character split (GSAP) — special case | `components/ui/SplitText` in `HeroOpening` |
+
+**Motion blur:** `useFadeIn` / `useReveal` / `useStagger` default `motionBlur: true`. Enter from ~8px blur → sharp; while the element occupies the viewport, scroll velocity maps to ≤6px blur (clears when idle or off-screen). Skipped under `prefers-reduced-motion` and coarse pointers. Opt out with `motionBlur={false}` on `AnimatedSection` or the hook options.
+
+Do not wrap an entire section in `AnimatedSection` when the heading should pull up independently — animate the heading with `WordPullUp` and fade the remaining copy/content separately.
 
 > **Source:** visual-identity Motion Design
 

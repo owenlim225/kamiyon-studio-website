@@ -46,7 +46,8 @@ export function PartnersMarquee({
 
   return (
     <section
-      className="bg-[var(--bg-secondary)] py-12 md:py-16"
+      id="home-partners"
+      className="scroll-mt-4 bg-[var(--bg-secondary)] py-12 md:py-16"
       aria-label={sectionLabel}
     >
       <Container>
