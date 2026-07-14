@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 
+import { HeroScrollHelper } from "@/components/sections/HeroScrollHelper";
 import { Container } from "@/components/ui/Container";
 import { SplitText } from "@/components/ui/SplitText";
 import { useOpeningAnimation } from "@/hooks/useOpeningAnimation";
@@ -55,6 +56,7 @@ export function HeroOpening({ hero: _hero }: HeroOpeningProps) {
       />
 
       <div className="relative z-10 flex min-h-[100svh] flex-col">
+        <HeroScrollHelper />
         <Container className="relative flex flex-1 flex-col py-10 md:py-14">
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <SplitText

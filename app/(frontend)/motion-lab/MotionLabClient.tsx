@@ -25,7 +25,7 @@ const DEMO_CARDS = [
   { title: "Reveal", body: "Viewport fade-up via AnimatedSection." },
   { title: "Stagger", body: "Children enter with a shared stagger." },
   { title: "Parallax", body: "Scrubbed motion on fine pointers." },
-  { title: "Timeline", body: "Scroll-linked GSAP timeline below." },
+  { title: "Motion blur", body: "Velocity blur while scrolling past." },
 ] as const;
 
 function MotionLabHero() {
@@ -187,8 +187,9 @@ export function MotionLabClient() {
           <AnimatedSection as="div" delay={0.08}>
             <p className="mt-3 max-w-2xl text-[var(--text-muted)]">
               Standard: headings use WordPullUp; body copy fades via
-              AnimatedSection / useFadeIn (ScrollTrigger). Prefer this pairing
-              over wrapping an entire section in one fade.
+              AnimatedSection / useFadeIn (ScrollTrigger) with soft enter blur
+              and velocity-linked blur while scrolling past (fine pointers). Prefer
+              this pairing over wrapping an entire section in one fade.
             </p>
           </AnimatedSection>
         </Container>

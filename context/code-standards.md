@@ -88,6 +88,7 @@ const page = (await getAboutPage()) ?? aboutPageFallback;
 - Prefer composition over deep selector chains
 - Mobile-first responsive classes
 - Honor `prefers-reduced-motion`
+- Scroll reveals use soft motion blur by default (`AnimatedSection` / `useFadeIn`); opt out with `motionBlur={false}`
 
 ---
 

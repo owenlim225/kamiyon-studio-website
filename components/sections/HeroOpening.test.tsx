@@ -13,6 +13,14 @@ vi.mock("@/hooks/useParallax", () => ({
   useParallax: () => ({ current: null }),
 }));
 
+vi.mock("@/components/sections/HeroScrollHelper", () => ({
+  HeroScrollHelper: () => (
+    <div role="status" data-testid="hero-scroll-helper">
+      Scroll down
+    </div>
+  ),
+}));
+
 vi.mock("@/components/ui/SplitText", () => ({
   SplitText: ({
     text,
@@ -80,5 +88,12 @@ describe("HeroOpening", () => {
 
     const bleed = stage?.closest("[aria-hidden='true']");
     expect(bleed).toHaveClass("absolute", "inset-0");
+  });
+
+  it("mounts the hero scroll helper tip", () => {
+    render(<HeroOpening hero={baseHero} />);
+
+    expect(screen.getByTestId("hero-scroll-helper")).toBeInTheDocument();
+    expect(screen.getByText("Scroll down")).toBeInTheDocument();
   });
 });

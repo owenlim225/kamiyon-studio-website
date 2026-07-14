@@ -44,6 +44,7 @@ Fixed left rail on desktop listing home sections (Hero → Contact) with smooth 
 
 ## In Progress
 
+- Done this session: Motion blur on scroll reveals (`useFadeIn` / `useReveal` / `useStagger` + `AnimatedSection`) — soft enter blur + velocity blur while elements pass through viewport; `lib/motion/motion-blur` + `attach-velocity-blur`; reduced-motion / coarse-pointer safe
 - Done this session: `LineSidebar` + `HomeLineSidebar` on `/` (desktop-only fixed left rail); `lib/home/section-nav` anchors; section `id`s + `scroll-mt` on hero/partners/projects/services/contact; scroll-spy via `IntersectionObserver`; unit tests for sidebar + wiring
 - Done this session: Restored `PartnersMarquee` as its own home section (reverted brief hero-overlay experiment); removed overlay/variant tests
 - Done prior (committed): CardNav closed chrome (logo left / burger right, CTA hidden); open panel top-right vertical About/Work/Contact; Escape + focus trap; unit + e2e nav smoke
@@ -53,16 +54,17 @@ Fixed left rail on desktop listing home sections (Hero → Contact) with smooth 
 
 ## Next Up (resume here)
 
-1. Visual QA: LineSidebar on `/` (desktop rail; hidden below `lg`; click → smooth scroll; scroll-spy active; reduced motion; Lenis on/off)
-2. Visual QA: partners as standalone section again (not hero overlay) + full home scroll path Hero → Contact
-3. Visual QA: header closed/open + simplified hero on `/` and `/about` (desktop + mobile; reduced motion; Escape/focus)
-4. Visual QA: WordPullUp + body fade on `/`; services stack (Lenis on/off + reduced motion)
-5. Document LineSidebar in `ui-context.md` when phase closes
-6. Roll WordPullUp + fade-in standard to About / Services / Portfolio / Contact page headings
-7. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content
-8. Optional: draft/preview after cutover; Payload schema sign-off; production `NEXT_PUBLIC_SITE_URL` at deploy
-9. Optional: dual-model a11y/UX polish on motion stack
-10. Optional: remove unused `lib/home/opening-items` if nothing else adopts it
+1. Visual QA: motion blur on `/` and `/motion-lab` (desktop scroll speed → soft blur; stops when idle; reduced motion / touch unchanged)
+2. Visual QA: LineSidebar on `/` (desktop rail; hidden below `lg`; click → smooth scroll; scroll-spy active; reduced motion; Lenis on/off)
+3. Visual QA: partners as standalone section again (not hero overlay) + full home scroll path Hero → Contact
+4. Visual QA: header closed/open + simplified hero on `/` and `/about` (desktop + mobile; reduced motion; Escape/focus)
+5. Visual QA: WordPullUp + body fade on `/`; services stack (Lenis on/off + reduced motion)
+6. Document LineSidebar in `ui-context.md` when phase closes
+7. Roll WordPullUp + fade-in standard to About / Services / Portfolio / Contact page headings
+8. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content
+9. Optional: draft/preview after cutover; Payload schema sign-off; production `NEXT_PUBLIC_SITE_URL` at deploy
+10. Optional: dual-model a11y/UX polish on motion stack
+11. Optional: remove unused `lib/home/opening-items` if nothing else adopts it
 
 **Done (pointers only):**
 
@@ -117,6 +119,7 @@ Fixed left rail on desktop listing home sections (Hero → Contact) with smooth 
 | Contact URLs | `lib/contact/channels.ts` | Single source for fallbacks/nav/JSON-LD |
 | Motion stack | GSAP + ScrollTrigger + Lenis; Framer Motion micro only | Frontend layout providers; Payload admin excluded |
 | Motion demo | `/motion-lab` (noIndex, hidden from nav) | Architecture showcase before marketing adoption |
-| Typography motion | Headings: `WordPullUp` (scroll); body: `AnimatedSection` fade; hero brand: `SplitText` | Differentiated entrance; reduced-motion passthrough |
+| Typography motion | Headings: `WordPullUp` (scroll); body: `AnimatedSection` fade + motion blur; hero brand: `SplitText` | Differentiated entrance; reduced-motion passthrough |
+| Scroll motion blur | Enter blur → sharp; velocity blur while on-screen (`lib/motion/motion-blur`); fine pointer only | Realism on desktop scroll; opt-out via `motionBlur={false}` |
 
 Historical decisions and session notes live in [`completed/README.md`](./completed/README.md).
