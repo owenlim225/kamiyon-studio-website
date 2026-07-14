@@ -1,0 +1,97 @@
+.tilted-card-figure {
+  position: relative;
+  margin: 0;
+  width: 100%;
+  height: auto;
+  perspective: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.tilted-card-figure--content {
+  align-items: stretch;
+  justify-content: flex-start;
+  height: 100%;
+  min-height: min-content;
+}
+
+.tilted-card-mobile-alert {
+  position: absolute;
+  top: 1rem;
+  z-index: 4;
+  text-align: center;
+  font-size: 0.875rem;
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .tilted-card-mobile-alert {
+    display: block;
+  }
+
+  .tilted-card-caption {
+    display: none;
+  }
+}
+
+.tilted-card-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+}
+
+.tilted-card-inner--content {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+}
+
+.tilted-card-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  border-radius: var(--radius-card-lg, 15px);
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.tilted-card-body {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tilted-card-body > * {
+  flex: 1 1 auto;
+  min-height: min-content;
+  width: 100%;
+}
+
+.tilted-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  will-change: transform;
+  transform: translateZ(30px);
+}
+
+.tilted-card-caption {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 4px;
+  background-color: var(--bg-surface, #fff);
+  padding: 4px 10px;
+  font-size: 10px;
+  color: var(--text-primary, #2d2d2d);
+  opacity: 0;
+  z-index: 3;
+}

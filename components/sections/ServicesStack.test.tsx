@@ -1,0 +1,85 @@
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("lenis", () => {
+  class MockLenis {
+    on = vi.fn();
+    raf = vi.fn();
+    destroy = vi.fn();
+  }
+  return { default: MockLenis };
+});
+
+vi.mock("lenis/react", () => ({
+  useLenis: () => undefined,
+}));
+
+import { ServicesStack, type ServiceStackSlide } from "./ServicesStack";
+
+const slides: ServiceStackSlide[] = [
+  {
+    id: "interactive",
+    eyebrow: "Interactive Experience",
+    title: "Interactive Experience Development",
+    summary: "Games, learning experiences, simulations, and prototypes.",
+    exploreHref: "/services/interactive-experience-development",
+  },
+  {
+    id: "software",
+    eyebrow: "Software",
+    title: "Software Development",
+    summary: "Modern digital products with usability and scalability.",
+    exploreHref: "/services/software-development",
+  },
+  {
+    id: "creative",
+    eyebrow: "Creative",
+    title: "Creative & Design Services",
+    summary: "Multidisciplinary creative services for strong visual communication.",
+    exploreHref: "/services/creative-design-services",
+  },
+];
+
+describe("ServicesStack", () => {
+  it("renders nothing when slides is empty", () => {
+    const { container } = render(<ServicesStack slides={[]} />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("renders section heading and all service cards", () => {
+    render(<ServicesStack slides={slides} />);
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: "What we build" })
+    ).toBeInTheDocument();
+
+    slides.forEach((slide) => {
+      expect(
+        screen.getByRole("heading", { level: 3, name: slide.title })
+      ).toBeInTheDocument();
+      expect(screen.getByText(slide.summary)).toBeInTheDocument();
+    });
+  });
+
+  it("renders an Explore link for each service", () => {
+    render(<ServicesStack slides={slides} />);
+
+    const exploreLinks = screen.getAllByRole("link", { name: "Explore" });
+    expect(exploreLinks).toHaveLength(slides.length);
+    exploreLinks.forEach((link, index) => {
+      expect(link).toHaveAttribute("href", slides[index].exploreHref);
+    });
+  });
+
+  it("uses ScrollStack window-scroll mode for page-flow stacking", () => {
+    const { container } = render(<ServicesStack slides={slides} />);
+
+    expect(
+      container.querySelector(".scroll-stack-scroller--window")
+    ).toBeInTheDocument();
+    expect(container.querySelectorAll(".scroll-stack-card")).toHaveLength(
+      slides.length
+    );
+  });
+});

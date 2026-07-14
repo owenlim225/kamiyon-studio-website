@@ -39,7 +39,7 @@ export function ProjectsBento({ caseStudies }: ProjectsBentoProps) {
           </Button>
         </div>
 
-        <div className="mt-10 flex flex-col gap-6">
+        <div className="mt-10 flex flex-col gap-8">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2" data-bento-row="large">
             {large.map((slot, index) => (
               <BentoProjectCard

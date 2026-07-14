@@ -36,22 +36,27 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**Post-GSAP / CMS ops** — GSAP plan closed; Payload operator setup and open questions remain.
+**Home services ScrollStack** — replace carousel with React Bits scroll-stack on `/`.
 
 ## Current Goal
 
-Operator CMS cutover and remaining open questions (schema sign-off, Deep Indigo, deploy URL).
+Present home service categories via window-scroll `ScrollStack` (Lenis-compatible) while preserving Kamiyon visual language and CMS/fallback content.
 
 ## In Progress
 
-- _(none)_
+- Done this session: `ServicesCarousel` → `ServicesStack` + `components/ui/ScrollStack` (`useWindowScroll`, no second root Lenis)
+- Fixed ScrollStack z-fight / clump: transform-invariant layout offsets (not getBoundingClientRect), ascending z-index, opaque card fills, rAF-throttled updates
+- Done this session: React Bits `TiltedCard` on all marketing cards (`components/ui/TiltedCard` + UI/section card wrappers)
+- Done this session: React Bits `CardNav` wired into `SiteHeader` (About / Work / Contact cards + GSAP expand)
 
 ## Next Up (resume here)
 
-1. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content (public site uses typed fallbacks until then)
-2. Optional: draft/preview after cutover; Payload schema sign-off as v1 canon; production `NEXT_PUBLIC_SITE_URL` at deploy
-3. Optional: adopt `AnimatedSection` on remaining marketing pages (Services, Portfolio, Contact)
-4. Optional: dual-model a11y/UX polish on motion stack; evaluate `@gsap/react` `useGSAP`
+1. Visual QA on `/` services stack (desktop + mobile; Lenis on/off + reduced motion)
+2. Visual QA: CardNav over home `HeroOpening` + interior pages (spacer vs overlay polish)
+3. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content (public site uses typed fallbacks until then)
+4. Optional: draft/preview after cutover; Payload schema sign-off as v1 canon; production `NEXT_PUBLIC_SITE_URL` at deploy
+5. Optional: adopt `AnimatedSection` on remaining marketing pages (Services, Portfolio, Contact)
+6. Optional: dual-model a11y/UX polish on motion stack; evaluate `@gsap/react` `useGSAP`
 
 **Done (pointers only):**
 
@@ -99,7 +104,9 @@ Operator CMS cutover and remaining open questions (schema sign-off, Deep Indigo,
 | Secret validation | `PAYLOAD_SECRET` required if `DATABASE_URL` set | Fail closed when CMS enabled |
 | Unmatched public URLs | `(frontend)/[...notFound]` → branded `not-found` | Dual root layouts (frontend/payload) |
 | Shell nav | Home, About, Services, Portfolio, Blog, Contact | Products/Community routes kept, hidden from nav |
-| Home composition | Hero → Partners → Projects → Services → Contact | 2026-07-11 redesign |
+| Home composition | HeroOpening → Partners → Projects → ServicesStack (ScrollStack) → Contact | 2026-07-15 services stack |
+| Home services UI | React Bits ScrollStack (`useWindowScroll`); reuse site Lenis, no nested root Lenis | Avoid dual smooth-scroll instances |
+| Shell header | React Bits CardNav (GSAP) via SiteHeader; cards About / Work / Contact | 2026-07-15 |
 | Contact URLs | `lib/contact/channels.ts` | Single source for fallbacks/nav/JSON-LD |
 | Motion stack | GSAP + ScrollTrigger + Lenis; Framer Motion micro only | Frontend layout providers; Payload admin excluded |
 | Motion demo | `/motion-lab` (noIndex, hidden from nav) | Architecture showcase before marketing adoption |

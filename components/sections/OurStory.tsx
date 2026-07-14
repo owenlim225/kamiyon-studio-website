@@ -1,4 +1,5 @@
 import { Container } from "@/components/ui/Container";
+import { TiltedCard, marketingCardTiltProps } from "@/components/ui/TiltedCard";
 import type { StorySection } from "@/lib/cms/types";
 
 type OurStoryProps = {
@@ -19,17 +20,18 @@ export function OurStory({ storySections }: OurStoryProps) {
 
         <div className="mt-10 space-y-8">
           {storySections.map((section, index) => (
-            <div
+            <TiltedCard
               key={section.title}
-              className={`rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-sm)] md:p-8 ${
-                index % 2 === 1 ? "md:ml-10" : "md:mr-10"
-              }`}
+              {...marketingCardTiltProps}
+              className={index % 2 === 1 ? "md:ml-10" : "md:mr-10"}
             >
-              <h3 className="font-display text-lg font-semibold text-[var(--text-primary)]">
-                {section.title}
-              </h3>
-              <p className="mt-3 text-base text-[var(--text-secondary)]">{section.body}</p>
-            </div>
+              <div className="rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-sm)] md:p-8">
+                <h3 className="font-display text-lg font-semibold text-[var(--text-primary)]">
+                  {section.title}
+                </h3>
+                <p className="mt-3 text-base text-[var(--text-secondary)]">{section.body}</p>
+              </div>
+            </TiltedCard>
           ))}
         </div>
       </Container>
