@@ -31,8 +31,9 @@ export function ServicesStack({ slides }: ServicesStackProps) {
 
   return (
     <section
+      id="home-services"
       aria-labelledby={sectionId}
-      className="bg-[var(--bg-primary)] py-16 md:py-24"
+      className="scroll-mt-4 bg-[var(--bg-primary)] py-16 md:py-24"
     >
       <Container>
         <div className="max-w-[680px]">

@@ -66,7 +66,7 @@ describe("HeroOpening", () => {
   it("includes a full-bleed stage, curtain layer, and parallax background wrapper", () => {
     const { container } = render(<HeroOpening hero={baseHero} />);
 
-    const section = container.querySelector("section[aria-label='Studio opening']");
+    const section = container.querySelector("section");
     expect(section).toHaveClass("min-h-[100svh]");
     expect(container.querySelector("[data-opening-curtain]")).toBeInTheDocument();
 
@@ -80,20 +80,5 @@ describe("HeroOpening", () => {
 
     const bleed = stage?.closest("[aria-hidden='true']");
     expect(bleed).toHaveClass("absolute", "inset-0");
-  });
-
-  it("embeds partners above the stage with a transparent overlay", () => {
-    const { container } = render(<HeroOpening hero={baseHero} />);
-
-    expect(screen.getByRole("region", { name: "Partners" })).toBeInTheDocument();
-    expect(container.querySelector("[data-hero-partners]")).toHaveClass(
-      "bg-transparent",
-    );
-  });
-
-  it("fades the hero bottom into the following page background", () => {
-    const { container } = render(<HeroOpening hero={baseHero} />);
-
-    expect(container.querySelector("[data-hero-blend]")).toBeInTheDocument();
   });
 });

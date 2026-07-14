@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { AnimatedSection } from "@/components/animation/AnimatedSection";
 import { Hero } from "@/components/sections/Hero";
+import { HomeLineSidebar } from "@/components/sections/HomeLineSidebar";
 import { HomeContact } from "@/components/sections/HomeContact";
 import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
 import { ProjectsBento } from "@/components/sections/ProjectsBento";
@@ -87,8 +88,12 @@ export default async function Home() {
 
   return (
     <>
-      {/* Brand-first opening embeds partners overlay; fades into projects. */}
+      <HomeLineSidebar />
+      {/* Brand-first opening uses its own GSAP entrance; section titles use WordPullUp. */}
       {hero ? <Hero hero={hero} /> : null}
+      <AnimatedSection as="div" distance={28}>
+        <PartnersMarquee eyebrow="Partners" />
+      </AnimatedSection>
       {/* ProjectsBento / HomeContact animate heading (WordPullUp) + body fade in-section. */}
       <ProjectsBento caseStudies={caseStudies} />
       {/* ScrollStack pins against window scroll — skip AnimatedSection wrapper. */}

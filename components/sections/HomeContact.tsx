@@ -26,8 +26,9 @@ export function HomeContact({
 }: HomeContactProps) {
   return (
     <section
+      id="home-contact"
       aria-labelledby="home-contact-heading"
-      className="bg-[var(--bg-primary)] py-16 md:py-24"
+      className="scroll-mt-4 bg-[var(--bg-primary)] py-16 md:py-24"
     >
       <Container className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">
         <div>

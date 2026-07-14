@@ -25,8 +25,9 @@ export function HeroOpening({ hero: _hero }: HeroOpeningProps) {
 
   return (
     <section
+      id="home-hero"
       ref={rootRef}
-      className="relative min-h-[100svh] overflow-hidden bg-[var(--color-charcoal)]"
+      className="relative min-h-[100svh] scroll-mt-0 overflow-hidden bg-[var(--color-charcoal)]"
       aria-label="Studio opening"
     >
       <div className="absolute inset-0" aria-hidden="true">

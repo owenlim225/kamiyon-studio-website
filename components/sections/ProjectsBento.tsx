@@ -27,7 +27,10 @@ export function ProjectsBento({ caseStudies }: ProjectsBentoProps) {
   const smallRows = chunkSlots(small, 3);
 
   return (
-    <section className="bg-[var(--bg-primary)] py-16 md:py-24">
+    <section
+      id="home-projects"
+      className="scroll-mt-4 bg-[var(--bg-primary)] py-16 md:py-24"
+    >
       <Container>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-[680px]">

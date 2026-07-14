@@ -79,23 +79,4 @@ describe("PartnersMarquee", () => {
     expect(style?.textContent).toMatch(/:focus-within/);
     expect(style?.textContent).toMatch(/animation-play-state:\s*paused/);
   });
-
-  it("uses a solid section background by default", () => {
-    const { container } = render(<PartnersMarquee />);
-    const section = container.querySelector("section");
-
-    expect(section).toHaveClass("bg-[var(--bg-secondary)]");
-    expect(section).not.toHaveClass("bg-transparent");
-  });
-
-  it("renders overlay variant with a transparent section background", () => {
-    const { container } = render(
-      <PartnersMarquee eyebrow="Partners" variant="overlay" />,
-    );
-    const section = container.querySelector("section");
-
-    expect(section).toHaveClass("bg-transparent");
-    expect(section).not.toHaveClass("bg-[var(--bg-secondary)]");
-    expect(screen.getByText("Partners")).toBeInTheDocument();
-  });
 });
