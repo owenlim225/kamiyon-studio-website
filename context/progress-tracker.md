@@ -106,7 +106,7 @@ Closed header: logo left + unequal 2-bar burger right (all breakpoints). Open: C
 | Secret validation | `PAYLOAD_SECRET` required if `DATABASE_URL` set | Fail closed when CMS enabled |
 | Unmatched public URLs | `(frontend)/[...notFound]` → branded `not-found` | Dual root layouts (frontend/payload) |
 | Shell nav | Home, About, Services, Portfolio, Blog, Contact | Products/Community routes kept, hidden from nav |
-| Home composition | HeroOpening (brand + motto) → Partners → Projects → ServicesStack → Contact | 2026-07-15 hero list removed |
+| Home composition | HeroOpening (brand + motto + partners overlay, fade into projects) → Projects → ServicesStack → Contact | 2026-07-15 |
 | Home services UI | React Bits ScrollStack (`useWindowScroll`); reuse site Lenis, no nested root Lenis | Avoid dual smooth-scroll instances |
 | Shell header | CardNav via SiteHeader — closed: logo+burger; open: top-right vertical About/Work/Contact; transparent on `/` | 2026-07-15 restyle |
 | Contact URLs | `lib/contact/channels.ts` | Single source for fallbacks/nav/JSON-LD |

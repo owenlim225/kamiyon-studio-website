@@ -9,24 +9,15 @@ type PartnersMarqueeEyebrow = "Partners" | "Clients";
 type PartnersMarqueeProps = {
   eyebrow?: PartnersMarqueeEyebrow;
   partners?: PartnerPlaceholder[];
-  /** `overlay` sits on dark hero media with a transparent section background. */
-  variant?: "default" | "overlay";
 };
 
 function PartnerSlotList({
   partners,
   ariaHidden = false,
-  variant = "default",
 }: {
   partners: PartnerPlaceholder[];
   ariaHidden?: boolean;
-  variant?: "default" | "overlay";
 }) {
-  const slotClassName =
-    variant === "overlay"
-      ? "inline-flex min-h-14 min-w-[10rem] items-center justify-center rounded-[var(--radius-card)] border border-[var(--color-ivory)]/25 bg-[var(--color-ivory)]/10 px-6 py-3 text-sm font-medium uppercase tracking-wide text-[var(--color-ivory)]/80 backdrop-blur-sm md:min-w-[12rem]"
-      : "inline-flex min-h-16 min-w-[10rem] items-center justify-center rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-4 text-sm font-medium uppercase tracking-wide text-[var(--text-muted)] shadow-[var(--shadow-sm)] md:min-w-[12rem]";
-
   return (
     <ul
       role="list"
@@ -35,7 +26,10 @@ function PartnerSlotList({
     >
       {partners.map((partner) => (
         <li key={`${ariaHidden ? "duplicate-" : ""}${partner.id}`}>
-          <span className={slotClassName} aria-label={partner.label}>
+          <span
+            className="inline-flex min-h-16 min-w-[10rem] items-center justify-center rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-4 text-sm font-medium uppercase tracking-wide text-[var(--text-muted)] shadow-[var(--shadow-sm)] md:min-w-[12rem]"
+            aria-label={partner.label}
+          >
             {partner.label}
           </span>
         </li>
@@ -47,30 +41,19 @@ function PartnerSlotList({
 export function PartnersMarquee({
   eyebrow,
   partners = PARTNER_PLACEHOLDERS,
-  variant = "default",
 }: PartnersMarqueeProps) {
   const sectionLabel = eyebrow ?? "Partner logos";
-  const isOverlay = variant === "overlay";
 
   return (
     <section
-      data-hero-partners={isOverlay ? "" : undefined}
-      className={
-        isOverlay
-          ? "bg-transparent py-8 md:py-10"
-          : "bg-[var(--bg-secondary)] py-12 md:py-16"
-      }
+      className="bg-[var(--bg-secondary)] py-12 md:py-16"
       aria-label={sectionLabel}
     >
       <Container>
         {eyebrow ? (
           <p
             id="partners-marquee-eyebrow"
-            className={
-              isOverlay
-                ? "text-center text-sm font-semibold uppercase tracking-wide text-[var(--color-ivory)]/70"
-                : "text-center text-sm font-semibold uppercase tracking-wide text-sakura-ink"
-            }
+            className="text-center text-sm font-semibold uppercase tracking-wide text-sakura-ink"
           >
             {eyebrow}
           </p>
@@ -84,12 +67,8 @@ export function PartnersMarquee({
         >
           <div className="partners-marquee__viewport overflow-hidden">
             <div className="partners-marquee__track flex w-max">
-              <PartnerSlotList partners={partners} variant={variant} />
-              <PartnerSlotList
-                partners={partners}
-                ariaHidden
-                variant={variant}
-              />
+              <PartnerSlotList partners={partners} />
+              <PartnerSlotList partners={partners} ariaHidden />
             </div>
           </div>
         </div>

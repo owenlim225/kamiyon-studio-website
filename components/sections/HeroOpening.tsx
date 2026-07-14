@@ -9,8 +9,6 @@ import { useParallax } from "@/hooks/useParallax";
 import type { HomeHero } from "@/lib/cms/types";
 import { SITE_MOTTO } from "@/lib/seo/constants";
 
-import { PartnersMarquee } from "./PartnersMarquee";
-
 type HeroOpeningProps = {
   hero: HomeHero;
 };
@@ -18,8 +16,7 @@ type HeroOpeningProps = {
 const HERO_BACKGROUND = "/assets/background.png";
 
 /**
- * Full-bleed opening stage: brand title + motto over atmospheric background,
- * with partners overlaid at the base and a soft fade into the next section.
+ * Full-bleed opening stage: brand title + motto over atmospheric background.
  * CMS headline/subheadline/CTA stay on the hero prop for typing — not rendered.
  */
 export function HeroOpening({ hero: _hero }: HeroOpeningProps) {
@@ -46,7 +43,7 @@ export function HeroOpening({ hero: _hero }: HeroOpeningProps) {
             className="object-cover object-[center_35%] opacity-90"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-charcoal)]/75 via-[var(--color-charcoal)]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-charcoal)]/75 via-[var(--color-charcoal)]/45 to-[var(--color-charcoal)]/80" />
         <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-charcoal)]/55 via-transparent to-[var(--color-charcoal)]/40" />
       </div>
 
@@ -78,17 +75,7 @@ export function HeroOpening({ hero: _hero }: HeroOpeningProps) {
             </p>
           </div>
         </Container>
-
-        <div className="relative z-20 pb-2 md:pb-4">
-          <PartnersMarquee eyebrow="Partners" variant="overlay" />
-        </div>
       </div>
-
-      <div
-        data-hero-blend
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[15] h-40 bg-gradient-to-b from-transparent via-[var(--bg-primary)]/55 to-[var(--bg-primary)] md:h-52"
-        aria-hidden="true"
-      />
     </section>
   );
 }

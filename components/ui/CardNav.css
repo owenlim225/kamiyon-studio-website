@@ -17,15 +17,22 @@
 .card-nav {
   display: block;
   width: 100%;
-  height: 60px;
+  height: 96px;
   padding: 0;
-  background-color: var(--bg-surface);
-  border: 0.5px solid color-mix(in srgb, var(--color-charcoal) 12%, transparent);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-md);
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
   position: relative;
   overflow: hidden;
   will-change: height;
+}
+
+/* Panel surface only when the menu is open */
+.card-nav.open {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-md);
 }
 
 .card-nav-container--open .card-nav {
@@ -33,28 +40,16 @@
   max-width: 22rem;
 }
 
-/* Home hero overlay: stay readable but as transparent as possible when collapsed */
-.card-nav.card-nav--transparent:not(.open) {
-  border-color: color-mix(in srgb, var(--color-ivory) 28%, transparent);
-  box-shadow: none;
-  backdrop-filter: blur(8px);
-}
-
-.card-nav.card-nav--transparent.open {
-  border-color: color-mix(in srgb, var(--color-charcoal) 12%, transparent);
-  box-shadow: var(--shadow-md);
-}
-
 .card-nav-top {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  height: 96px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.25rem;
   z-index: 2;
 }
 
@@ -97,10 +92,10 @@
   align-items: flex-end;
   justify-content: center;
   cursor: pointer;
-  gap: 6px;
+  gap: 16px;
   background: none;
   border: none;
-  padding: 0.25rem;
+  padding: 0.35rem;
   color: inherit;
 }
 
@@ -115,7 +110,7 @@
 }
 
 .hamburger-line {
-  height: 2px;
+  height: 5px;
   background-color: currentColor;
   transition:
     transform 0.25s ease,
@@ -126,11 +121,11 @@
 }
 
 .hamburger-line--long {
-  width: 28px;
+  width: 72px;
 }
 
 .hamburger-line--short {
-  width: 16px;
+  width: 44px;
 }
 
 .hamburger-menu.open {
@@ -139,15 +134,15 @@
 
 .hamburger-menu.open .hamburger-line--long,
 .hamburger-menu.open .hamburger-line--short {
-  width: 22px;
+  width: 56px;
 }
 
 .hamburger-menu.open .hamburger-line:first-child {
-  transform: translateY(4px) rotate(45deg);
+  transform: translateY(10.5px) rotate(45deg);
 }
 
 .hamburger-menu.open .hamburger-line:last-child {
-  transform: translateY(-4px) rotate(-45deg);
+  transform: translateY(-10.5px) rotate(-45deg);
 }
 
 .logo-container {
@@ -168,7 +163,7 @@
 }
 
 .card-nav-logo {
-  height: 28px;
+  height: 80px;
   width: auto;
 }
 
@@ -208,7 +203,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 60px;
+  top: 96px;
   bottom: 0;
   padding: 0.5rem;
   display: flex;

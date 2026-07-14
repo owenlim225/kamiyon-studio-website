@@ -91,13 +91,11 @@ export function CardNav({
 }: CardNavProps) {
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const ghostCollapsed = transparent && !isExpanded;
-  const resolvedBaseColor = ghostCollapsed
-    ? "color-mix(in srgb, var(--color-charcoal) 18%, transparent)"
-    : baseColor;
-  const resolvedMenuColor = ghostCollapsed
-    ? "var(--color-ivory)"
-    : menuColor;
+  /** Collapsed chrome is invisible — logo + burger only; panel surface appears when open. */
+  const topBarHeight = 96;
+  const resolvedBaseColor = isExpanded ? baseColor : "transparent";
+  const resolvedMenuColor =
+    transparent && !isExpanded ? "var(--color-ivory)" : menuColor;
   const navRef = useRef<HTMLElement | null>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
@@ -122,7 +120,6 @@ export function CardNav({
 
     contentEl.offsetHeight;
 
-    const topBar = 60;
     const padding = 16;
     const contentHeight = contentEl.scrollHeight;
 
@@ -131,7 +128,7 @@ export function CardNav({
     contentEl.style.position = wasPosition;
     contentEl.style.height = wasHeight;
 
-    return topBar + contentHeight + padding;
+    return topBarHeight + contentHeight + padding;
   };
 
   const createTimeline = () => {
@@ -141,7 +138,7 @@ export function CardNav({
     const cards = cardsRef.current.filter(Boolean);
     const duration = prefersReducedMotion() ? 0 : 0.4;
 
-    gsap.set(navEl, { height: 60, overflow: "hidden" });
+    gsap.set(navEl, { height: topBarHeight, overflow: "hidden" });
     gsap.set(cards, { y: 50, opacity: 0 });
 
     const tl = gsap.timeline({ paused: true });

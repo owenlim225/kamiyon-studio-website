@@ -87,11 +87,8 @@ export default async function Home() {
 
   return (
     <>
-      {/* Brand-first opening uses its own GSAP entrance; section titles use WordPullUp. */}
+      {/* Brand-first opening embeds partners overlay; fades into projects. */}
       {hero ? <Hero hero={hero} /> : null}
-      <AnimatedSection as="div" distance={28}>
-        <PartnersMarquee eyebrow="Partners" />
-      </AnimatedSection>
       {/* ProjectsBento / HomeContact animate heading (WordPullUp) + body fade in-section. */}
       <ProjectsBento caseStudies={caseStudies} />
       {/* ScrollStack pins against window scroll — skip AnimatedSection wrapper. */}

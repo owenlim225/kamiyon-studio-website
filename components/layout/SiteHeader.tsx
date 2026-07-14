@@ -35,7 +35,7 @@ export function SiteHeader({
         className={
           overlay
             ? "h-0"
-            : "h-[calc(1.2em+60px)] md:h-[calc(2em+60px)]"
+            : "h-[calc(1.2em+96px)] md:h-[calc(2em+96px)]"
         }
         aria-hidden="true"
       />
