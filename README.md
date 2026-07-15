@@ -101,7 +101,8 @@ PAYLOAD_SECRET=your_payload_secret
 DATABASE_URL=postgres://user:pass@localhost:5432/kamiyon
 
 # SEO / OG images (optional; localhost:3000 is default)
-NEXT_PUBLIC_SITE_URL=https://kamiyon.studio
+# Production (Vercel): https://kamiyonstudio.com — no trailing slash, apex only
+NEXT_PUBLIC_SITE_URL=https://kamiyonstudio.com
 ```
 
 See `.env.example` for all options.
@@ -120,7 +121,7 @@ Visit `http://localhost:3000`. The site will render with **fallback content** if
 |---|---|---|---|
 | `DATABASE_URL` | ✓ for `/admin` | Postgres connection for Payload | — |
 | `PAYLOAD_SECRET` | ✓ for `/admin` | Payload encryption secret | — |
-| `NEXT_PUBLIC_SITE_URL` | ✗ | Canonical site URL for OG images, sitemap | `http://localhost:3000` |
+| `NEXT_PUBLIC_SITE_URL` | ✗ | Canonical site URL for OG images, sitemap, robots | `http://localhost:3000` (prod: `https://kamiyonstudio.com`) |
 
 **Note:** The site is designed to work without CMS credentials during development. Missing env vars trigger fallback-first rendering from `lib/cms/fallbacks/*`. For `/admin` and live CMS content, `DATABASE_URL` and `PAYLOAD_SECRET` are required.
 
