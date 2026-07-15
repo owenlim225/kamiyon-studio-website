@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const {
   prefersReducedMotionMock,
   scrollToMock,
+  stopMock,
+  startMock,
   lenisOnMock,
   lenisOffMock,
   mockLenis,
@@ -14,11 +16,15 @@ const {
       opts?.onComplete?.();
     },
   );
+  const stopMock = vi.fn();
+  const startMock = vi.fn();
   const lenisOnMock = vi.fn();
   const lenisOffMock = vi.fn();
   const mockLenis = {
     scroll: 0,
     scrollTo: scrollToMock,
+    stop: stopMock,
+    start: startMock,
     on: lenisOnMock,
     off: lenisOffMock,
   };
@@ -28,6 +34,8 @@ const {
   return {
     prefersReducedMotionMock,
     scrollToMock,
+    stopMock,
+    startMock,
     lenisOnMock,
     lenisOffMock,
     mockLenis,
@@ -51,6 +59,10 @@ function getLenisScrollHandler(): () => void {
     throw new Error("No lenis scroll handler registered");
   }
   return call[1] as () => void;
+}
+
+function markUserWheel() {
+  window.dispatchEvent(new Event("wheel"));
 }
 
 describe("useHeroScrollBounce", () => {
@@ -78,37 +90,41 @@ describe("useHeroScrollBounce", () => {
     expect(result.current.visible).toBe(true);
   });
 
-  it("scroll past threshold invokes return-to-top via lenis and hides tip", () => {
+  it("user wheel past threshold invokes return-to-top via lenis and hides tip", () => {
     const { result } = renderHook(() =>
       useHeroScrollBounce({ threshold: 24, maxBounces: 1 }),
     );
 
-    mockLenis.scroll = 30;
     act(() => {
+      markUserWheel();
+      mockLenis.scroll = 30;
       getLenisScrollHandler()();
     });
 
+    expect(stopMock).toHaveBeenCalled();
     expect(scrollToMock).toHaveBeenCalledWith(
       0,
       expect.objectContaining({
+        force: true,
         onComplete: expect.any(Function),
       }),
     );
+    expect(startMock).toHaveBeenCalled();
     expect(result.current.visible).toBe(false);
   });
 
-  it("after max bounces, further scrolls do not return to top", () => {
+  it("after max bounces, further user scrolls do not return to top", () => {
     scrollToMock.mockImplementation(
       (_target: number, opts?: { onComplete?: () => void }) => {
-        // defer completion so re-entrancy lock is observable
         void opts;
       },
     );
 
     renderHook(() => useHeroScrollBounce({ threshold: 24, maxBounces: 1 }));
 
-    mockLenis.scroll = 30;
     act(() => {
+      markUserWheel();
+      mockLenis.scroll = 30;
       getLenisScrollHandler()();
     });
     expect(scrollToMock).toHaveBeenCalledTimes(1);
@@ -119,8 +135,9 @@ describe("useHeroScrollBounce", () => {
     });
 
     scrollToMock.mockClear();
-    mockLenis.scroll = 50;
     act(() => {
+      markUserWheel();
+      mockLenis.scroll = 50;
       getLenisScrollHandler()();
     });
 
@@ -132,8 +149,9 @@ describe("useHeroScrollBounce", () => {
 
     renderHook(() => useHeroScrollBounce({ threshold: 24 }));
 
-    mockLenis.scroll = 30;
     act(() => {
+      markUserWheel();
+      mockLenis.scroll = 30;
       getLenisScrollHandler()();
     });
 
@@ -150,8 +168,9 @@ describe("useHeroScrollBounce", () => {
 
     expect(result.current.visible).toBe(false);
 
-    mockLenis.scroll = 30;
     act(() => {
+      markUserWheel();
+      mockLenis.scroll = 30;
       getLenisScrollHandler()();
     });
 
@@ -170,6 +189,7 @@ describe("useHeroScrollBounce", () => {
     });
 
     act(() => {
+      markUserWheel();
       window.dispatchEvent(new Event("scroll"));
     });
 
@@ -179,12 +199,39 @@ describe("useHeroScrollBounce", () => {
     });
   });
 
-  it("cleans up lenis scroll listener on unmount", () => {
-    const { unmount } = renderHook(() => useHeroScrollBounce());
+  it("programmatic scroll alone does not trigger bounce", () => {
+    renderHook(() => useHeroScrollBounce({ threshold: 24 }));
+
+    act(() => {
+      mockLenis.scroll = 80;
+      getLenisScrollHandler()();
+    });
+
+    expect(scrollToMock).not.toHaveBeenCalled();
+  });
+
+  it("cleans up lenis scroll listener and return settle timer on unmount", () => {
+    scrollToMock.mockImplementation(() => {
+      // Leave return in-flight (no onComplete).
+    });
+    const clearTimeoutSpy = vi.spyOn(window, "clearTimeout");
+
+    const { unmount } = renderHook(() =>
+      useHeroScrollBounce({ threshold: 24 }),
+    );
 
     const handler = getLenisScrollHandler();
+
+    act(() => {
+      markUserWheel();
+      mockLenis.scroll = 30;
+      handler();
+    });
+
     unmount();
 
     expect(lenisOffMock).toHaveBeenCalledWith("scroll", handler);
+    expect(clearTimeoutSpy).toHaveBeenCalled();
+    clearTimeoutSpy.mockRestore();
   });
 });

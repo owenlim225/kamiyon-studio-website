@@ -36,35 +36,34 @@ Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`proje
 
 ## Current Phase
 
-**Home section navigation** — React Bits LineSidebar on `/`.
+**Home hero scroll helper** — sakura tip + one-shot bounce-to-top on `/`.
 
 ## Current Goal
 
-Fixed left rail on desktop listing home sections (Hero → Contact) with smooth scroll + scroll-spy active state.
+Ship a small upper-hero “Scroll down” balloon that bounce-returns once on user scroll, then releases normal scrolling (Lenis + LineSidebar intact).
 
 ## In Progress
 
-- Done this session: Motion blur on scroll reveals (`useFadeIn` / `useReveal` / `useStagger` + `AnimatedSection`) — soft enter blur + velocity blur while elements pass through viewport; `lib/motion/motion-blur` + `attach-velocity-blur`; reduced-motion / coarse-pointer safe
-- Done this session: `LineSidebar` + `HomeLineSidebar` on `/` (desktop-only fixed left rail); `lib/home/section-nav` anchors; section `id`s + `scroll-mt` on hero/partners/projects/services/contact; scroll-spy via `IntersectionObserver`; unit tests for sidebar + wiring
-- Done this session: Restored `PartnersMarquee` as its own home section (reverted brief hero-overlay experiment); removed overlay/variant tests
-- Done prior (committed): CardNav closed chrome (logo left / burger right, CTA hidden); open panel top-right vertical About/Work/Contact; Escape + focus trap; unit + e2e nav smoke
-- Done prior (committed): HeroOpening brand-first (static `/assets/background.png`, SplitText + `SITE_MOTTO`); dropped featured opening list / `openingItems` from home page
-- Done prior: `WordPullUp` + `lib/utils` `cn`; home `ProjectsBento` / `ServicesStack` / `HomeContact` adopted; motion-lab demo; documented in `ui-context.md` / `code-standards.md`
-- Done prior: `ServicesCarousel` → `ServicesStack` + `ScrollStack`; `TiltedCard` on marketing cards; `CardNav` in `SiteHeader`; HeroOpening GSAP `useParallax` scrub
+- Done this session: `useHeroScrollBounce` (Lenis-aware, user-gesture gated, reduced-motion skip, dismiss + cleanup) + `HeroScrollHelper` in `HeroOpening`; unit tests green
+- Done this session: Motion blur on scroll reveals (`useFadeIn` / `useReveal` / `useStagger` + `AnimatedSection`) — soft enter blur + velocity blur; `lib/motion/motion-blur` + `attach-velocity-blur`; reduced-motion / coarse-pointer safe
+- Done this session: `LineSidebar` + `HomeLineSidebar` on `/` (desktop-only fixed left rail); `lib/home/section-nav` anchors; section `id`s + `scroll-mt`; scroll-spy via `IntersectionObserver`
+- Done this session: Restored `PartnersMarquee` as its own home section (reverted brief hero-overlay experiment)
+- Done prior (committed): CardNav closed/open chrome; HeroOpening brand-first; WordPullUp / ScrollStack / CardNav / parallax stack
 
 ## Next Up (resume here)
 
-1. Visual QA: motion blur on `/` and `/motion-lab` (desktop scroll speed → soft blur; stops when idle; reduced motion / touch unchanged)
-2. Visual QA: LineSidebar on `/` (desktop rail; hidden below `lg`; click → smooth scroll; scroll-spy active; reduced motion; Lenis on/off)
-3. Visual QA: partners as standalone section again (not hero overlay) + full home scroll path Hero → Contact
-4. Visual QA: header closed/open + simplified hero on `/` and `/about` (desktop + mobile; reduced motion; Escape/focus)
-5. Visual QA: WordPullUp + body fade on `/`; services stack (Lenis on/off + reduced motion)
-6. Document LineSidebar in `ui-context.md` when phase closes
-7. Roll WordPullUp + fade-in standard to About / Services / Portfolio / Contact page headings
-8. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content
-9. Optional: draft/preview after cutover; Payload schema sign-off; production `NEXT_PUBLIC_SITE_URL` at deploy
-10. Optional: dual-model a11y/UX polish on motion stack
-11. Optional: remove unused `lib/home/opening-items` if nothing else adopts it
+1. Visual QA: hero scroll helper on `/` (desktop + mobile; Lenis on/off; reduced motion; dismiss; LineSidebar after bounce)
+2. Visual QA: motion blur on `/` and `/motion-lab` (desktop scroll speed → soft blur; stops when idle; reduced motion / touch unchanged)
+3. Visual QA: LineSidebar on `/` (desktop rail; hidden below `lg`; click → smooth scroll; scroll-spy; reduced motion; Lenis on/off)
+4. Visual QA: partners as standalone section + full home scroll path Hero → Contact
+5. Visual QA: header closed/open + simplified hero on `/` and `/about` (desktop + mobile; reduced motion; Escape/focus)
+6. Visual QA: WordPullUp + body fade on `/`; services stack (Lenis on/off + reduced motion)
+7. Document LineSidebar in `ui-context.md` when phase closes
+8. Roll WordPullUp + fade-in standard to About / Services / Portfolio / Contact page headings
+9. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content
+10. Optional: draft/preview after cutover; Payload schema sign-off; production `NEXT_PUBLIC_SITE_URL` at deploy
+11. Optional: dual-model a11y/UX polish on motion stack
+12. Optional: remove unused `lib/home/opening-items` if nothing else adopts it
 
 **Done (pointers only):**
 
@@ -114,6 +113,7 @@ Fixed left rail on desktop listing home sections (Hero → Contact) with smooth 
 | Shell nav | Home, About, Services, Portfolio, Blog, Contact | Products/Community routes kept, hidden from nav |
 | Home composition | HeroOpening (brand + motto) → Partners → Projects → ServicesStack → Contact | 2026-07-15: list removed; partners overlay trial reverted |
 | Home section nav | React Bits LineSidebar (`HomeLineSidebar`); desktop-only (`lg+`) fixed left rail; `HOME_SECTION_NAV` + scroll-spy | 2026-07-15 |
+| Home hero scroll tip | `HeroScrollHelper` + `useHeroScrollBounce`; user-gesture gated one-shot return-to-top; reduced-motion skips hijack | 2026-07-15 |
 | Home services UI | React Bits ScrollStack (`useWindowScroll`); reuse site Lenis, no nested root Lenis | Avoid dual smooth-scroll instances |
 | Shell header | CardNav via SiteHeader — closed: logo+burger; open: top-right vertical About/Work/Contact; transparent on `/` | 2026-07-15 restyle |
 | Contact URLs | `lib/contact/channels.ts` | Single source for fallbacks/nav/JSON-LD |

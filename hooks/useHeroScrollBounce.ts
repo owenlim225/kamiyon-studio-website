@@ -15,6 +15,23 @@ export type UseHeroScrollBounceResult = {
   dismiss: () => void;
 };
 
+const SCROLL_INTENT_KEYS = new Set([
+  "ArrowDown",
+  "PageDown",
+  " ",
+  "Spacebar",
+  "End",
+]);
+
+const RETURN_SETTLE_MS = 800;
+/** How long a user gesture remains “fresh” for scroll bounce gating. */
+const USER_INTENT_MS = 500;
+
+/**
+ * One-shot (configurable) scroll bounce on the home hero: after user-driven
+ * scroll past `threshold`, smoothly return to y=0, then release.
+ * Ignores programmatic scrolls (e.g. LineSidebar scrollIntoView).
+ */
 export function useHeroScrollBounce(
   options: UseHeroScrollBounceOptions = {},
 ): UseHeroScrollBounceResult {
@@ -24,14 +41,41 @@ export function useHeroScrollBounce(
   const bounceCountRef = useRef(0);
   const isReturningRef = useRef(false);
   const dismissedRef = useRef(false);
+  const userIntentUntilRef = useRef(0);
+  const returnCleanupRef = useRef<(() => void) | null>(null);
 
-  const completeReturn = useCallback(() => {
-    isReturningRef.current = false;
+  const clearReturnCleanup = useCallback(() => {
+    returnCleanupRef.current?.();
+    returnCleanupRef.current = null;
   }, []);
 
+  const completeReturn = useCallback(() => {
+    clearReturnCleanup();
+    isReturningRef.current = false;
+  }, [clearReturnCleanup]);
+
   const returnToTop = useCallback(() => {
+    clearReturnCleanup();
+
     if (lenis) {
-      lenis.scrollTo(0, { onComplete: completeReturn });
+      lenis.stop();
+
+      const settleTimer = window.setTimeout(() => {
+        lenis.start();
+        completeReturn();
+      }, RETURN_SETTLE_MS);
+
+      returnCleanupRef.current = () => {
+        window.clearTimeout(settleTimer);
+      };
+
+      lenis.scrollTo(0, {
+        force: true,
+        onComplete: () => {
+          lenis.start();
+          completeReturn();
+        },
+      });
       return;
     }
 
@@ -39,28 +83,28 @@ export function useHeroScrollBounce(
 
     const onScroll = () => {
       if (window.scrollY <= 0) {
-        window.removeEventListener("scroll", onScroll);
-        window.clearTimeout(fallbackTimer);
         completeReturn();
       }
     };
 
-    // Smooth scroll may not emit a final scrollY===0 event in all browsers.
-    const fallbackTimer = window.setTimeout(() => {
-      window.removeEventListener("scroll", onScroll);
+    const settleTimer = window.setTimeout(() => {
       completeReturn();
-    }, 800);
+    }, RETURN_SETTLE_MS);
 
     window.addEventListener("scroll", onScroll, { passive: true });
-  }, [lenis, completeReturn]);
+    returnCleanupRef.current = () => {
+      window.clearTimeout(settleTimer);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [lenis, completeReturn, clearReturnCleanup]);
 
-  const handleScroll = useCallback(
+  const tryBounce = useCallback(
     (scrollY: number) => {
       if (dismissedRef.current || isReturningRef.current) {
         return;
       }
 
-      if (scrollY <= threshold) {
+      if (performance.now() > userIntentUntilRef.current) {
         return;
       }
 
@@ -72,10 +116,14 @@ export function useHeroScrollBounce(
         return;
       }
 
+      if (scrollY <= threshold) {
+        return;
+      }
+
       bounceCountRef.current += 1;
       isReturningRef.current = true;
+      userIntentUntilRef.current = 0;
 
-      // Hide tip once bounce budget is consumed (matches dismiss path).
       if (bounceCountRef.current >= maxBounces) {
         setVisible(false);
       }
@@ -85,32 +133,67 @@ export function useHeroScrollBounce(
     [maxBounces, returnToTop, threshold],
   );
 
+  const markUserIntent = useCallback(() => {
+    userIntentUntilRef.current = performance.now() + USER_INTENT_MS;
+  }, []);
+
   const dismiss = useCallback(() => {
     dismissedRef.current = true;
+    clearReturnCleanup();
+    isReturningRef.current = false;
     setVisible(false);
-  }, []);
+  }, [clearReturnCleanup]);
+
+  useEffect(() => {
+    const onWheel = () => {
+      markUserIntent();
+    };
+
+    const onTouchMove = () => {
+      markUserIntent();
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!SCROLL_INTENT_KEYS.has(event.key)) {
+        return;
+      }
+      markUserIntent();
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [markUserIntent]);
 
   useEffect(() => {
     if (lenis) {
       const onScroll = () => {
-        handleScroll(lenis.scroll);
+        tryBounce(lenis.scroll);
       };
 
       lenis.on("scroll", onScroll);
       return () => {
         lenis.off("scroll", onScroll);
+        clearReturnCleanup();
       };
     }
 
     const onScroll = () => {
-      handleScroll(window.scrollY);
+      tryBounce(window.scrollY);
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
+      clearReturnCleanup();
     };
-  }, [handleScroll, lenis]);
+  }, [tryBounce, lenis, clearReturnCleanup]);
 
   return { visible, dismiss };
 }
