@@ -1,22 +1,26 @@
 ## Application Building Context
 
-Read the following files in order before implementing
-or making any architectural decision:
+**Primary source of truth for website build decisions:**
+`context/WEBSITE-ESSENTIAL-CONTEXT.md`
+(Sanity + Cloudflare target stack, IA, performance budgets,
+motion policy, migration roadmap). Prefer it over older
+Payload-era notes in `architecture.md` / `progress-tracker.md`.
 
-1. `context/project-overview.md` — product definition,
-   goals, features, and scope
-2. `context/architecture.md` — system structure,
-   boundaries, storage model, and invariants
-3. `context/ui-context.md` — theme, colors, typography,
-   and component conventions
-4. `context/code-standards.md` — implementation rules
-   and conventions
-5. `context/ai-workflow-rules.md` — development workflow,
+Then read as needed (do not load archives unless tracing history):
+
+1. `context/WEBSITE-ESSENTIAL-CONTEXT.md` — locked target
+   architecture, content model, budgets, open questions
+2. `context/ui-context.md` — theme, colors, typography,
+   and component conventions (until fully merged above)
+3. `context/code-standards.md` — implementation rules
+   (adapt CMS env sections to Sanity/R2 when implementing)
+4. `context/ai-workflow-rules.md` — development workflow,
    scoping rules, and delivery approach
-6. `context/progress-tracker.md` — current phase,
-   open questions, next steps, and architecture decisions
-7. `context/completed/README.md` — index of archived
-   milestones (read when tracing history)
+5. `context/progress-tracker.md` — current phase notes
+   (may lag the essential context during CMS migration)
+6. `context/project-overview.md` — product definition
+   (supplementary; essential context wins on stack)
+7. `context/completed/README.md` — archived milestones only
 
 Update `context/progress-tracker.md` after each
 meaningful implementation change.

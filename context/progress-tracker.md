@@ -17,53 +17,48 @@ When a task/phase is marked complete:
 
 ## Canon Analysis Summary (abbreviated)
 
-Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`project-overview.md`](./project-overview.md).
+Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`project-overview.md`](./project-overview.md). **Stack/design locks:** [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md).
 
 | Area | Key facts |
 | --- | --- |
 | Identity | Kamiyon Studio — Founded 2024 — Biñan City, Laguna — Motto **Create. Play. Inspire.** — 6 team members — Mascot Kami-chan |
-| Site scope | Routes: Home, About, Services, Products, Portfolio, Community, Contact, Blog (stub) — Payload CMS + typed fallbacks — External contact only (no forms) |
-| Nav (shell) | Home, About, Services, Portfolio, Blog, Contact — Products/Community hidden from header/footer (routes preserved) |
+| Site scope | Home, About, Services, Products, Portfolio, Community, Blog, Contact, Motion Lab (noindex), Studio (noindex) |
+| Target stack | Sanity + OpenNext (CF Pages/Workers free) + R2 media + Resend + CF Web Analytics |
+| Nav (locked) | Home, About, Services, **Products**, Portfolio, **Community**, Blog, Contact |
 | Products (canon IP) | Eclipse, Vocabu Wildlife Edition, Afterschool Cleanup |
 | Services | 4 categories, 10 service areas (`docs/services/services.md`) |
-| CMS (Payload) | Globals: `site-settings`, `home-page`, `about-page`, `contact-page` — Collections: `team-members`, `service-categories`, `services`, `products`, `case-studies`, `community-items`, `media`, `users` — see `architecture.md` |
-| Design tokens | Sakura `#f97695` (confirmed); Warm Ivory/Charcoal/Soft Gold extracted Phase 9; Deep Indigo TBD — Fonts: Poppins (UI), Montserrat (headlines) |
-| Placeholder gaps | Social URLs + public email **wired 2026-07-10** (operator-provided; not yet in canon docs); no named clients or community events in canon — never fabricate |
+| Design tokens | Primary `#FF7998` · Secondary `#E9C080` · Black `#201013` · White `#F8F8F8` · Fonts: Geologica (UI/display), Montserrat (body) |
+| Contact | Form (Resend) + external links |
+| Placeholder gaps | No named clients or community events in canon — never fabricate |
 
-**Known conflicts:** README motto "Play. Question. Create." vs canon "Create. Play. Inspire." (website uses canon). `typography.md` / `consultation-process.md` are erroneous duplicates.
+**Known conflicts:** README motto "Play. Question. Create." vs canon "Create. Play. Inspire." (website uses canon). Repo still on Payload until Phase D. Nav code still hides Products/Community (T16).
 
 ---
 
 ## Current Phase
 
-**Home hero scroll helper** — sakura tip + one-shot bounce-to-top on `/`.
+**Phase A complete → Phase B next:** Sanity + Cloudflare target locked. See [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md) (wins over this file on stack/CMS/design).
 
 ## Current Goal
 
-Ship a small upper-hero “Scroll down” balloon that bounce-returns once on user scroll, then releases normal scrolling (Lenis + LineSidebar intact).
+Scaffold a **new** Sanity project, embed Studio at `/studio`, recreate schemas (incl. blog), keep Payload until `lib/cms` swap is green.
+
+## Decisions locked (2026-07-21)
+
+OpenNext SSR/ISR · `kamiyonstudio.com` · free-tier CF · new Sanity + `/studio` · R2-only media · empty seed · contact form + Resend · full blog model · Products+Community in nav · GSAP-only · motion-lab noindex · colors `#FF7998` / `#E9C080` / `#201013` / `#F8F8F8` · Geologica + Montserrat · CF Web Analytics only.
 
 ## In Progress
 
-- Done this session: `useHeroScrollBounce` (Lenis-aware, user-gesture gated, reduced-motion skip, dismiss + cleanup) + `HeroScrollHelper` in `HeroOpening`; unit tests green
-- Done this session: Motion blur on scroll reveals (`useFadeIn` / `useReveal` / `useStagger` + `AnimatedSection`) — soft enter blur + velocity blur; `lib/motion/motion-blur` + `attach-velocity-blur`; reduced-motion / coarse-pointer safe
-- Done this session: `LineSidebar` + `HomeLineSidebar` on `/` (desktop-only fixed left rail); `lib/home/section-nav` anchors; section `id`s + `scroll-mt`; scroll-spy via `IntersectionObserver`
-- Done this session: Restored `PartnersMarquee` as its own home section (reverted brief hero-overlay experiment)
-- Done prior (committed): CardNav closed/open chrome; HeroOpening brand-first; WordPullUp / ScrollStack / CardNav / parallax stack
+- Context freeze: `WEBSITE-ESSENTIAL-CONTEXT.md` + `ui-context.md` colors/fonts synced; `architecture.md` marked stale
+- Prior (Payload-era) home motion work remains in tree; Lenis/Framer to be removed in Phase F (T10)
 
 ## Next Up (resume here)
 
-1. Visual QA: hero scroll helper on `/` (desktop + mobile; Lenis on/off; reduced motion; dismiss; LineSidebar after bounce)
-2. Visual QA: motion blur on `/` and `/motion-lab` (desktop scroll speed → soft blur; stops when idle; reduced motion / touch unchanged)
-3. Visual QA: LineSidebar on `/` (desktop rail; hidden below `lg`; click → smooth scroll; scroll-spy; reduced motion; Lenis on/off)
-4. Visual QA: partners as standalone section + full home scroll path Hero → Contact
-5. Visual QA: header closed/open + simplified hero on `/` and `/about` (desktop + mobile; reduced motion; Escape/focus)
-6. Visual QA: WordPullUp + body fade on `/`; services stack (Lenis on/off + reduced motion)
-7. Document LineSidebar in `ui-context.md` when phase closes
-8. Roll WordPullUp + fade-in standard to About / Services / Portfolio / Contact page headings
-9. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content
-10. Optional: draft/preview after cutover; Payload schema sign-off; production `NEXT_PUBLIC_SITE_URL` at deploy
-11. Optional: dual-model a11y/UX polish on motion stack
-12. Optional: remove unused `lib/home/opening-items` if nothing else adopts it
+1. Phase B: `npm create sanity@latest` → embed `/studio` → schemas per essential context §7
+2. Phase C: swap `lib/cms` to Sanity + GROQ + R2 refs; keep public API + fallbacks
+3. Phase D: delete Payload
+4. Phase E: OpenNext + R2 + Sanity webhook revalidation + CF Web Analytics
+5. Phase F: nav Products/Community, blog UI, contact+Resend, fonts/colors, GSAP-only, lab noindex, CWV gates
 
 **Done (pointers only):**
 
@@ -78,21 +73,25 @@ Ship a small upper-hero “Scroll down” balloon that bounce-returns once on us
 
 ## Open Questions
 
-- [x] **CMS choice** — **Payload CMS 3** (Postgres); Sanity removed Phase 4
-- [ ] **Payload schema sign-off** — Confirm globals/collections in `payload.config.ts` accepted as v1 canon
-- [x] **Facebook page URL** — **answered 2026-07-10:** `https://www.facebook.com/kamiyonstudio`
-- [x] **LinkedIn URL** — **answered 2026-07-10:** public `https://www.linkedin.com/company/105066188/`
-- [x] **Public email address** — **answered 2026-07-10:** `kamiyonstudio@gmail.com`
-- [x] **Deployment target** — **answered 2026-07-10:** Vercel; `NEXT_PUBLIC_SITE_URL` still TBD at deploy time
-- [ ] **Deep Indigo hex value** — not in `brand-kit.png`; do not invent
-- [ ] **`/news` route** — deferred/skipped for v1 (Vision item)
-- [ ] **Press Kit `/pres`** — deferred post-v1
-- [ ] **Portfolio taxonomy divergence** — canon `caseStudy` model; discipline filters need schema change
-- [ ] **Contact policy** — external links only; no lead-capture form for v1
-- [ ] **Beaufort for LoL license** — confirm before production use
-- [ ] **Product development status** — per-product status defaults to `tbd`
-- [ ] **README motto conflict** — update canon README to match Create. Play. Inspire.?
-- [ ] **Draft/preview** — deferred post-migration
+- [x] **CMS choice** — **Sanity** (new project); Payload retiring Phase D — see essential context
+- [x] **Facebook page URL** — `https://www.facebook.com/kamiyonstudio`
+- [x] **LinkedIn URL** — `https://www.linkedin.com/company/105066188/`
+- [x] **Public email address** — `kamiyonstudio@gmail.com`
+- [x] **Deployment** — Cloudflare OpenNext; prod `https://kamiyonstudio.com`; preview `*.pages.dev`
+- [x] **Brand colors** — `#FF7998` / `#E9C080` / `#201013` / `#F8F8F8` (Deep Indigo not required for site)
+- [x] **Fonts** — Geologica + Montserrat; Beaufort removed
+- [x] **Contact policy** — form (Resend) + external links
+- [x] **Nav** — Products + Community in primary nav
+- [x] **Motion** — GSAP only on main site; `/motion-lab` public noindex
+- [x] **Analytics** — Cloudflare Web Analytics only
+- [ ] **`/news` route** — deferred/skipped
+- [ ] **Press Kit** — deferred
+- [ ] **Portfolio taxonomy / discipline filters** — deferred until needed
+- [ ] **Product development status** — per-product defaults to `tbd`
+- [ ] **README motto conflict** — update canon README to Create. Play. Inspire.?
+- [ ] **Draft/preview (Sanity Presentation)** — optional post-launch
+- [ ] **R2 public CDN hostname** — set during Phase E
+- [ ] **Resend from-address / CONTACT_TO_EMAIL** — confirm production inbox
 
 ---
 
@@ -100,26 +99,21 @@ Ship a small upper-hero “Scroll down” balloon that bounce-returns once on us
 
 | Decision | Choice | Rationale |
 | --- | --- | --- |
-| Motto | Create. Play. Inspire. | User confirmed |
-| Contact v1 | Facebook + LinkedIn + mailto only | No forms / visitor auth |
-| Content strategy | Payload CMS + typed fallbacks | Empty CMS OK |
-| CMS (current) | Payload 3 + Postgres | In-repo `/admin`; Sanity deleted |
-| Data fetching | SSG + ISR (1h `unstable_cache`) | Marketing performance |
-| Rich text | Lexical → `PortableTextBlock[]` adapter | Matches `PortableText.tsx` |
-| Images | Payload media `url` + `/assets/**` localPatterns | No Sanity CDN |
-| Access control | Public read / authenticated write; Users auth-only | Phase 6 hardening |
-| Secret validation | `PAYLOAD_SECRET` required if `DATABASE_URL` set | Fail closed when CMS enabled |
-| Unmatched public URLs | `(frontend)/[...notFound]` → branded `not-found` | Dual root layouts (frontend/payload) |
-| Shell nav | Home, About, Services, Portfolio, Blog, Contact | Products/Community routes kept, hidden from nav |
-| Home composition | HeroOpening (brand + motto) → Partners → Projects → ServicesStack → Contact | 2026-07-15: list removed; partners overlay trial reverted |
-| Home section nav | React Bits LineSidebar (`HomeLineSidebar`); desktop-only (`lg+`) fixed left rail; `HOME_SECTION_NAV` + scroll-spy | 2026-07-15 |
-| Home hero scroll tip | `HeroScrollHelper` + `useHeroScrollBounce`; user-gesture gated one-shot return-to-top; reduced-motion skips hijack | 2026-07-15 |
-| Home services UI | React Bits ScrollStack (`useWindowScroll`); reuse site Lenis, no nested root Lenis | Avoid dual smooth-scroll instances |
-| Shell header | CardNav via SiteHeader — closed: logo+burger; open: top-right vertical About/Work/Contact; transparent on `/` | 2026-07-15 restyle |
-| Contact URLs | `lib/contact/channels.ts` | Single source for fallbacks/nav/JSON-LD |
-| Motion stack | GSAP + ScrollTrigger + Lenis; Framer Motion micro only | Frontend layout providers; Payload admin excluded |
-| Motion demo | `/motion-lab` (noIndex, hidden from nav) | Architecture showcase before marketing adoption |
-| Typography motion | Headings: `WordPullUp` (scroll); body: `AnimatedSection` fade + motion blur; hero brand: `SplitText` | Differentiated entrance; reduced-motion passthrough |
-| Scroll motion blur | Enter blur → sharp; velocity blur while on-screen (`lib/motion/motion-blur`); fine pointer only | Realism on desktop scroll; opt-out via `motionBlur={false}` |
+| Motto | Create. Play. Inspire. | Canon |
+| Target CMS | Sanity (new project) + `/studio` | Editors; no Postgres; publish via webhook |
+| Media | Cloudflare R2 only | Sanity holds structured refs |
+| Hosting | OpenNext on CF Pages/Workers (free) | SSR/ISR without paid plan until limits |
+| Domain | `https://kamiyonstudio.com` | Locked |
+| Revalidation | Sanity webhook → `revalidateTag` | Publish ≠ redeploy |
+| Contact | Form (Resend) + external links | Production lead capture |
+| Blog | Full model (authors, cats, tags, PT, SEO, related) | Production grade |
+| Shell nav | Include Products + Community | Locked (code T16) |
+| Motion (main) | GSAP + ScrollTrigger only | Drop Framer + Lenis |
+| Motion lab | Public `/motion-lab`, noindex | Showcase without SEO cost |
+| Colors | `#FF7998` `#E9C080` `#201013` `#F8F8F8` | Official brand |
+| Fonts | Geologica (UI/display), Montserrat (body) | Google Fonts; no Beaufort |
+| Analytics | Cloudflare Web Analytics only | Privacy + free tier |
+| Content strategy | Sanity + typed fallbacks | Empty CMS OK until seeded |
+| **Current repo CMS** | Payload (temporary) | Remove in Phase D |
 
-Historical decisions and session notes live in [`completed/README.md`](./completed/README.md).
+Home composition / CardNav / LineSidebar decisions from 2026-07-15 remain until Phase F motion cleanup. Historical notes: [`completed/README.md`](./completed/README.md).

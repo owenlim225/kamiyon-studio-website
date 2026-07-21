@@ -1,34 +1,36 @@
 # Architecture Context
 
-## Stack
+> **STALE (Payload era).** Target architecture is locked in [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md): Sanity + OpenNext on Cloudflare + R2 + Resend. Use that file for all new work. This document describes the **current repo** until Payload is removed (migration Phase D).
+
+## Stack (current repo — being replaced)
 
 | Layer | Technology | Role |
 | --- | --- | --- |
 | Framework | Next.js 16.2 (App Router) + TypeScript | Routing, SSR/SSG, metadata |
 | UI | React 19 + Tailwind CSS 4 | Components and styling |
-| Content | Payload CMS (Postgres) | All page copy, media references, structured entries |
-| Fonts | Poppins, Montserrat (Google Fonts or self-hosted) | UI and marketing typography per visual identity |
-| Deployment | Vercel (confirmed) | Set `DATABASE_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SITE_URL` at deploy |
+| Content | Payload CMS (Postgres) — **retiring** | Temporary; migrating back to Sanity |
+| Fonts | Poppins/Montserrat today → **Geologica + Montserrat** (locked) | See essential context §8 |
+| Deployment | Assumed Vercel today → **Cloudflare OpenNext** (locked) | See essential context §3–§6 |
 
-No auth or contact-form backend for v1. Contact is external links only. Payload uses Postgres for CMS content; the public site still renders typed fallbacks when `DATABASE_URL` / `PAYLOAD_SECRET` are unset.
+Target: Sanity Studio at `/studio`, media on R2, contact form via Resend, ISR + webhook revalidation (publish without redeploy).
 
-> **Source:** Repo `package.json`, [`docs/technology/engineering-principles.md`](../docs/technology/engineering-principles.md)
+> **Source of truth:** [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md)
 
 ---
 
 ## CMS
 
-**Chosen: Payload CMS 3** (Postgres via `@payloadcms/db-postgres`), embedded at `/admin`.
+**Target (locked): Sanity** — new project/dataset, Studio at `/studio`, R2 for all binaries.
 
-| Criterion | Payload (chosen) |
+**Current repo: Payload CMS 3** (Postgres) at `/admin` — delete in Phase D after `lib/cms` swap.
+
+| Criterion | Sanity (target) |
 | --- | --- |
-| Next.js integration | First-class (`@payloadcms/next`) |
-| Draft / placeholder workflow | Drafts + `isPlaceholder` fields |
-| Media | Local `/api/media` (S3 optional later) |
-| Ops burden | Self-hosted with app; needs `DATABASE_URL` + `PAYLOAD_SECRET` |
-| Fit for marketing blocks | Strong (Lexical rich text, blocks, globals) |
-
-Rationale: Keeps CMS in-repo with the Next.js app, typed Local API for `lib/cms`, and empty-CMS cutover with typed fallbacks. Sanity was removed in migration Phase 4 (2026-07-11).
+| Next.js integration | `next-sanity` + embedded `/studio` |
+| Publish without deploy | Webhook → `revalidateTag` / ISR |
+| Media | Cloudflare R2 only (Sanity holds refs) |
+| Ops burden | Sanity-hosted content lake; no Postgres for CMS |
+| Fit for marketing blocks | Portable Text + singletons/documents |
 
 ---
 
