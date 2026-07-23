@@ -36,7 +36,7 @@ All sections defined in [`docs/marketing/website-guidelines.md`](../docs/marketi
 | **Products** | Original IP showcase (Eclipse, Vocabu, Afterschool Cleanup) | future-ip, product docs |
 | **Portfolio** | Case studies: challenge, solution, impact | website-guidelines (no named clients in canon — placeholders) |
 | **Community** | Workshops, jams, partnerships, involvement | culture, partnerships, social-media |
-| **Contact** | External links (Facebook, LinkedIn, email); Resend form planned (T8) | URLs in siteSettings / fallbacks |
+| **Contact** | Google Form CTA (interim) + external links; Resend in-app form planned (T8) | Form URL + siteSettings / fallbacks |
 
 ---
 
@@ -113,8 +113,9 @@ Home → About (team, culture) → Community → Contact
 ### Contact
 
 - Welcoming intro copy (CMS)
+- Interim primary CTA: [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSeIefAWJu5FP9pwljLFz1wSUxU2ybR3--GdylUYUBsGHH0yaw/viewform) (linked button)
 - External links: Facebook, LinkedIn, public email (mailto)
-- Contact form via Resend is a follow-up (T8); links-only must keep working until then
+- In-app form via Resend is T8; Google Form + links must keep working until then
 
 ### Global
 

@@ -115,6 +115,8 @@ graphify update .
 
 **Consequences:** Editors use `*.sanity.studio` (or `pnpm sanity:dev` locally). Sanity project CORS must allow the Studio host. Upload secret + API origin must be set for hosted Studio → R2. ADR-001 “embedded Studio at `/studio`” is superseded for deploy topology; `/studio` path retained as redirect.
 
+**Ops note (2026-07-24):** Hostname `kamiyon` → https://kamiyon.sanity.studio/ redirects into Sanity Dashboard (`www.sanity.io/@…/studio/{appId}`). Keep `deployment.appId` in `sanity.cli.ts` in sync after `sanity deploy` / `sanity undeploy`. See ADR-009 for browser env bake-in.
+
 ---
 
 ## ADR-008 — Kinetic overlay nav replaces CardNav (2026-07-24)
@@ -131,3 +133,43 @@ graphify update .
 - Honor `prefers-reduced-motion`, Escape-to-close, `aria-expanded`
 
 **Consequences:** CardNav remains in repo unused by the shell until cleaned up; header tests target the kinetic menu.
+
+---
+
+## ADR-009 — Hosted Studio env: static `SANITY_STUDIO_*` + repo defaults (2026-07-24)
+
+**Status:** Accepted
+
+**Context:** After ADR-007 hosting cutover, https://kamiyon.sanity.studio/ crashed with “Missing SANITY_STUDIO_PROJECT_ID…” even when `.env.local` had values and `sanity deploy` claimed vars were included. Root cause: Sanity’s Vite bundler only replaces **static** identifiers like `process.env.SANITY_STUDIO_PROJECT_ID`. A helper using `process.env[key]` was left empty in the browser bundle. A stale `deployment.appId` also produced post-login “Studio not found” until undeploy + fresh deploy.
+
+**Decision:**
+
+- In `sanity/env.ts`, read env only via static `process.env.SANITY_STUDIO_*` / `NEXT_PUBLIC_*` property access (never dynamic keys)
+- Prefer `SANITY_STUDIO_*` for hosted Studio; fall back to `NEXT_PUBLIC_*` for Next.js
+- Ship public repo defaults: project `c6ej1xoj`, dataset `kamiyon` (safe in client bundles)
+- Document `SANITY_STUDIO_PROJECT_ID` / `SANITY_STUDIO_DATASET` in `.env.example`; set them before `pnpm sanity:deploy`
+- Keep `deployment.appId` current in `sanity.cli.ts` after successful deploy (do not leave a stale id)
+
+**Consequences:** Hosted Studio boots without requiring Next-only `NEXT_PUBLIC_*` in the Vite allowlist. Changing project/dataset still possible via env; defaults match the Kamiyon Sanity project. After deploy, hard-refresh Studio if an old `pane2-*.js` chunk is cached.
+
+---
+
+## ADR-010 — QA triage + interim Google Form contact (2026-07-24)
+
+**Status:** Accepted
+
+**Context:** Manual QA on pre-cutover production was consolidated in [`QA-Report.md`](./QA-Report.md). Kinetic nav (ADR-008) and hosted Studio (ADR-007) landed the same day. Several tracker constraints still said “no contact forms” / “embedded Studio.”
+
+**Decision:**
+
+- **Interim contact CTA:** external Google Form  
+  `https://docs.google.com/forms/d/e/1FAIpQLSeIefAWJu5FP9pwljLFz1wSUxU2ybR3--GdylUYUBsGHH0yaw/viewform`  
+  Wire as linked button until T8 Resend. `/contact` remains channels + mailto.
+- **QA-001** (confirmation email): out of app scope — Google Forms respondent settings, not Resend.
+- **QA-008** (CardNav hamburger freeze): superseded; do not patch CardNav for production shell.
+- **Same-route in-app nav** (QA-005/006/007): smooth-scroll to top / target section.
+- **Scroll tip** (QA-002/009): keep bounce UX; first scroll intent must move the page.
+- **Execution:** QA polish (WS1–WS3) runs **in parallel** with staging ops (WS4a); Wave 4 DNS (WS4b) stays serial after WS4a.
+- **T8 later:** Resend → studio inbox + visitor confirmation; confirm `CONTACT_TO_EMAIL` before prod.
+
+**Consequences:** Context files updated (`progress-tracker`, `QA-Report`, essential §10, ai-workflow, project-overview). Repo must wire the Google Form URL (currently many CTAs still point at `/contact` only). Multitask fan-out ownership is defined in `progress-tracker.md`.

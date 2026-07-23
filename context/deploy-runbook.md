@@ -39,7 +39,7 @@ Worker **runtime** secrets (`SANITY_REVALIDATE_SECRET`, `MEDIA_UPLOAD_SECRET`, `
 | `NEXT_PUBLIC_CF_WEB_ANALYTICS_TOKEN` | optional | staging token | prod token |
 | `CLOUDFLARE_ACCOUNT_ID` | optional local Wrangler | GitHub secret | GitHub secret |
 
-Also document Sanity: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, optional `SANITY_API_READ_TOKEN`.
+Also document Sanity: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, optional `SANITY_API_READ_TOKEN`. For **hosted Studio** deploy, also set `SANITY_STUDIO_PROJECT_ID` / `SANITY_STUDIO_DATASET` (static `process.env` only — see ADR-009). Repo defaults: `c6ej1xoj` / `kamiyon`.
 
 ---
 
@@ -130,6 +130,7 @@ pnpm sanity:deploy -y
 ## Cutover checklist (Wave 4 — fill in)
 
 - [x] Staging deploy on Free tier (`*.workers.dev`) — pages + `/studio` redirect + API auth smoke
+- [x] Hosted Studio live at `https://kamiyon.sanity.studio` (ADR-007/009; user confirmed 2026-07-24)
 - [ ] Point Sanity webhook at staging revalidate URL
 - [ ] Redeploy Studio with `SANITY_STUDIO_API_ORIGIN` for R2 uploads; smoke upload
 - [ ] Prod Worker smoke on `*.workers.dev`

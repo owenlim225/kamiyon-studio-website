@@ -176,12 +176,12 @@ Always update after implementation:
 
 Enforce on every implementation pass:
 
-- **No contact forms** — Facebook, LinkedIn, mailto only
-- **No auth** — no Clerk, sessions, or admin routes in app
+- **Contact** — Interim: Google Form CTA + Facebook/LinkedIn/mailto; no half-built in-app form until T8 Resend. Do not claim an in-app mail pipeline exists.
+- **No auth** — no Clerk, sessions, or admin routes in the marketing app (Studio auth is Sanity-hosted)
 - **No hardcoded copy** — CMS or typed fallbacks
-- **Seven sections** — Home, About, Services, Products, Portfolio, Community, Contact
+- **Seven sections** — Home, About, Services, Products, Portfolio, Community, Contact (+ Blog route when T9 lands)
 - **Headless CMS** — all page content externalized
-- **No blog/careers/press kit** in v1 (Vision items)
+- **No careers/press kit** in v1 (Vision items); `/news` deferred
 
 ---
 
