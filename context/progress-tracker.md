@@ -159,7 +159,8 @@ Batch S (CMS seed — done 2026-07-24):
 
 ## Recent polish (2026-07-24)
 
-- **Display headings:** CinematicFooter glow/size treatment (`display-text-glow` + `text-5xl`/`md:text-8xl`/`font-black`) is now the default for `WordPullUp` section titles (home: Projects, Services, Contact).
+- **Display headings:** CinematicFooter glow/size treatment (`footer-text-glow` + `text-5xl`/`md:text-8xl`/`font-black`) is now the default for `WordPullUp` section titles (home: Projects, Services, Contact).
+- **Site cross-hatch:** Subtle fixed `.site-bg-grid` overlay (1% lines; footer keeps its own 3% masked grid).
 
 ## Architecture Decisions (active)
 
