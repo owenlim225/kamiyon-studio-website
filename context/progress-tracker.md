@@ -17,7 +17,9 @@ When a task/phase is marked complete:
 
 ## Current Phase
 
-**Phase C complete (2026-07-23) → Phase E next:** OpenNext + R2 upload + webhook revalidation + CF Web Analytics.
+**Phase E in progress (2026-07-24):** OpenNext + R2 + webhook revalidation + CF Web Analytics.
+
+**Wave 3 (staging deploy):** blocked — Workers Free **3 MiB** limit; OpenNext staging bundle ~**5.5 MiB gzip** (Sanity Studio). Needs **Workers Paid**, then `pnpm deploy:staging` + secrets + smoke. See [`deploy-runbook.md`](./deploy-runbook.md).
 
 **Source of truth:** [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md) · [`DECISIONS.md`](./DECISIONS.md)
 

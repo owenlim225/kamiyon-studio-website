@@ -31,7 +31,7 @@ export async function resolveMediaBucket(): Promise<MediaBucket> {
 
   const { getCloudflareContext } = await import("@opennextjs/cloudflare");
   const { env } = getCloudflareContext();
-  const bucket = (env as CloudflareEnv & { MEDIA_BUCKET?: MediaBucket }).MEDIA_BUCKET;
+  const bucket = (env as { MEDIA_BUCKET?: MediaBucket }).MEDIA_BUCKET;
 
   if (!bucket) {
     throw new Error("MEDIA_BUCKET binding is not configured");

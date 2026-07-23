@@ -27,13 +27,13 @@ describe("TiltedCard", () => {
         showMobileWarning={false}
         showTooltip={false}
       >
-        <a href="/products/eclipse">Eclipse</a>
+        <a href="https://example.com/products/eclipse">Eclipse</a>
       </TiltedCard>,
     );
 
     expect(screen.getByRole("link", { name: "Eclipse" })).toHaveAttribute(
       "href",
-      "/products/eclipse",
+      "https://example.com/products/eclipse",
     );
   });
 

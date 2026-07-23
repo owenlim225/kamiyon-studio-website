@@ -19,6 +19,8 @@ const eslintConfig = defineConfig([
     "coverage/**",
     "playwright-report/**",
     "test-results/**",
+    // OpenNext build output — not website source
+    ".open-next/**",
   ]),
 ]);
 

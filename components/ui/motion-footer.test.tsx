@@ -84,25 +84,24 @@ describe("CinematicFooter", () => {
 
     const nav = screen.getByRole("navigation", { name: "Footer" });
     expect(nav).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Services" })).toHaveAttribute(
-      "href",
-      "/services",
-    );
-    expect(screen.getByRole("link", { name: "Products" })).toHaveAttribute(
-      "href",
-      "/products",
-    );
-    expect(screen.getByRole("link", { name: "Community" })).toHaveAttribute(
-      "href",
-      "/community",
-    );
-    expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute(
-      "href",
-      "/blog",
-    );
+
+    const services = screen.getByRole("link", { name: "Services" });
+    const products = screen.getByRole("link", { name: "Products" });
+    const community = screen.getByRole("link", { name: "Community" });
+    const blog = screen.getByRole("link", { name: "Blog" });
+
+    expect(services).toHaveAttribute("href", "/services");
+    expect(products).toHaveAttribute("href", "/products");
+    expect(community).toHaveAttribute("href", "/community");
+    expect(blog).toHaveAttribute("href", "/blog");
+
+    for (const link of [services, products, community, blog]) {
+      expect(link).toHaveClass("footer-text-link");
+      expect(link).not.toHaveClass("footer-glass-pill");
+    }
   });
 
-  it("renders live social links as external anchors", () => {
+  it("does not render a Crafted with pill", () => {
     render(
       <CinematicFooter
         siteName={testShellProps.siteName}
@@ -113,22 +112,45 @@ describe("CinematicFooter", () => {
       />,
     );
 
-    expect(screen.queryByText("(Coming soon)")).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Facebook" })).toHaveAttribute(
-      "href",
-      "https://www.facebook.com/kamiyonstudio",
-    );
-    expect(screen.getByRole("link", { name: "LinkedIn" })).toHaveAttribute(
-      "href",
-      "https://www.linkedin.com/company/105066188/",
-    );
-    expect(screen.getByRole("link", { name: "Email" })).toHaveAttribute(
-      "href",
-      "mailto:kamiyonstudio@gmail.com",
-    );
+    expect(screen.queryByText(/Crafted with/i)).not.toBeInTheDocument();
   });
 
-  it("still renders placeholder social links as Coming soon text when flagged", () => {
+  it("renders all six social platforms as icon links with aria-labels", () => {
+    render(
+      <CinematicFooter
+        siteName={testShellProps.siteName}
+        footerMotto={testShellProps.footerMotto}
+        navItems={testShellProps.navItems}
+        socialLinks={testShellProps.socialLinks}
+        contactCta={testShellProps.contactCta}
+      />,
+    );
+
+    const expected = [
+      {
+        name: "Facebook",
+        href: "https://www.facebook.com/kamiyonstudio",
+      },
+      {
+        name: "LinkedIn",
+        href: "https://www.linkedin.com/company/105066188/",
+      },
+      { name: "itch.io", href: "https://kamiyon-studio.itch.io/" },
+      { name: "YouTube", href: "https://youtube.com/@kamiyonstudio" },
+      { name: "X", href: "https://x.com/kamiyonstudio" },
+      { name: "Email", href: "mailto:kamiyonstudio@gmail.com" },
+    ] as const;
+
+    for (const { name, href } of expected) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("href", href);
+      expect(link).not.toHaveClass("footer-glass-pill");
+    }
+
+    expect(screen.queryByText("Facebook")).not.toBeInTheDocument();
+  });
+
+  it("renders comingSoon socials as muted disabled icons without hrefs", () => {
     render(
       <CinematicFooter
         siteName={testShellProps.siteName}
@@ -146,10 +168,17 @@ describe("CinematicFooter", () => {
       />,
     );
 
-    expect(screen.getByText("(Coming soon)")).toBeInTheDocument();
+    expect(screen.queryByText("(Coming soon)")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: /Facebook/ }),
     ).not.toBeInTheDocument();
+
+    const disabledIcon = screen.getByRole("img", {
+      name: "Facebook (coming soon)",
+    });
+    expect(disabledIcon).toHaveAttribute("aria-disabled", "true");
+    expect(disabledIcon).toHaveClass("opacity-40");
+    expect(disabledIcon).not.toHaveAttribute("href");
   });
 
   it("renders the studio motto accessibly and location in credits", () => {
@@ -191,7 +220,7 @@ describe("CinematicFooter", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders contact and portfolio primary CTAs", () => {
+  it("renders contact and portfolio primary CTAs as text links", () => {
     render(
       <CinematicFooter
         siteName={testShellProps.siteName}
@@ -202,13 +231,17 @@ describe("CinematicFooter", () => {
       />,
     );
 
-    expect(
-      screen.getByRole("link", { name: testShellProps.contactCta.label }),
-    ).toHaveAttribute("href", testShellProps.contactCta.href);
-    expect(screen.getByRole("link", { name: "View portfolio" })).toHaveAttribute(
-      "href",
-      "/portfolio",
-    );
+    const contact = screen.getByRole("link", {
+      name: testShellProps.contactCta.label,
+    });
+    const portfolio = screen.getByRole("link", { name: "View portfolio" });
+
+    expect(contact).toHaveAttribute("href", testShellProps.contactCta.href);
+    expect(portfolio).toHaveAttribute("href", "/portfolio");
+    expect(contact).toHaveClass("footer-text-link");
+    expect(portfolio).toHaveClass("footer-text-link");
+    expect(contact).not.toHaveClass("footer-glass-pill");
+    expect(portfolio).not.toHaveClass("footer-glass-pill");
   });
 
   it("scrolls to top when the back-to-top control is activated", async () => {

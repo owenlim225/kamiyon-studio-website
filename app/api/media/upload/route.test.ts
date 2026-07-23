@@ -1,6 +1,5 @@
+/** @vitest-environment node */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-import { setMediaBucketForTests } from "@/lib/cms/media-bucket";
 
 /** Minimal 1×1 PNG (valid IHDR). */
 const PNG_1X1 = Uint8Array.from(
@@ -15,19 +14,23 @@ describe("POST /api/media/upload", () => {
   const originalBase = process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL;
   const putMock = vi.fn();
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.resetModules();
     putMock.mockReset();
     putMock.mockResolvedValue(undefined);
     process.env.MEDIA_UPLOAD_SECRET = "test-media-upload-secret";
     process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL = "https://media.example.com";
+
+    const { setMediaBucketForTests } = await import("@/lib/cms/media-bucket");
     setMediaBucketForTests({
       put: (...args: unknown[]) => putMock(...args),
     });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
+    const { setMediaBucketForTests } = await import("@/lib/cms/media-bucket");
     setMediaBucketForTests(null);
+
     if (originalSecret === undefined) {
       delete process.env.MEDIA_UPLOAD_SECRET;
     } else {

@@ -1,10 +1,15 @@
 import { defineField, defineType } from "sanity";
 
+import { R2AssetInput } from "../../components/r2AssetInput";
+
 /** Structured R2 media reference — no binary stored in Sanity. */
 export const r2Asset = defineType({
   name: "r2Asset",
   title: "R2 Media",
   type: "object",
+  components: {
+    input: R2AssetInput,
+  },
   fields: [
     defineField({
       name: "key",

@@ -55,7 +55,7 @@ function extractSecret(request: Request): string | null {
 export async function POST(request: Request): Promise<NextResponse<ApiEnvelope<RevalidateData>>> {
   const expected = process.env.SANITY_REVALIDATE_SECRET?.trim();
   if (!expected) {
-    return jsonEnvelope(503, {
+    return jsonEnvelope<RevalidateData>(503, {
       success: false,
       data: null,
       error: "Revalidation is not configured",
@@ -64,7 +64,7 @@ export async function POST(request: Request): Promise<NextResponse<ApiEnvelope<R
 
   const provided = extractSecret(request);
   if (!provided || !secretsMatch(provided, expected)) {
-    return jsonEnvelope(401, {
+    return jsonEnvelope<RevalidateData>(401, {
       success: false,
       data: null,
       error: "Unauthorized",
@@ -77,7 +77,7 @@ export async function POST(request: Request): Promise<NextResponse<ApiEnvelope<R
     try {
       payload = await request.json();
     } catch {
-      return jsonEnvelope(400, {
+      return jsonEnvelope<RevalidateData>(400, {
         success: false,
         data: null,
         error: "Invalid JSON body",

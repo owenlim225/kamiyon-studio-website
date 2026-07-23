@@ -4,6 +4,11 @@ import Link from "next/link";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 
+import {
+  SocialPlatformIcon,
+  SOCIAL_PLATFORM_LABELS,
+  type SocialPlatformIconName,
+} from "@/components/ui/social-platform-icons";
 import { useGsapContext } from "@/hooks/useGsapContext";
 import type { NavItem, NavSocialLink } from "@/lib/config/navigation";
 import {
@@ -310,11 +315,11 @@ export function CinematicFooter({
             ref={linksRef}
             className="flex w-full flex-col items-center gap-6"
           >
-            <div className="flex w-full flex-wrap justify-center gap-4">
+            <div className="flex w-full flex-wrap justify-center gap-6 md:gap-10">
               <MagneticButton
                 as={Link}
                 href={contactCta.href}
-                className="footer-glass-pill group flex items-center gap-3 rounded-full px-10 py-5 text-sm font-bold text-foreground md:text-base"
+                className="footer-text-link text-sm font-bold md:text-base"
               >
                 {contactCta.label}
               </MagneticButton>
@@ -322,7 +327,7 @@ export function CinematicFooter({
               <MagneticButton
                 as={Link}
                 href="/portfolio"
-                className="footer-glass-pill group flex items-center gap-3 rounded-full px-10 py-5 text-sm font-bold text-foreground md:text-base"
+                className="footer-text-link text-sm font-bold md:text-base"
               >
                 View portfolio
               </MagneticButton>
@@ -335,7 +340,7 @@ export function CinematicFooter({
                     <MagneticButton
                       as={Link}
                       href={item.href}
-                      className="footer-glass-pill rounded-full px-6 py-3 text-xs font-medium text-muted-foreground hover:text-foreground md:text-sm"
+                      className="footer-text-link text-xs font-medium md:text-sm"
                     >
                       {item.label}
                     </MagneticButton>
@@ -345,33 +350,68 @@ export function CinematicFooter({
             </nav>
 
             <nav aria-label="Connect">
-              <ul className="flex flex-wrap justify-center gap-3">
-                {socialLinks.map((link) => (
-                  <li key={link.label}>
-                    {link.comingSoon ? (
-                      <span className="footer-glass-pill inline-flex cursor-default rounded-full px-6 py-3 text-xs font-medium text-muted-foreground md:text-sm">
-                        {link.label}{" "}
-                        <span className="ml-1 text-[10px]">(Coming soon)</span>
-                      </span>
-                    ) : (
+              <ul className="flex flex-row flex-wrap items-center justify-center gap-1">
+                {socialLinks.map((link) => {
+                  const platform = link.platform as
+                    | SocialPlatformIconName
+                    | undefined;
+                  const ariaLabel = platform
+                    ? SOCIAL_PLATFORM_LABELS[platform]
+                    : link.label;
+                  const isEmail = platform === "email";
+
+                  if (link.comingSoon) {
+                    return (
+                      <li key={link.label}>
+                        <span
+                          className="footer-social-icon cursor-default opacity-40"
+                          aria-label={`${ariaLabel} (coming soon)`}
+                          aria-disabled="true"
+                          role="img"
+                        >
+                          {platform ? (
+                            <SocialPlatformIcon platform={platform} size={20} />
+                          ) : (
+                            <span className="text-xs font-medium">
+                              {link.label}
+                            </span>
+                          )}
+                        </span>
+                      </li>
+                    );
+                  }
+
+                  if (platform) {
+                    return (
+                      <li key={link.label}>
+                        <MagneticButton
+                          as="a"
+                          href={getSocialHref(link)}
+                          className="footer-social-icon"
+                          aria-label={ariaLabel}
+                          rel={isEmail ? undefined : "noopener noreferrer"}
+                          target={isEmail ? undefined : "_blank"}
+                        >
+                          <SocialPlatformIcon platform={platform} size={20} />
+                        </MagneticButton>
+                      </li>
+                    );
+                  }
+
+                  return (
+                    <li key={link.label}>
                       <MagneticButton
                         as="a"
                         href={getSocialHref(link)}
-                        className="footer-glass-pill rounded-full px-6 py-3 text-xs font-medium text-muted-foreground hover:text-foreground md:text-sm"
-                        rel={
-                          link.platform === "email"
-                            ? undefined
-                            : "noopener noreferrer"
-                        }
-                        target={
-                          link.platform === "email" ? undefined : "_blank"
-                        }
+                        className="footer-text-link text-xs font-medium md:text-sm"
+                        rel="noopener noreferrer"
+                        target="_blank"
                       >
                         {link.label}
                       </MagneticButton>
-                    )}
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             </nav>
           </div>
@@ -385,30 +425,12 @@ export function CinematicFooter({
             <p>Based in {STUDIO_LOCATION}</p>
           </div>
 
-          <div className="footer-glass-pill order-1 flex cursor-default items-center gap-2 rounded-full border-border/50 px-6 py-3 md:order-2">
-            <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase md:text-xs">
-              Crafted with
-            </span>
-            <span
-              className="animate-footer-heartbeat text-sm text-destructive md:text-base"
-              aria-hidden="true"
-            >
-              ❤
-            </span>
-            <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase md:text-xs">
-              by
-            </span>
-            <span className="ml-1 text-xs font-black tracking-normal text-foreground md:text-sm">
-              {siteName}
-            </span>
-          </div>
-
           <MagneticButton
             as="button"
             type="button"
             onClick={scrollToTop}
             aria-label="Back to top"
-            className="footer-glass-pill group order-3 flex h-12 w-12 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
+            className="footer-glass-pill group order-3 flex h-12 w-12 items-center justify-center rounded-full text-muted-foreground hover:text-foreground md:ml-auto"
           >
             <svg
               className="h-5 w-5 transform transition-transform duration-300 group-hover:-translate-y-1.5"

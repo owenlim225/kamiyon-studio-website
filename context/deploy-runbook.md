@@ -52,6 +52,8 @@ Also document Sanity: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATAS
 
 Incremental cache buckets (OpenNext): `kamiyon-next-cache-staging` / `kamiyon-next-cache-prod`.
 
+These names are wired in [`wrangler.jsonc`](../wrangler.jsonc). Track F provisioned all four buckets; media custom domains respond over HTTPS (empty `/` → 404 is expected).
+
 ---
 
 ## Webhook URLs (placeholders)
@@ -78,11 +80,27 @@ pnpm deploy:prod      # OpenNext build + production deploy
 
 Requires Wrangler auth (`wrangler login` or `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`).
 
+### Local OpenNext build notes (Wave 2–3)
+
+- `pnpm exec opennextjs-cloudflare build` runs `next build` then bundles for Workers.
+- On **Windows without Developer Mode** (no `SeCreateSymbolicLinkPrivilege`), bundling fails with `EPERM: symlink` while recreating pnpm links in `.open-next/`. Workarounds: enable [Windows Developer Mode](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development), use WSL/Linux CI, or a local junction/copy fallback in `@opennextjs/aws` `copyTracedFiles` (not committed).
+- Stop any lingering `workerd` (e.g. prior `preview`) before rebuild — it locks `.open-next/assets` and causes `EPERM` on `rmSync`.
+- OpenNext warns Windows is not fully supported; Linux CI remains the durable path.
+
+### Wave 3 staging deploy status (2026-07-24)
+
+- OpenNext **build succeeded** on Windows after junction workaround.
+- Cache populate to `kamiyon-next-cache-staging` succeeded (80 entries).
+- **Deploy blocked:** Worker upload ~**5.5 MiB gzip** (Sanity Studio in server bundle) exceeds Workers **Free 3 MiB** limit. Needs **Workers Paid** (10 MiB) — see [Workers limits](https://developers.cloudflare.com/workers/platform/limits/).
+- Staging Worker `kamiyon-studio-website-staging` was **not** created; secrets/vars/smoke deferred until Paid + redeploy.
+- After Paid: `pnpm deploy:staging`, then set secrets/vars and smoke `*.workers.dev`.
+
 ---
 
 ## Cutover checklist (Wave 4 — fill in)
 
-- [ ] Staging smoke on `*.workers.dev` (pages, `/studio`, media upload, webhook)
+- [ ] **Workers Paid** enabled on account `273c0d63b6dc29bb5f52c77212bf87d7`
+- [ ] Staging deploy + smoke on `*.workers.dev` (pages, `/studio`, media upload, webhook)
 - [ ] Prod Worker smoke on `*.workers.dev`
 - [ ] Attach `kamiyonstudio.com` + `www`
 - [ ] Point Sanity CORS + webhook URLs at production

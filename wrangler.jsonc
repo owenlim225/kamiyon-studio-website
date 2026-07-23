@@ -15,16 +15,15 @@
       "service": "kamiyon-studio-website",
     },
   ],
+  // Track F provisioned: kamiyon-media-{staging,prod}, kamiyon-next-cache-{staging,prod}.
   "r2_buckets": [
     {
       "binding": "MEDIA_BUCKET",
-      // Placeholder — Wave 2 integrator binds the real media bucket
-      "bucket_name": "kamiyon-media-placeholder",
+      "bucket_name": "kamiyon-media-prod",
     },
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      // Placeholder — Wave 2 integrator binds the real OpenNext cache bucket
-      "bucket_name": "kamiyon-next-inc-cache-placeholder",
+      "bucket_name": "kamiyon-next-cache-prod",
     },
   ],
   "env": {
@@ -39,11 +38,11 @@
       "r2_buckets": [
         {
           "binding": "MEDIA_BUCKET",
-          "bucket_name": "kamiyon-media-staging-placeholder",
+          "bucket_name": "kamiyon-media-staging",
         },
         {
           "binding": "NEXT_INC_CACHE_R2_BUCKET",
-          "bucket_name": "kamiyon-next-inc-cache-staging-placeholder",
+          "bucket_name": "kamiyon-next-cache-staging",
         },
       ],
     },
@@ -58,11 +57,11 @@
       "r2_buckets": [
         {
           "binding": "MEDIA_BUCKET",
-          "bucket_name": "kamiyon-media-placeholder",
+          "bucket_name": "kamiyon-media-prod",
         },
         {
           "binding": "NEXT_INC_CACHE_R2_BUCKET",
-          "bucket_name": "kamiyon-next-inc-cache-placeholder",
+          "bucket_name": "kamiyon-next-cache-prod",
         },
       ],
     },
