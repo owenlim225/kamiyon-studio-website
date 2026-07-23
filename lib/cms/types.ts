@@ -294,8 +294,8 @@ export type Partner = {
   label: string;
   slug: Slug;
   order: number;
+  /** Logo/icon only — home marquee displays without links. */
   logo?: CmsImage;
-  websiteUrl?: string;
   isPlaceholder: boolean;
 };
 

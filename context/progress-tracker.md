@@ -159,6 +159,7 @@ Batch S (CMS seed — done 2026-07-24):
 
 ## Recent polish (2026-07-24)
 
+- **Partner logos (Sanity):** Home marquee renders uploaded `partner.logo` (R2) as images only — no links/CTAs. `websiteUrl` removed from partner schema. Studio: edit Partner docs → upload Logo → set Label/alt → uncheck Placeholder. Redeploy Studio after schema change (`pnpm sanity:deploy`).
 - **Display headings:** CinematicFooter glow/size treatment (`footer-text-glow` + `text-5xl`/`md:text-8xl`/`font-black`) is now the default for `WordPullUp` section titles (home: Projects, Services, Contact).
 - **Site cross-hatch:** Subtle fixed `.site-bg-grid` overlay (1% lines; footer keeps its own 3% masked grid).
 

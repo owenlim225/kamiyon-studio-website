@@ -9,6 +9,7 @@ export const partner = defineType({
       name: "label",
       title: "Label",
       type: "string",
+      description: "Internal name / accessible label (shown when no logo is set).",
       validation: (r) => r.required(),
     }),
     defineField({
@@ -22,22 +23,21 @@ export const partner = defineType({
       name: "order",
       title: "Order",
       type: "number",
+      description: "Lower numbers appear first in the home partners marquee.",
       validation: (r) => r.required(),
     }),
     defineField({
       name: "logo",
       title: "Logo",
       type: "r2Asset",
-    }),
-    defineField({
-      name: "websiteUrl",
-      title: "Website URL",
-      type: "url",
+      description:
+        "Partner logo or icon only. Displayed on the home marquee with no link or click action.",
     }),
     defineField({
       name: "isPlaceholder",
       title: "Placeholder",
       type: "boolean",
+      description: "Turn off once a real partner logo is uploaded.",
       initialValue: true,
     }),
   ],
@@ -49,6 +49,16 @@ export const partner = defineType({
     },
   ],
   preview: {
-    select: { title: "label", subtitle: "websiteUrl" },
+    select: { title: "label", order: "order", isPlaceholder: "isPlaceholder" },
+    prepare({ title, order, isPlaceholder }) {
+      const bits = [
+        typeof order === "number" ? `Order ${order}` : null,
+        isPlaceholder ? "Placeholder" : "Logo slot",
+      ].filter(Boolean);
+      return {
+        title: title || "Partner",
+        subtitle: bits.join(" · "),
+      };
+    },
   },
 });
