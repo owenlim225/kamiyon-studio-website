@@ -17,7 +17,7 @@ When a task/phase is marked complete:
 
 ## Current Phase
 
-**Phase B scaffold complete (2026-07-21) → Phase C next:** Sanity Studio at `/studio` with §7 schemas. Operator must set `NEXT_PUBLIC_SANITY_PROJECT_ID`.
+**Phase C complete (2026-07-23) → Phase E next:** OpenNext + R2 upload + webhook revalidation + CF Web Analytics.
 
 **Source of truth:** [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md) · [`DECISIONS.md`](./DECISIONS.md)
 
@@ -25,40 +25,33 @@ When a task/phase is marked complete:
 
 ## Current Goal
 
-Swap `lib/cms` to Sanity + GROQ + R2 refs (Phase C); preserve public API + typed fallbacks.
+Deploy path + media + revalidation (Phase E); then Phase F surfaces (contact/Resend, blog UI, E2E).
+
+---
+
+## Completed in Phase C (2026-07-23)
+
+Done — see [`completed/2026-07-23-phase-c-sanity-cms-swap.md`](./completed/2026-07-23-phase-c-sanity-cms-swap.md).
 
 ---
 
 ## Completed in Phase B (2026-07-21)
 
-- `sanity`, `next-sanity`, `@sanity/vision` installed
-- `sanity.config.ts`, `sanity.cli.ts`, desk structure, env helpers
-- Full §7 schemas: singletons, collections, blog (author/category/tag/post), `r2Asset` object, `mediaAsset` doc
-- Embedded Studio at `/studio` (`app/studio/[[...tool]]`) with `noindex` layout + robots disallow
-- `.env.example` updated with Sanity/R2/Resend vars
-- Unit tests: `sanity/env.test.ts`, `sanity/schemaTypes/index.test.ts`
-
-**Operator step:** Create project at [sanity.io/manage](https://www.sanity.io/manage) or `pnpm sanity init`; copy project ID to `.env.local`.
+Done — Sanity Studio `/studio` + §7 schemas. Operator still needs project ID in `.env.local` for live Studio/CMS.
 
 ---
 
 ## Completed in repo hygiene (2026-07-21)
 
-- Payload runtime removed; `lib/cms` fallbacks-only
-- Framer Motion + Lenis removed from main site (GSAP-only)
-- Geologica + Montserrat; brand hex `#FF7998` etc.
-- Products + Community in primary nav
-- `context/DECISIONS.md` created; agent docs aligned
-- `graphify-out/` retired (regenerate: `graphify update .`)
+Done — see [`DECISIONS.md`](./DECISIONS.md) ADR-005.
 
 ---
 
 ## Next Up (resume here)
 
-1. **Operator:** Set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` in `.env.local`; verify `/studio` loads
-2. **Phase C:** swap `lib/cms` to Sanity + GROQ + R2 refs; keep public API + fallbacks
-3. **Phase E:** OpenNext + R2 + webhook revalidation + CF Web Analytics
-4. **Phase F surfaces:** contact+Resend (T8), blog UI (T9), expanded E2E (T15)
+1. **Operator:** Set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` in `.env.local`; verify `/studio` loads and CMS getters leave fallbacks when dataset is empty
+2. **Phase E:** OpenNext + R2 upload + webhook revalidation + CF Web Analytics (T4/T5/T6/T14)
+3. **Phase F surfaces:** contact+Resend (T8), blog UI (T9), expanded E2E (T15)
 
 **Done (pointers):** see [`completed/README.md`](./completed/README.md)
 

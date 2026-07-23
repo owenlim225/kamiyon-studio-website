@@ -6,7 +6,7 @@ This repository builds the **official Kamiyon Studio marketing website** — the
 
 **Source of truth for company facts:** [`docs/`](../docs/) (Kamiyon canon).  
 **Build instructions for agents:** `context/` files (this folder).  
-**Runtime content:** Typed fallbacks until Sanity is wired; target CMS is Sanity (see [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md)).
+**Runtime content:** Sanity GROQ via `lib/cms` when configured; typed fallbacks otherwise (see [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md)).
 
 Kamiyon Studio is a Filipino creative technology studio founded in **2024** in **Biñan City, Laguna, Philippines**. It operates as both a client-services agency and an original IP studio, creating games and interactive experiences that educate, inspire, and make a lasting impact.
 

@@ -28,6 +28,15 @@ export type PortableTextBlock = {
   markDefs?: Array<Record<string, unknown>>;
 };
 
+/** Blog portable-text image block (`blogBody` inlineImage). */
+export type PortableTextInlineImage = {
+  _key?: string;
+  _type: "inlineImage";
+  asset?: CmsImage;
+};
+
+export type BlogBodyBlock = PortableTextBlock | PortableTextInlineImage;
+
 /** Spec 02 — seoMetadata, cta, socialLink */
 
 export type SeoMetadata = {
@@ -324,7 +333,7 @@ export type Post = {
   categories: BlogCategory[];
   tags: BlogTag[];
   featuredImage?: CmsImage;
-  body: PortableTextBlock[];
+  body: BlogBodyBlock[];
   seo: SeoMetadata;
   readingTimeMinutes?: number;
   publishedAt: string;

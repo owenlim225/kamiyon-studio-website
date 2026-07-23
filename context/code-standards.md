@@ -91,7 +91,6 @@ Target (Sanity + Cloudflare): see [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESS
 - Prefer composition over deep selector chains
 - Mobile-first responsive classes
 - Honor `prefers-reduced-motion`
-- Scroll reveals use soft motion blur by default (`AnimatedSection` / `useFadeIn`); opt out with `motionBlur={false}`
 
 ---
 

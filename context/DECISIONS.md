@@ -78,3 +78,21 @@ graphify update .
 **Decision:** Holistic cleanup applied: Payload removed, GSAP-only main site, Geologica/Montserrat + brand hex tokens, Products/Community in nav, agent docs aligned.
 
 **Follow-ups (not in cleanup):** T1 Sanity scaffold, T3–T6 data layer + webhooks, T5 OpenNext deploy, T4 R2, T8 Resend contact form, T9 blog UI, T14 CF Analytics.
+
+---
+
+## ADR-006 — Phase C Sanity GROQ data layer (2026-07-23)
+
+**Status:** Accepted
+
+**Context:** Phase B delivered Studio + schemas. Public site still used null stubs + typed fallbacks.
+
+**Decision:**
+
+- Wire `lib/cms/queries.ts` to Sanity via GROQ (`lib/cms/groq.ts`) and `safeSanityFetch`
+- Return `null` when Sanity is unset, empty, or errors — pages keep `resolveWithFallback`
+- Resolve media with `getMediaUrl` / `r2Asset` (`url` or `key` + `NEXT_PUBLIC_R2_PUBLIC_BASE_URL`)
+- Expose blog getters (`getPosts`, `getPostBySlug`) ahead of blog UI (T9)
+- Cache with `next.revalidate` + tags; webhook invalidation deferred to Phase E
+
+**Consequences:** Empty dataset or missing env still serves fallbacks. Live content appears once Studio is configured and documents are published.

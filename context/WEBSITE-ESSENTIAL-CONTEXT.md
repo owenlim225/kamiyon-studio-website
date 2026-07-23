@@ -127,7 +127,7 @@ Contact form ──► API route / Worker ──► Resend ──► studio inbo
 
 ### Current repo reality (2026-07-21)
 
-Payload **removed**. Public site uses **typed fallbacks** via `lib/cms/queries` (returns `null`) + `resolveWithFallback()`. Sanity Studio scaffold exists at `/studio` (env-gated); full GROQ swap is Phase C.
+Payload **removed**. Public site uses Sanity GROQ via `lib/cms` when configured; otherwise **typed fallbacks** via `resolveWithFallback()`. Studio at `/studio` (env-gated).
 
 ### Migration shape (do not keep both)
 
@@ -387,7 +387,7 @@ Decisions in §3 locked.
 - Schemas per §7; empty dataset.
 - Keep Payload until Phase D.
 
-### Phase C — Data layer swap
+### Phase C — Data layer swap (done 2026-07-23)
 
 - `lib/cms` → Sanity + GROQ; R2 media URLs; fallbacks green.
 - Tests/mocks updated.
@@ -421,7 +421,7 @@ Decisions in §3 locked.
 | --- | --- | --- |
 | T1 | Scaffold new Sanity project; embed Studio at `/studio` | P0 |
 | T2 | Schema parity (§7) including blog/author/category/tag | P0 |
-| T3 | Swap `lib/cms` to Sanity + GROQ; keep public API + fallbacks | P0 |
+| T3 | Swap `lib/cms` to Sanity + GROQ; keep public API + fallbacks | P0 — **done** (2026-07-23) |
 | T4 | R2 media model + Studio upload + `getMediaUrl` | P0 |
 | T5 | OpenNext Cloudflare deploy + env docs (free tier) | P0 |
 | T6 | Sanity webhook → `revalidateTag` / path revalidation | P0 |

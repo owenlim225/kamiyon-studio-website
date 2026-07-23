@@ -2,6 +2,7 @@ import { mapR2AssetToCmsImage, type R2AssetRef } from "./media";
 import type {
   AboutPage,
   Author,
+  BlogBodyBlock,
   BlogCategory,
   BlogTag,
   CaseStudy,
@@ -102,7 +103,36 @@ function mapPortableBody(value: unknown): PortableTextBlock[] {
   if (!Array.isArray(value)) {
     return [];
   }
-  return value as PortableTextBlock[];
+  return value.filter((block) => asRecord(block)?._type === "block") as PortableTextBlock[];
+}
+
+function mapBlogBody(value: unknown): BlogBodyBlock[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((block): BlogBodyBlock | null => {
+      const row = asRecord(block);
+      if (!row) {
+        return null;
+      }
+
+      if (row._type === "block") {
+        return block as PortableTextBlock;
+      }
+
+      if (row._type === "inlineImage") {
+        return {
+          _type: "inlineImage",
+          _key: typeof row._key === "string" ? row._key : undefined,
+          asset: mapR2AssetToCmsImage(row.asset as R2AssetRef | null | undefined),
+        };
+      }
+
+      return null;
+    })
+    .filter((block): block is BlogBodyBlock => block !== null);
 }
 
 function mapHomeBlocks(value: unknown): HomeBlock[] {
@@ -484,7 +514,7 @@ export function mapPost(doc: unknown): Post | null {
       .map(mapBlogTag)
       .filter((tag): tag is BlogTag => Boolean(tag)),
     featuredImage: mapR2AssetToCmsImage(row.featuredImage as R2AssetRef | null | undefined),
-    body: mapPortableBody(row.body),
+    body: mapBlogBody(row.body),
     seo: mapSeo(row.seo),
     readingTimeMinutes:
       typeof row.readingTimeMinutes === "number" ? row.readingTimeMinutes : undefined,

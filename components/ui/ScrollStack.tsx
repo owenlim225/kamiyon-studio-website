@@ -29,7 +29,6 @@ type CardTransform = {
   translateY: number;
   scale: number;
   rotation: number;
-  blur: number;
 };
 
 export type ScrollStackProps = {
@@ -43,7 +42,6 @@ export type ScrollStackProps = {
   baseScale?: number;
   scaleDuration?: number;
   rotationAmount?: number;
-  blurAmount?: number;
   useWindowScroll?: boolean;
   onStackComplete?: () => void;
 };
@@ -89,7 +87,6 @@ export default function ScrollStack({
   baseScale = 0.85,
   scaleDuration: _scaleDuration = 0.5,
   rotationAmount = 0,
-  blurAmount = 0,
   useWindowScroll = false,
   onStackComplete,
 }: ScrollStackProps) {
@@ -177,24 +174,6 @@ export default function ScrollStack({
       const scale = 1 - scaleProgress * (1 - targetScale);
       const rotation = rotationAmount ? i * rotationAmount * scaleProgress : 0;
 
-      let blur = 0;
-      if (blurAmount) {
-        let topCardIndex = 0;
-        for (let j = 0; j < cardsRef.current.length; j++) {
-          const jCardTop = cardTopsRef.current[j] ?? 0;
-          const jTriggerStart =
-            jCardTop - stackPositionPx - itemStackDistance * j;
-          if (scrollTop >= jTriggerStart) {
-            topCardIndex = j;
-          }
-        }
-
-        if (i < topCardIndex) {
-          const depthInStack = topCardIndex - i;
-          blur = Math.max(0, depthInStack * blurAmount);
-        }
-      }
-
       let translateY = 0;
       const isPinned = scrollTop >= pinStart && scrollTop <= pinEnd;
 
@@ -208,7 +187,6 @@ export default function ScrollStack({
         translateY: Math.round(translateY * 100) / 100,
         scale: Math.round(scale * 1000) / 1000,
         rotation: Math.round(rotation * 100) / 100,
-        blur: Math.round(blur * 100) / 100,
       };
 
       const lastTransform = lastTransformsRef.current.get(i);
@@ -216,16 +194,10 @@ export default function ScrollStack({
         !lastTransform ||
         Math.abs(lastTransform.translateY - newTransform.translateY) > 0.1 ||
         Math.abs(lastTransform.scale - newTransform.scale) > 0.001 ||
-        Math.abs(lastTransform.rotation - newTransform.rotation) > 0.1 ||
-        Math.abs(lastTransform.blur - newTransform.blur) > 0.1;
+        Math.abs(lastTransform.rotation - newTransform.rotation) > 0.1;
 
       if (hasChanged) {
-        const transform = `translate3d(0, ${newTransform.translateY}px, 0) scale(${newTransform.scale}) rotate(${newTransform.rotation}deg)`;
-        const filter = newTransform.blur > 0 ? `blur(${newTransform.blur}px)` : "";
-
-        card.style.transform = transform;
-        card.style.filter = filter;
-
+        card.style.transform = `translate3d(0, ${newTransform.translateY}px, 0) scale(${newTransform.scale}) rotate(${newTransform.rotation}deg)`;
         lastTransformsRef.current.set(i, newTransform);
       }
 
@@ -248,7 +220,6 @@ export default function ScrollStack({
     scaleEndPosition,
     baseScale,
     rotationAmount,
-    blurAmount,
     onStackComplete,
     calculateProgress,
     parsePercentage,
@@ -287,7 +258,7 @@ export default function ScrollStack({
       }
       // Later cards paint above earlier ones — prevents bleed/z-fight while stacking.
       card.style.zIndex = String(i + 1);
-      card.style.willChange = "transform, filter";
+      card.style.willChange = "transform";
       card.style.transformOrigin = "top center";
       card.style.backfaceVisibility = "hidden";
       card.style.transform = "translate3d(0, 0, 0)";

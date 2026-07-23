@@ -279,7 +279,7 @@ export const communityItemsQuery = defineQuery(/* groq */ `
 `);
 
 export const postsQuery = defineQuery(/* groq */ `
-  *[_type == "post"] | order(publishedAt desc) {
+  *[_type == "post" && defined(publishedAt) && publishedAt <= now()] | order(publishedAt desc) {
     _type,
     title,
     slug,
@@ -297,7 +297,7 @@ export const postsQuery = defineQuery(/* groq */ `
 `);
 
 export const postBySlugQuery = defineQuery(/* groq */ `
-  *[_type == "post" && slug.current == $slug][0]{
+  *[_type == "post" && slug.current == $slug && defined(publishedAt) && publishedAt <= now()][0]{
     _type,
     title,
     slug,

@@ -110,7 +110,7 @@ describe("mapPost", () => {
     expect(mapPost({ title: "Draft", slug: { current: "draft" } })).toBeNull();
   });
 
-  it("maps authors and related slugs", () => {
+  it("maps authors, related slugs, and inline images", () => {
     const post = mapPost({
       title: "Hello",
       slug: { current: "hello" },
@@ -118,7 +118,14 @@ describe("mapPost", () => {
       authors: [{ name: "Ada", slug: { current: "ada" } }],
       categories: [{ title: "News", slug: { current: "news" } }],
       tags: [{ title: "Launch", slug: { current: "launch" } }],
-      body: [],
+      body: [
+        { _type: "block", children: [{ _type: "span", text: "Hi" }] },
+        {
+          _type: "inlineImage",
+          _key: "img1",
+          asset: { url: "https://cdn.example.com/inline.png", alt: "Inline" },
+        },
+      ],
       seo: { title: "Hello", description: "Desc" },
       relatedPostSlugs: ["other"],
     });
@@ -127,6 +134,13 @@ describe("mapPost", () => {
       _type: "post",
       authors: [{ _type: "author", name: "Ada", slug: { current: "ada" } }],
       relatedPostSlugs: ["other"],
+      body: [
+        { _type: "block" },
+        {
+          _type: "inlineImage",
+          asset: { url: "https://cdn.example.com/inline.png", alt: "Inline" },
+        },
+      ],
     });
   });
 });

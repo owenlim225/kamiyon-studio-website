@@ -201,10 +201,8 @@ Animations should communicate delight, not distraction:
 | Element | Pattern | Component |
 | --- | --- | --- |
 | Section / page headings (`h1`–`h2`) | Word pull-up stagger on scroll into view | `components/ui/WordPullUp` |
-| Body copy, eyebrows, supporting text | Fade + slight rise on scroll; soft enter blur + velocity blur while scrolling past (desktop / fine pointer) | `AnimatedSection` / `useFadeIn` |
+| Body copy, eyebrows, supporting text | Fade + slight rise on scroll | `AnimatedSection` / `useFadeIn` |
 | Full-bleed opening hero brand | Character split (GSAP) — special case | `components/ui/SplitText` in `HeroOpening` |
-
-**Motion blur:** `useFadeIn` / `useReveal` / `useStagger` default `motionBlur: true`. Enter from ~8px blur → sharp; while the element occupies the viewport, scroll velocity maps to ≤6px blur (clears when idle or off-screen). Skipped under `prefers-reduced-motion` and coarse pointers. Opt out with `motionBlur={false}` on `AnimatedSection` or the hook options.
 
 Do not wrap an entire section in `AnimatedSection` when the heading should pull up independently — animate the heading with `WordPullUp` and fade the remaining copy/content separately.
 
