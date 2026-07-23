@@ -4,6 +4,8 @@ import {
   mapCaseStudy,
   mapCollection,
   mapHomePage,
+  mapPartner,
+  mapPartnerToMarqueeItem,
   mapPost,
   mapService,
   mapSiteSettings,
@@ -142,6 +144,77 @@ describe("mapPost", () => {
         },
       ],
     });
+  });
+});
+
+describe("mapPartner", () => {
+  it("returns null without a label", () => {
+    expect(mapPartner({ slug: { current: "acme" }, _id: "partner-1" })).toBeNull();
+  });
+
+  it("prefers slug.current as id", () => {
+    expect(
+      mapPartner({
+        _id: "drafts.partner-1",
+        label: "Partner placeholder",
+        slug: { current: "partner-1" },
+        order: 1,
+        isPlaceholder: true,
+      }),
+    ).toMatchObject({
+      _type: "partner",
+      id: "partner-1",
+      label: "Partner placeholder",
+      slug: { current: "partner-1" },
+      order: 1,
+      isPlaceholder: true,
+    });
+  });
+
+  it("falls back to document _id when slug is missing", () => {
+    expect(
+      mapPartner({
+        _id: "partner-doc-2",
+        label: "Partner placeholder",
+        order: 2,
+      }),
+    ).toMatchObject({
+      id: "partner-doc-2",
+      label: "Partner placeholder",
+    });
+  });
+
+  it("maps optional logo and websiteUrl", () => {
+    expect(
+      mapPartner({
+        _id: "p3",
+        label: "Partner placeholder",
+        slug: { current: "partner-3" },
+        order: 3,
+        logo: { url: "https://cdn.example.com/logo.png", alt: "Logo" },
+        websiteUrl: "https://example.com",
+        isPlaceholder: false,
+      }),
+    ).toMatchObject({
+      logo: { url: "https://cdn.example.com/logo.png", alt: "Logo" },
+      websiteUrl: "https://example.com",
+      isPlaceholder: false,
+    });
+  });
+});
+
+describe("mapPartnerToMarqueeItem", () => {
+  it("projects to id/label for PartnersMarquee", () => {
+    expect(
+      mapPartnerToMarqueeItem({
+        _type: "partner",
+        id: "partner-1",
+        label: "Partner placeholder",
+        slug: { current: "partner-1" },
+        order: 1,
+        isPlaceholder: true,
+      }),
+    ).toEqual({ id: "partner-1", label: "Partner placeholder" });
   });
 });
 

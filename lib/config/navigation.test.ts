@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { PRIMARY_NAV_ITEMS } from "./navigation";
+import { INTERIM_CONTACT_FORM_URL } from "@/lib/contact/channels";
+
+import { CONTACT_CTA, PRIMARY_NAV_ITEMS } from "./navigation";
 
 const EXPECTED_PRIMARY_NAV = [
   { label: "Home", href: "/" },
@@ -27,5 +29,20 @@ describe("PRIMARY_NAV_ITEMS", () => {
     expect(labels).toContain("Community");
     expect(hrefs).toContain("/products");
     expect(hrefs).toContain("/community");
+  });
+
+  it("keeps Contact as the in-app channels page", () => {
+    expect(PRIMARY_NAV_ITEMS.find((item) => item.label === "Contact")?.href).toBe(
+      "/contact",
+    );
+  });
+});
+
+describe("CONTACT_CTA", () => {
+  it("points the interim primary CTA at the Google Form", () => {
+    expect(CONTACT_CTA).toEqual({
+      label: "Get in touch",
+      href: INTERIM_CONTACT_FORM_URL,
+    });
   });
 });

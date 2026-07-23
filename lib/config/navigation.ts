@@ -1,6 +1,7 @@
 import type { SocialPlatform } from "@/lib/cms/types";
 import {
   FACEBOOK_PAGE_URL,
+  INTERIM_CONTACT_FORM_URL,
   ITCH_URL,
   LINKEDIN_COMPANY_URL,
   PUBLIC_EMAIL,
@@ -27,7 +28,7 @@ export const PRIMARY_NAV_ITEMS: readonly NavItem[] = [
 
 export const CONTACT_CTA: NavItem = {
   label: "Get in touch",
-  href: "/contact",
+  href: INTERIM_CONTACT_FORM_URL,
 };
 
 export type NavSocialLink = {

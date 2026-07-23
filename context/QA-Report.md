@@ -1,16 +1,33 @@
 # Comprehensive QA Debugging Report
 
-**Project:** Kamiyon Studio Website
-**Purpose:** Consolidated QA findings for debugging and implementation
-**Audience:** Cursor AI / Development Team
-**Version:** 1.0
-**Status:** Open Issues
+**Project:** Kamiyon Studio Website  
+**Purpose:** Consolidated QA findings for debugging and implementation  
+**Audience:** Cursor AI / Development Team  
+**Version:** 1.1  
+**Status:** Triaged (2026-07-24)  
+**QA environment:** Production (`kamiyonstudio.com`) **before** 2026-07-24 staging/kinetic-nav changes  
+
+---
+
+# Triage decisions (2026-07-24)
+
+| Decision | Choice |
+| --- | --- |
+| Contact “form” | External **Google Form** link (not in-app / not Resend yet) |
+| Google Form URL | https://docs.google.com/forms/d/e/1FAIpQLSeIefAWJu5FP9pwljLFz1wSUxU2ybR3--GdylUYUBsGHH0yaw/viewform |
+| Same-route nav (QA-005/006/007) | **(A)** Scroll to top / target section |
+| Scroll tip (QA-002/009) | Keep bounce UX; **first scroll must count** (dismiss tip without eating the scroll) |
+| Hamburger (QA-008) | **Superseded** — CardNav replaced by kinetic nav (ADR-008) |
+| Priority vs Wave 4 | QA streams **parallel** with staging ops |
+| T8 Resend (later) | Studio inbox + visitor confirmation when form ships; confirm `CONTACT_TO_EMAIL` |
+
+**Repo gap (closed in WS3):** Interim Google Form wired via `INTERIM_CONTACT_FORM_URL` / `CONTACT_CTA` + fallbacks. Live Sanity CMS may still need a reseed/patch if Studio content still points at `/contact`.
 
 ---
 
 # Executive Summary
 
-This report consolidates the latest manual QA findings with the existing QA tracking table. The comparison confirms that nearly all manually observed issues have already been identified in the issue tracker, while also providing additional behavioral context that explains *why* these bugs occur and how they affect user experience.
+Manual QA matched the prior tracker. Remaining work is frontend interaction polish plus wiring the interim Google Form CTA. Email “confirmation” (QA-001) is a **Google Forms** receipt setting / out-of-band concern — not an app mail pipeline bug.
 
 Overall assessment:
 
@@ -18,29 +35,42 @@ Overall assessment:
 * **Layout consistency:** Good
 * **Content & references:** Working correctly
 * **Navigation anchors:** Mostly functional
-* **Primary remaining work:** UI state management, interaction consistency, navigation behavior, and event handling.
+* **Primary remaining work:** Wave 4 cutover (WS4b); optional WS6; T8 Resend (WS5). WS1–WS3 polish streams done in repo.
 
-The application feels feature-complete from a design perspective, but several frontend interaction bugs reduce perceived quality and responsiveness.
+---
+
+# Status board
+
+| ID | Title | Severity | Status | Owner stream |
+| --- | --- | --- | --- | --- |
+| QA-001 | Email confirmation (Google Form) | Medium | **Out of scope (app)** — Google Forms settings; optional ops note | Ops / Form owner |
+| QA-002 | Initial scroll does not work | High | **Open** — same root as QA-009 | WS1 |
+| QA-003 | Header logo disappears | Medium | **Needs re-QA** on kinetic nav / staging | WS2 |
+| QA-004 | Header logo not clickable | Medium | **Needs re-QA** on kinetic nav / staging | WS2 |
+| QA-005 | Contact / brand link same-route | Medium | **Resolved (WS3)** — same-route smooth-scroll | WS3 |
+| QA-006 | Footer nav same-route | Medium | **Resolved (WS3)** — same-route smooth-scroll | WS3 |
+| QA-007 | Get in Touch already at target | Low | **Resolved (WS3)** — in-app replay scroll; Form is external | WS3 |
+| QA-008 | Hamburger freezes | High | **Superseded** (ADR-008 kinetic nav) | — |
+| QA-009 | Scroll hint consumes first scroll | High | **Open** — bounce must not eat first intent | WS1 |
+| QA-010 | Scroll hint × inconsistent | Medium | **Open** | WS1 (+ WS2 if overlay) |
 
 ---
 
 # QA Comparison Summary
 
-| Existing QA                       | Manual Observation                                | Result   |
-| --------------------------------- | ------------------------------------------------- | -------- |
-| Email confirmation missing        | Confirmed                                         | Match    |
-| Initial scroll bug                | Confirmed with additional root-cause observations | Expanded |
-| Header logo disappearing          | Confirmed                                         | Match    |
-| Header logo not clickable         | Confirmed                                         | Match    |
-| Contact navigation issue          | Confirmed                                         | Match    |
-| Footer navigation issue           | Confirmed                                         | Match    |
-| Get in Touch behavior             | Confirmed                                         | Match    |
-| Hamburger menu freezes            | Confirmed                                         | Match    |
-| Scroll hint consumes first scroll | Confirmed with explanation                        | Expanded |
-| Scroll hint X inconsistent        | Confirmed                                         | Match    |
-| "I miss her"                      | Removed (non-project item)                        | Ignored  |
-
-No new functional bugs were discovered outside the existing issue tracker. However, the manual QA session provides significantly more insight into the underlying behavioral problems, especially around scroll state and interaction timing.
+| Existing QA | Manual Observation | Result |
+| --- | --- | --- |
+| Email confirmation missing | Google Form submit; no app Resend | **Reclassified** |
+| Initial scroll bug | Confirmed; bounce returns to top | Expanded → WS1 |
+| Header logo disappearing | Pre-kinetic prod; re-QA staging | Needs re-QA |
+| Header logo not clickable | Pre-kinetic prod; re-QA staging | Needs re-QA |
+| Contact navigation issue | Same-route no feedback | **Resolved (WS3)** |
+| Footer navigation issue | Same-route no feedback | **Resolved (WS3)** |
+| Get in Touch behavior | Already at target | **Resolved (WS3)** |
+| Hamburger menu freezes | CardNav era | **Superseded** |
+| Scroll hint consumes first scroll | Bounce-back | Expanded → WS1 |
+| Scroll hint X inconsistent | Confirmed | Open → WS1 |
+| "I miss her" | Non-project | Ignored |
 
 ---
 
@@ -52,7 +82,7 @@ No new functional bugs were discovered outside the existing issue tracker. Howev
 
 ### Module
 
-Email System
+Google Forms (external)
 
 ### Severity
 
@@ -60,34 +90,26 @@ Medium
 
 ### Status
 
-Open
+**Out of scope for app code** (2026-07-24)
 
 ### Description
 
-Completing the relevant user action does not result in a confirmation email being delivered.
+Contact CTA opens an external [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSeIefAWJu5FP9pwljLFz1wSUxU2ybR3--GdylUYUBsGHH0yaw/viewform). Submitter expected a confirmation email; none arrived.
 
-### Steps to Reproduce
+### Clarification
 
-1. Perform the action that should trigger an email.
-2. Check Inbox.
-3. Check Spam/Junk.
-4. No confirmation email arrives.
+This is **not** Resend / `/api/contact`. There is no in-app mail send for this path. Confirmation depends on Google Forms → Settings → email receipts / respondent notifications, or Gmail filters.
 
-### Expected
+### App work (related, not this bug)
 
-Confirmation email is successfully sent and received.
+* Wire interim CTA/href to the Google Form URL until T8 Resend.
+* T8 later: native form + Resend → studio inbox + visitor confirmation.
 
-### Actual
+### Ops checklist (Form owner)
 
-No email received.
-
-### Debug Checklist
-
-* Verify email service configuration.
-* Confirm SMTP/API credentials.
-* Check server logs for failed sends.
-* Verify production environment variables.
-* Confirm trigger function executes successfully.
+* [ ] Google Form: collect email + “Send response copy” / confirmation enabled
+* [ ] Responses destination (Sheet) receiving rows
+* [ ] Spam check for `kamiyonstudio@gmail.com` and respondent inbox
 
 ---
 
@@ -95,7 +117,7 @@ No email received.
 
 ### Module
 
-Scrolling
+Scrolling / `useHeroScrollBounce`
 
 ### Severity
 
@@ -103,48 +125,23 @@ High
 
 ### Status
 
-Open
+Open → **WS1**
 
 ### Description
 
-Immediately after refreshing the homepage, the first mouse wheel interaction does not move the page.
+Immediately after refreshing the homepage, the first mouse wheel interaction does not move the page. Users must scroll twice.
 
-Instead, the first wheel event is consumed by the scroll helper overlay.
+### Expected (locked)
 
-Users must scroll twice before movement begins.
+Tip may dismiss / bounce policy may remain, but the **first scroll intent must move the page** (or equivalent: dismiss without consuming the scroll).
 
-### Steps
+### Suspected cause (code)
 
-1. Refresh homepage.
-2. Attempt to scroll once.
+`useHeroScrollBounce` marks wheel intent, then on scroll past threshold **smooth-returns to y=0**. That is bounce-back, not `preventDefault` on a non-passive wheel listener.
 
-### Expected
+### Recommended fix
 
-The page scrolls immediately.
-
-### Actual
-
-First wheel input is consumed.
-
-Second wheel input finally scrolls.
-
-### Additional Findings
-
-The issue appears directly tied to the **Scroll Down ×** helper.
-
-Current sequence:
-
-* First scroll hides helper.
-* Page remains stationary.
-* Second scroll finally moves page.
-
-### Suspected Cause
-
-The helper overlay intercepts the first wheel event.
-
-### Recommended Fix
-
-The overlay should dismiss while allowing the original wheel event to continue propagating so scrolling begins immediately.
+Dismiss/hide tip on first intent while allowing scroll progress to stick (or apply bounce only after a completed intentional scroll, never on the first gesture).
 
 ---
 
@@ -152,7 +149,7 @@ The overlay should dismiss while allowing the original wheel event to continue p
 
 ### Module
 
-Header
+Header / kinetic nav
 
 ### Severity
 
@@ -160,26 +157,17 @@ Medium
 
 ### Status
 
-Open
+**Needs re-QA** on staging + ADR-008 (`SterlingGateKineticNavigation`) → **WS2**
 
 ### Description
 
-The left navigation logo occasionally disappears during browsing.
-
-### Expected
-
-Logo remains visible at all times.
-
-### Actual
-
-Intermittent disappearance.
+Left nav logo occasionally disappeared (observed on pre-kinetic production).
 
 ### Debug Areas
 
-* Conditional rendering
-* Animation lifecycle
+* Conditional rendering / animation lifecycle
 * Scroll-triggered visibility
-* Hydration/state synchronization
+* Hydration/state sync in kinetic header
 
 ---
 
@@ -195,26 +183,12 @@ Medium
 
 ### Status
 
-Open
-
-### Description
-
-The left logo intermittently ignores click events.
-
-### Expected
-
-Always clickable.
-
-### Actual
-
-Clickable only intermittently.
+**Needs re-QA** → **WS2** (coordinate with WS1 if scroll-tip overlay steals hits)
 
 ### Debug Areas
 
-* Pointer events
-* Invisible overlays
-* z-index conflicts
-* Event interception
+* Pointer events / invisible overlays / z-index
+* Event interception from hero helper (`z-20`)
 
 ---
 
@@ -230,26 +204,13 @@ Medium
 
 ### Status
 
-Open
+**Resolved (WS3)** — `SameRouteLink` + `handleSameRouteNavClick`
 
-### Description
+### Locked behavior
 
-The "Kamiyon Studio" link behaves inconsistently depending on the current page.
+Same route → **smooth-scroll to top or target section** (policy A).
 
-When accessed from another page, navigation works correctly.
-
-When already on the homepage, clicking it appears to do nothing because it navigates back to the current route without any visible feedback.
-
-### Expected
-
-Consistent behavior regardless of route.
-
-Possible implementations:
-
-* Scroll to top
-* Scroll to Contact
-* Reload intentionally
-* Disable when already active with clear visual feedback
+Different route → navigate as today.
 
 ---
 
@@ -265,22 +226,11 @@ Medium
 
 ### Status
 
-Open
+**Resolved (WS3)** — footer nav uses `SameRouteLink`
 
-### Description
+### Locked behavior
 
-Footer navigation elements appear inactive while already on the homepage.
-
-### Expected
-
-Consistent navigation behavior across all pages.
-
-### Debug Areas
-
-* Route detection
-* Hash navigation
-* Scroll restoration
-* Anchor handling
+Same as QA-005: same-route → scroll to top/section.
 
 ---
 
@@ -288,7 +238,7 @@ Consistent navigation behavior across all pages.
 
 ### Module
 
-Contact
+Contact CTA
 
 ### Severity
 
@@ -296,21 +246,11 @@ Low
 
 ### Status
 
-Open
+**Resolved (WS3)** — interim CTA is Google Form (external); in-app `/contact` / hash targets still same-route scroll
 
-### Description
+### Locked behavior
 
-When already viewing the Contact section, clicking **Get in Touch** produces no visible response.
-
-Unclear whether this is intended behavior.
-
-### Recommendation
-
-If already in Contact:
-
-* replay smooth scrolling,
-* highlight the section,
-* or visually indicate that the destination is already active.
+If already at Contact (page or `#` target): **scroll / replay** to the contact section (policy A). Interim href may be Google Form (external) — then “already here” only applies to in-app `/contact` or hash targets.
 
 ---
 
@@ -318,7 +258,7 @@ If already in Contact:
 
 ### Module
 
-Navigation
+Navigation (CardNav)
 
 ### Severity
 
@@ -326,25 +266,9 @@ High
 
 ### Status
 
-Open
+**Superseded** (ADR-008 — kinetic overlay nav)
 
-### Description
-
-The mobile navigation toggle occasionally becomes unresponsive.
-
-Observed behavior:
-
-* Sometimes opens.
-* Sometimes closes.
-* Sometimes ignores clicks entirely.
-
-### Debug Areas
-
-* Menu open state
-* Animation completion
-* Event listeners
-* Pointer lock
-* State synchronization
+Do not patch `CardNav` for this. Optional cleanup: remove unused CardNav in a later PR. New freezes on kinetic toggle → file as new issue under WS2.
 
 ---
 
@@ -352,7 +276,7 @@ Observed behavior:
 
 ### Module
 
-Scroll Hint
+Scroll Hint / `HeroScrollHelper`
 
 ### Severity
 
@@ -360,23 +284,11 @@ High
 
 ### Status
 
-Open
+Open → **WS1** (duplicate root cause with QA-002)
 
-### Description
-
-This issue is closely related to QA-002.
-
-The scroll hint currently consumes the user's first wheel event before allowing page scrolling.
-
-This creates the perception that scrolling is broken.
-
-### Expected
+### Expected (locked)
 
 Dismiss helper while preserving the original scroll action.
-
-### Debug Recommendation
-
-The wheel event should continue after dismissing the helper rather than terminating.
 
 ---
 
@@ -392,165 +304,75 @@ Medium
 
 ### Status
 
-Open
-
-### Description
-
-The close (X) button behaves inconsistently.
-
-Observed:
-
-* sometimes clickable,
-* sometimes ignored,
-* sometimes delayed.
+Open → **WS1**
 
 ### Debug Areas
 
-* Pointer events
-* Event propagation
-* Animation state
-* z-index
-* Focus handling
+* Pointer events, z-index vs header, animation state, focus handling
 
 ---
 
 # Cross-Issue Analysis
 
-Several reported issues are likely symptoms of the same underlying architectural problems rather than isolated bugs.
+## 1. Hero scroll bounce (WS1)
 
-## 1. UI State Synchronization
+Affects QA-002, QA-009, QA-010. Primary file ownership: `hooks/useHeroScrollBounce.ts`, `components/sections/HeroScrollHelper.tsx`.
 
-Potentially affects:
+## 2. Kinetic chrome (WS2)
 
-* disappearing logo,
-* frozen hamburger menu,
-* inconsistent button behavior,
-* inactive navigation elements.
+Affects QA-003, QA-004; any new menu freeze. Ownership: `sterling-gate-kinetic-navigation*`, `SiteHeader`.
 
-Investigate whether component state becomes desynchronized after route changes, scroll events, or animations.
+## 3. Same-route scroll policy (WS3)
 
----
+Affects QA-005, QA-006, QA-007. One shared helper for header/footer/CTAs.
 
-## 2. Event Propagation
+## 4. Layering / pointer events
 
-Potentially affects:
+May couple WS1 tip and WS2 logo clickability — fix tip z-index/pointer-events with WS1; re-test logo in WS2.
 
-* first scroll bug,
-* scroll hint,
-* X button,
-* header logo,
-* footer links.
+## 5. Route & external CTA
 
-Review any use of:
-
-* `preventDefault()`
-* `stopPropagation()`
-* passive vs non-passive event listeners
-* wheel event handling
-
----
-
-## 3. Layering / Pointer Events
-
-Potentially affects:
-
-* logo clickability,
-* X button,
-* menu responsiveness.
-
-Inspect for:
-
-* invisible overlays,
-* stale animation containers,
-* `pointer-events: none/auto`,
-* incorrect stacking (`z-index`).
-
----
-
-## 4. Route & Anchor Handling
-
-Potentially affects:
-
-* Contact links,
-* Footer links,
-* Get in Touch button.
-
-Ensure navigation logic handles three distinct cases consistently:
-
-1. Different route → navigate.
-2. Same route → smooth-scroll to target.
-3. Already at target → provide visible feedback or replay the scroll animation.
-
----
-
-## 5. Animation Lifecycle
-
-Potentially affects:
-
-* logo disappearance,
-* hamburger menu,
-* scroll helper,
-* interaction lockups.
-
-Review animation cleanup to ensure components do not remain in an unintended intermediate state after transitions.
+Google Form is external; do not invent same-route scroll when `href` is absolute to Google.
 
 ---
 
 # Positive Findings
 
-The following areas performed well during testing:
-
-* Visual design and presentation.
-* Overall page structure.
-* Content organization.
-* References and external links.
-* Anchor navigation (outside of the homepage edge cases).
-* General responsiveness and layout quality.
-
-The remaining issues are concentrated in frontend interaction logic rather than design or information architecture.
+* Visual design and presentation
+* Overall page structure and content organization
+* References / external links (when wired)
+* Anchor navigation outside homepage edge cases
+* General layout quality
 
 ---
 
 # Priority Recommendations
 
-## Critical (Resolve First)
+## Critical (WS1 — parallel with ops)
 
-* QA-002 — Initial scroll requires two interactions.
-* QA-008 — Hamburger menu intermittently freezes.
-* QA-009 — Scroll hint consumes the first wheel event.
+* QA-002 / QA-009 — first scroll must count
+* QA-010 — × dismiss reliability
 
----
+## High (WS2 — re-QA then fix)
 
-## High Priority
+* QA-003 / QA-004 — logo visibility & clickability on kinetic nav
 
-* QA-003 — Header logo disappears.
-* QA-004 — Header logo loses clickability.
-* QA-010 — Scroll hint close button is inconsistent.
+## Medium
 
----
+* QA-001 — ops-only on Google Form settings
 
-## Medium Priority
+## Closed / superseded
 
-* QA-005 — Contact link behavior on the homepage.
-* QA-006 — Footer navigation consistency.
-* QA-001 — Confirmation email delivery.
+* QA-005 / QA-006 / QA-007 — WS3 same-route + Google Form CTA
+* QA-008 — CardNav hamburger
 
 ---
 
-## Low Priority
+# Implementation Guidance
 
-* QA-007 — "Get in Touch" button feedback while already in the Contact section.
-
----
-
-# Implementation Guidance for Cursor
-
-Rather than fixing each issue independently, begin by auditing the shared interaction infrastructure. The clustering of symptoms suggests common underlying causes.
-
-1. Review global event listeners (`wheel`, `scroll`, `pointer`, `click`) for improper use of `preventDefault()`, `stopPropagation()`, or passive listener configuration.
-2. Audit UI state management for the scroll hint, header, hamburger menu, and navigation components to ensure state remains synchronized after route changes and animations.
-3. Inspect all animated elements for stale overlays, lingering DOM nodes, incorrect `pointer-events`, and `z-index` conflicts that may intercept user interactions.
-4. Standardize navigation behavior so that links and buttons respond consistently whether the user is on a different route, the same route, or already at the target anchor.
-5. Verify that animation lifecycle hooks clean up correctly, leaving components in an interactive state after transitions complete.
-
-Addressing these foundational interaction patterns should resolve multiple reported issues simultaneously, reducing the need for isolated patches and improving overall frontend reliability.
+1. **WS1 first for scroll:** change bounce so first wheel/touch/key intent is not undone; keep tip dismissible via ×.
+2. **WS2:** reproduce logo issues only on staging kinetic header; do not “fix” CardNav.
+3. **WS3:** shared same-route → `scrollTo` / section behavior; skip when href is external (Google Form).
+4. **Form wiring:** set interim contact CTA / channel to Google Form URL in config or CMS; keep `/contact` page for channels + mailto.
+5. **T8 later:** Resend native form; then retire Google Form as primary CTA if product wants.
+6. **Wave 4 ops:** parallel — see `progress-tracker.md` workstreams.

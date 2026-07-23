@@ -22,6 +22,7 @@ const TYPE_TAGS: Record<string, readonly string[]> = {
   product: ["product"],
   caseStudy: ["caseStudy"],
   communityItem: ["communityItem"],
+  partner: ["partner"],
   post: ["post"],
   author: ["post"],
   category: ["post"],

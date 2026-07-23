@@ -17,6 +17,15 @@ function markUserWheel() {
   window.dispatchEvent(new Event("wheel"));
 }
 
+function scrollPastThreshold(scrollY = 30) {
+  Object.defineProperty(window, "scrollY", {
+    configurable: true,
+    writable: true,
+    value: scrollY,
+  });
+  window.dispatchEvent(new Event("scroll"));
+}
+
 describe("useHeroScrollBounce", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -38,47 +47,68 @@ describe("useHeroScrollBounce", () => {
     expect(result.current.visible).toBe(true);
   });
 
-  it("user wheel past threshold invokes return-to-top and hides tip", () => {
+  it("first user scroll past threshold dismisses tip without returning to top", () => {
     const { result } = renderHook(() =>
       useHeroScrollBounce({ threshold: 24, maxBounces: 1 }),
     );
 
     act(() => {
       markUserWheel();
-      Object.defineProperty(window, "scrollY", {
-        configurable: true,
-        writable: true,
-        value: 30,
-      });
-      window.dispatchEvent(new Event("scroll"));
+      scrollPastThreshold(30);
     });
 
-    expect(scrollToMock).toHaveBeenCalledWith({
-      top: 0,
-      behavior: "smooth",
+    expect(scrollToMock).not.toHaveBeenCalled();
+    expect(result.current.visible).toBe(false);
+  });
+
+  it("touch intent past threshold also dismisses without return-to-top", () => {
+    const { result } = renderHook(() =>
+      useHeroScrollBounce({ threshold: 24, maxBounces: 1 }),
+    );
+
+    act(() => {
+      window.dispatchEvent(new Event("touchmove"));
+      scrollPastThreshold(40);
     });
+
+    expect(scrollToMock).not.toHaveBeenCalled();
+    expect(result.current.visible).toBe(false);
+  });
+
+  it("key scroll intent past threshold dismisses without return-to-top", () => {
+    const { result } = renderHook(() =>
+      useHeroScrollBounce({ threshold: 24, maxBounces: 1 }),
+    );
+
+    act(() => {
+      window.dispatchEvent(
+        new KeyboardEvent("keydown", { key: "ArrowDown" }),
+      );
+      scrollPastThreshold(40);
+    });
+
+    expect(scrollToMock).not.toHaveBeenCalled();
     expect(result.current.visible).toBe(false);
   });
 
   it("does not auto-hijack scroll when reduced motion is preferred", () => {
     prefersReducedMotionMock.mockReturnValue(true);
 
-    renderHook(() => useHeroScrollBounce({ threshold: 24 }));
+    const { result } = renderHook(() =>
+      useHeroScrollBounce({ threshold: 24 }),
+    );
 
     act(() => {
       markUserWheel();
-      Object.defineProperty(window, "scrollY", {
-        configurable: true,
-        writable: true,
-        value: 30,
-      });
-      window.dispatchEvent(new Event("scroll"));
+      scrollPastThreshold(30);
     });
 
     expect(scrollToMock).not.toHaveBeenCalled();
+    // Tip may still dismiss; page must never be bounced back.
+    expect(result.current.visible).toBe(false);
   });
 
-  it("dismiss hides tip and prevents bounce", () => {
+  it("dismiss hides tip and prevents further auto-dismiss side effects", () => {
     const { result } = renderHook(() => useHeroScrollBounce({ threshold: 24 }));
 
     act(() => {
@@ -89,29 +119,33 @@ describe("useHeroScrollBounce", () => {
 
     act(() => {
       markUserWheel();
-      Object.defineProperty(window, "scrollY", {
-        configurable: true,
-        writable: true,
-        value: 30,
-      });
-      window.dispatchEvent(new Event("scroll"));
+      scrollPastThreshold(30);
     });
 
     expect(scrollToMock).not.toHaveBeenCalled();
+    expect(result.current.visible).toBe(false);
   });
 
-  it("programmatic scroll alone does not trigger bounce", () => {
-    renderHook(() => useHeroScrollBounce({ threshold: 24 }));
+  it("programmatic scroll alone does not dismiss tip", () => {
+    const { result } = renderHook(() => useHeroScrollBounce({ threshold: 24 }));
 
     act(() => {
-      Object.defineProperty(window, "scrollY", {
-        configurable: true,
-        writable: true,
-        value: 80,
-      });
-      window.dispatchEvent(new Event("scroll"));
+      scrollPastThreshold(80);
     });
 
+    expect(scrollToMock).not.toHaveBeenCalled();
+    expect(result.current.visible).toBe(true);
+  });
+
+  it("scroll below threshold with intent does not dismiss tip", () => {
+    const { result } = renderHook(() => useHeroScrollBounce({ threshold: 24 }));
+
+    act(() => {
+      markUserWheel();
+      scrollPastThreshold(10);
+    });
+
+    expect(result.current.visible).toBe(true);
     expect(scrollToMock).not.toHaveBeenCalled();
   });
 });

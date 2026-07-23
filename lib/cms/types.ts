@@ -285,6 +285,20 @@ export type CaseStudy = {
   seo: SeoMetadata;
 };
 
+/** Spec 05 — partner (home marquee) */
+
+export type Partner = {
+  _type: "partner";
+  /** Marquee key: slug.current, else document `_id`. */
+  id: string;
+  label: string;
+  slug: Slug;
+  order: number;
+  logo?: CmsImage;
+  websiteUrl?: string;
+  isPlaceholder: boolean;
+};
+
 /** Spec 05 — communityItem */
 
 export type CommunityItemType =

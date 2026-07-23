@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { siteSettingsFallback } from "@/lib/cms/fallbacks/site-settings";
 import type { SiteSettings } from "@/lib/cms/types";
+import { INTERIM_CONTACT_FORM_URL } from "@/lib/contact/channels";
 
 import {
   buildShellNavProps,
@@ -18,7 +19,11 @@ describe("buildShellNavProps", () => {
       footerText: "Create. Play. Inspire.",
       globalCtas: [
         { label: "Explore our services", href: "/services", variant: "primary" },
-        { label: "Contact us", href: "/contact", variant: "secondary" },
+        {
+          label: "Contact us",
+          href: INTERIM_CONTACT_FORM_URL,
+          variant: "secondary",
+        },
       ],
       socialLinks: [
         {
@@ -34,7 +39,10 @@ describe("buildShellNavProps", () => {
 
     expect(props.siteName).toBe("Kamiyon Studio CMS");
     expect(props.footerMotto).toBe("Create. Play. Inspire.");
-    expect(props.contactCta).toEqual({ label: "Contact us", href: "/contact" });
+    expect(props.contactCta).toEqual({
+      label: "Contact us",
+      href: INTERIM_CONTACT_FORM_URL,
+    });
     expect(props.socialLinks[0]).toEqual({
       label: "Facebook",
       href: "https://facebook.com/kamiyon",
@@ -54,12 +62,20 @@ describe("buildShellNavProps", () => {
     ]);
   });
 
-  it("falls back to static contact CTA when no /contact href exists", () => {
+  it("falls back to interim Google Form CTA when no contact href exists", () => {
     expect(
       getContactCtaFromSettings([
         { label: "Explore our services", href: "/services", variant: "primary" },
       ])
-    ).toEqual({ label: "Get in touch", href: "/contact" });
+    ).toEqual({ label: "Get in touch", href: INTERIM_CONTACT_FORM_URL });
+  });
+
+  it("still accepts legacy /contact global CTAs from CMS", () => {
+    expect(
+      getContactCtaFromSettings([
+        { label: "Contact us", href: "/contact", variant: "secondary" },
+      ]),
+    ).toEqual({ label: "Contact us", href: "/contact" });
   });
 
   it("prefers footerText over tagline for the footer motto", () => {

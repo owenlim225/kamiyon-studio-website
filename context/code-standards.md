@@ -198,5 +198,5 @@ Do not modify unless explicitly instructed:
 
 - Vision labels in UI when rendering vision-only content
 - Motto on site: **Create. Play. Inspire.**
-- Contact: external links today; Resend form is a tracked follow-up (T8) — do not half-implement
+- Contact: interim Google Form CTA + external links; Resend in-app form is T8 — do not half-implement Resend before WS5
 - Product `developmentStatus`: default `tbd` — never hardcode `released` without canon proof

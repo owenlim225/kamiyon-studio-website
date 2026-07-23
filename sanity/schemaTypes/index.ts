@@ -7,6 +7,7 @@ import { communityItem } from "./documents/communityItem";
 import { contactPage } from "./documents/contactPage";
 import { homePage } from "./documents/homePage";
 import { mediaAsset } from "./documents/mediaAsset";
+import { partner } from "./documents/partner";
 import { product } from "./documents/product";
 import { service } from "./documents/service";
 import { serviceCategory } from "./documents/serviceCategory";
@@ -59,6 +60,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     product,
     caseStudy,
     communityItem,
+    partner,
     mediaAsset,
     // Blog
     author,

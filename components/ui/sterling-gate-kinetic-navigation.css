@@ -50,6 +50,19 @@
   color: var(--sg-ink);
   font-weight: 700;
   letter-spacing: -0.02em;
+  /* Frosted chrome matches Menu control — keeps ink wordmark readable on dark heroes. */
+  padding: 0.45rem 0.9rem 0.45rem 0.55rem;
+  border-radius: var(--radius-pill, 9999px);
+  border: 1px solid color-mix(in srgb, var(--sg-ink) 12%, transparent);
+  background: color-mix(in srgb, var(--sg-surface) 88%, transparent);
+  backdrop-filter: blur(10px);
+  transition: border-color 0.2s var(--sg-ease), background 0.2s var(--sg-ease);
+}
+
+.sterling-gate .nav-logo-row:hover,
+.sterling-gate .nav-logo-row:focus-visible {
+  border-color: var(--sg-primary);
+  outline: none;
 }
 
 .sterling-gate .nav-logo-mark {
@@ -280,7 +293,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sterling-gate .nav-link-hover-bg,
-  .sterling-gate .nav-close-btn {
+  .sterling-gate .nav-close-btn,
+  .sterling-gate .nav-logo-row {
     transition: none;
   }
 }

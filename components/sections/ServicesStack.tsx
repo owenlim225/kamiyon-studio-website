@@ -46,7 +46,7 @@ export function ServicesStack({ slides }: ServicesStackProps) {
             as="h2"
             id={sectionId}
             words="What we build"
-            className="mt-3 text-2xl md:text-3xl"
+            className="mt-3"
           />
         </div>
 

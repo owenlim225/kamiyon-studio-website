@@ -27,11 +27,11 @@ It intentionally **excludes** company-wide material that is not needed to build 
 | Product | Production-grade marketing portfolio + CMS-backed content site |
 | Audience | Global (clients, partners, educators, players, media, future hires) |
 | Primary job | Trust + clarity + qualified contact / consultation interest |
-| Editors | Non-developers via embedded Sanity Studio at `/studio` |
+| Editors | Non-developers via **hosted** Sanity Studio (`kamiyon.sanity.studio`); Worker `/studio` redirects (ADR-007) |
 | Motto (site) | **Create. Play. Inspire.** (canon; ignore README “Play. Question. Create.”) |
 | HQ (display) | Biñan City, Laguna, Philippines · Founded 2024 |
 | Production URL | `https://kamiyonstudio.com` |
-| Preview URLs | Cloudflare default `*.pages.dev` |
+| Preview / staging | Cloudflare Workers `*.workers.dev` (staging live); Pages `*.pages.dev` only if used |
 
 ### Goals
 
@@ -59,13 +59,13 @@ It intentionally **excludes** company-wide material that is not needed to build 
 | --- | --- |
 | Hosting | **OpenNext** on Cloudflare Pages + Workers (SSR/ISR) |
 | Caching | Sanity content fetched dynamically with **cache + `revalidateTag` / webhook** so publish ≠ redeploy |
-| Domain | Production `https://kamiyonstudio.com`; previews `*.pages.dev` |
+| Domain | Production `https://kamiyonstudio.com`; staging `*.workers.dev` |
 | Cloudflare plan | **Free tier** (Pages + Workers + R2 within free limits; upgrade only if exceeded) |
 | CMS | **New** Sanity project + dataset (`npm create sanity@latest`) |
-| Studio | Embedded at **`/studio`** |
+| Studio | **Hosted** at `https://kamiyon.sanity.studio` (ADR-007); `/studio` on Worker redirects |
 | Media | **All** images, videos, downloadables in **Cloudflare R2**; Sanity stores structured content + **media references** (URLs/keys) only |
-| Seed | Empty dataset; **manual** initial content entry |
-| Contact | **Form + external links**; email via **Resend** |
+| Seed | `pnpm sanity:seed` from `lib/cms/fallbacks` (+ partners/blog stubs); Studio for R2 media refine (ADR-011) |
+| Contact | **Interim:** Google Form CTA + external links; **Target (T8):** in-app form via **Resend** |
 | Blog | Authors, categories, tags, featured image, SEO, Portable Text, reading time, published/updated dates, related posts |
 | Primary nav | Home, About, Services, **Products**, Portfolio, **Community**, Blog, Contact |
 | Motion (main site) | **GSAP only** (remove Framer Motion + Lenis from production routes) |
@@ -80,7 +80,8 @@ It intentionally **excludes** company-wide material that is not needed to build 
 ## 4. Target stack (locked)
 
 ```
-Editors ──► /studio (Sanity) ──► Sanity Content Lake (structured data + R2 refs)
+Editors ──► kamiyon.sanity.studio ──► Sanity Content Lake (structured data + R2 refs)
+              ▲ Worker /studio redirects here
                                          │
                                          │ webhook → revalidateTag / ISR
                                          ▼
@@ -89,7 +90,8 @@ Visitors ──► Cloudflare CDN ──► OpenNext (Pages/Workers) ──► S
                                          ▼
                                    Cloudflare R2 ──► media (CDN)
                                          │
-Contact form ──► API route / Worker ──► Resend ──► studio inbox
+Contact (interim) ──► Google Form (external)
+Contact (T8) ──► API route / Worker ──► Resend ──► studio inbox + visitor confirm
 ```
 
 | Layer | Technology | Role |
@@ -97,10 +99,10 @@ Contact form ──► API route / Worker ──► Resend ──► studio inbo
 | Framework | Next.js (App Router) + TypeScript + React | Site, SSR/ISR, metadata |
 | Adapter | **OpenNext for Cloudflare** | Run Next on Pages/Workers |
 | UI | Tailwind CSS 4 + design tokens | Presentation |
-| CMS | **Sanity** | Structured content; Studio at `/studio` |
+| CMS | **Sanity** | Structured content; Studio hosted (ADR-007) |
 | Media | **Cloudflare R2** + CDN | All binaries; Sanity holds references only |
 | Edge / hosting | Cloudflare Pages + Workers (free tier) | Host + cache |
-| Email | **Resend** | Contact form delivery |
+| Email | **Resend** (T8); interim Google Form | Contact delivery |
 | Analytics | **Cloudflare Web Analytics** | Privacy-friendly traffic |
 | SEO | `lib/seo/*` + Sanity SEO fields | Metadata, JSON-LD, sitemap, robots |
 | Motion | **GSAP + ScrollTrigger** only (main site) | Tasteful animation |
@@ -132,7 +134,7 @@ Payload **removed**. Public site uses Sanity GROQ via `lib/cms` when configured;
 ### Migration shape (do not keep both)
 
 1. Scaffold **new** Sanity project; embed Studio at `/studio`.
-2. Recreate schemas (§7); empty dataset; editors seed manually.
+2. Recreate schemas (§7); seed via `pnpm sanity:seed` (ADR-011); refine media in Studio.
 3. Swap `lib/cms` to `next-sanity` + GROQ; preserve export names.
 4. Media helper resolves **R2 URLs** from Sanity reference fields (never Sanity asset CDN as source of truth).
 5. Delete Payload tree, deps, Postgres env, Lexical adapters.
@@ -320,10 +322,13 @@ Code-split GSAP; do not load it on pages with no animation.
 
 | Channel | Behavior |
 | --- | --- |
-| Contact form | Production form on `/contact` → API → **Resend** → studio inbox |
+| Interim primary CTA | External [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSeIefAWJu5FP9pwljLFz1wSUxU2ybR3--GdylUYUBsGHH0yaw/viewform) (linked button; wire in nav/CTA until T8) |
+| `/contact` page | Channels + mailto (`kamiyonstudio@gmail.com`); no in-app form until T8 |
+| Target (T8) | In-app form → API → **Resend** → studio inbox + visitor confirmation |
 | External links | Facebook, LinkedIn, public email (`mailto`), others from `siteSettings` |
 | Secrets | `RESEND_API_KEY` in Cloudflare env; never commit |
-| Validation | Server-side validate + rate limit; no PII in client logs |
+| Validation (T8) | Server-side validate + rate limit; no PII in client logs |
+| Same-route nav | In-app links: smooth-scroll to top / section (QA policy A, 2026-07-24) |
 
 ---
 
@@ -406,12 +411,12 @@ Decisions in §3 locked.
 
 ### Phase F — Production surfaces
 
-- Nav: show Products + Community.
-- Blog frontend + schemas.
-- Contact form + Resend + external links.
-- Fonts → Geologica/Montserrat; colors → locked hex.
-- Remove Framer + Lenis from main site; motion-lab `noindex`.
-- Lighthouse/CWV gates; E2E; scorecard → launch.
+- ~~Nav: Products + Community~~ done (cleanup).
+- ~~Fonts / brand hex / Framer+Lenis removal~~ done (cleanup).
+- Blog frontend (T9).
+- Wire interim Google Form CTA; then Contact form + Resend (T8) + external links.
+- Cloudflare Web Analytics (T14); Lighthouse/CWV gates; E2E (T15); scorecard → launch.
+- QA polish streams: see [`progress-tracker.md`](./progress-tracker.md) + [`QA-Report.md`](./QA-Report.md).
 
 ---
 
@@ -419,14 +424,14 @@ Decisions in §3 locked.
 
 | ID | Ticket | Priority |
 | --- | --- | --- |
-| T1 | Scaffold new Sanity project; embed Studio at `/studio` | P0 |
+| T1 | Scaffold Sanity project; Studio hosted (ADR-007) — `/studio` redirects | P0 — **done** (hosted 2026-07-24) |
 | T2 | Schema parity (§7) including blog/author/category/tag | P0 |
 | T3 | Swap `lib/cms` to Sanity + GROQ; keep public API + fallbacks | P0 — **done** (2026-07-23) |
 | T4 | R2 media model + Studio upload + `getMediaUrl` | P0 |
 | T5 | OpenNext Cloudflare deploy + env docs (free tier) | P0 |
 | T6 | Sanity webhook → `revalidateTag` / path revalidation | P0 |
 | T7 | Delete Payload runtime and deps | P0 — **done** (2026-07-21 cleanup) |
-| T8 | Contact form API + Resend + external links UI | P1 |
+| T8 | Contact form API + Resend + external links UI (interim: Google Form CTA) | P1 |
 | T9 | Blog listing/detail UI (reading time, related, SEO) | P1 |
 | T10 | Remove Framer Motion + Lenis from main site | P1 — **done** (2026-07-21 cleanup) |
 | T11 | Apply Geologica + Montserrat; remove Beaufort/Poppins | P1 — **done** (2026-07-21 cleanup) |
@@ -454,8 +459,8 @@ Decisions in §3 locked.
 ### Stale until rewritten
 
 - [`context/architecture.md`](./architecture.md) — still Payload-era
-- [`context/progress-tracker.md`](./progress-tracker.md) — may lag; this file wins
 - [`context/completed/**`](./completed/) — archives only
+- ADR-001 “embedded Studio” / `*.pages.dev` preview wording — superseded by ADR-007 + live Workers staging; prefer §2–3 updates above + `progress-tracker.md` for ops status
 
 ### Company AI context
 

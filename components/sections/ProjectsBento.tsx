@@ -42,7 +42,7 @@ export function ProjectsBento({ caseStudies }: ProjectsBentoProps) {
             <WordPullUp
               as="h2"
               words="Recent Projects"
-              className="mt-3 text-2xl md:text-3xl"
+              className="mt-3"
             />
           </div>
           <AnimatedSection as="div" delay={0.08}>

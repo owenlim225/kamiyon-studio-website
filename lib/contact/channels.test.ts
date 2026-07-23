@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   FACEBOOK_PAGE_URL,
+  INTERIM_CONTACT_FORM_URL,
   ITCH_URL,
   LINKEDIN_COMPANY_URL,
   PUBLIC_EMAIL,
@@ -21,6 +22,9 @@ describe("contact channels", () => {
     expect(ITCH_URL).toBe("https://kamiyon-studio.itch.io/");
     expect(YOUTUBE_URL).toBe("https://youtube.com/@kamiyonstudio");
     expect(X_URL).toBe("https://x.com/kamiyonstudio");
+    expect(INTERIM_CONTACT_FORM_URL).toBe(
+      "https://docs.google.com/forms/d/e/1FAIpQLSeIefAWJu5FP9pwljLFz1wSUxU2ybR3--GdylUYUBsGHH0yaw/viewform",
+    );
   });
 
   it("builds live contact channels (not placeholders)", () => {

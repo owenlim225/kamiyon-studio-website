@@ -16,6 +16,7 @@ const COLLECTION_TYPES = [
   "product",
   "caseStudy",
   "communityItem",
+  "partner",
   "mediaAsset",
   "author",
   "category",
