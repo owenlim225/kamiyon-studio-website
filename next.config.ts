@@ -1,6 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 import type { NextConfig } from "next";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -11,6 +12,16 @@ const nextConfig: NextConfig = {
     localPatterns: [
       {
         pathname: "/assets/**",
+      },
+    ],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "media.kamiyonstudio.com",
+      },
+      {
+        protocol: "https",
+        hostname: "media-staging.kamiyonstudio.com",
       },
     ],
   },
@@ -29,3 +40,5 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+initOpenNextCloudflareForDev();

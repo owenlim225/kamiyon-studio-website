@@ -46,6 +46,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Cloudflare / OpenNext
+.open-next/
+.wrangler/
+
 # local metadata
 .claude/
 .claude-flow/

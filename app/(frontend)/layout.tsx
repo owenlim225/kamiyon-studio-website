@@ -64,6 +64,7 @@ export default async function RootLayout({
         <AnimationProviders>
           <PageShell>{children}</PageShell>
         </AnimationProviders>
+        <CloudflareWebAnalytics />
       </body>
     </html>
   );

@@ -1,0 +1,70 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "kamiyon-studio-website",
+  "compatibility_date": "2026-07-23",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      // Must match the Worker "name" for this environment
+      "service": "kamiyon-studio-website",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_BUCKET",
+      // Placeholder — Wave 2 integrator binds the real media bucket
+      "bucket_name": "kamiyon-media-placeholder",
+    },
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      // Placeholder — Wave 2 integrator binds the real OpenNext cache bucket
+      "bucket_name": "kamiyon-next-inc-cache-placeholder",
+    },
+  ],
+  "env": {
+    "staging": {
+      "name": "kamiyon-studio-website-staging",
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "kamiyon-studio-website-staging",
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "MEDIA_BUCKET",
+          "bucket_name": "kamiyon-media-staging-placeholder",
+        },
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "kamiyon-next-inc-cache-staging-placeholder",
+        },
+      ],
+    },
+    "production": {
+      "name": "kamiyon-studio-website",
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "kamiyon-studio-website",
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "MEDIA_BUCKET",
+          "bucket_name": "kamiyon-media-placeholder",
+        },
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "kamiyon-next-inc-cache-placeholder",
+        },
+      ],
+    },
+  },
+}

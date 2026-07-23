@@ -1,13 +1,11 @@
+import type { ComponentPropsWithoutRef } from "react";
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { CloudflareWebAnalytics } from "./CloudflareWebAnalytics";
 
 vi.mock("next/script", () => ({
-  default: (props: React.ScriptHTMLAttributes<HTMLScriptElement>) => (
-    // eslint-disable-next-line @next/next/no-sync-scripts -- test double for next/script
-    <script {...props} />
-  ),
+  default: (props: ComponentPropsWithoutRef<"script">) => <script {...props} />,
 }));
 
 describe("CloudflareWebAnalytics", () => {
