@@ -21,7 +21,7 @@
 | Priority vs Wave 4 | QA streams **parallel** with staging ops |
 | T8 Resend (later) | Studio inbox + visitor confirmation when form ships; confirm `CONTACT_TO_EMAIL` |
 
-**Repo gap:** Current code defaults CTAs to `/contact` (channels only). Google Form URL is not wired in fallbacks/`CONTACT_CTA` — restore as interim CTA until T8 (see workstreams in `progress-tracker.md`).
+**Repo gap (closed in WS3):** Interim Google Form wired via `INTERIM_CONTACT_FORM_URL` / `CONTACT_CTA` + fallbacks. Live Sanity CMS may still need a reseed/patch if Studio content still points at `/contact`.
 
 ---
 
@@ -35,7 +35,7 @@ Overall assessment:
 * **Layout consistency:** Good
 * **Content & references:** Working correctly
 * **Navigation anchors:** Mostly functional
-* **Primary remaining work:** Scroll-hint bounce, kinetic chrome re-QA, same-route scroll policy, Google Form CTA wiring
+* **Primary remaining work:** Wave 4 cutover (WS4b); optional WS6; T8 Resend (WS5). WS1–WS3 polish streams done in repo.
 
 ---
 
@@ -47,9 +47,9 @@ Overall assessment:
 | QA-002 | Initial scroll does not work | High | **Open** — same root as QA-009 | WS1 |
 | QA-003 | Header logo disappears | Medium | **Needs re-QA** on kinetic nav / staging | WS2 |
 | QA-004 | Header logo not clickable | Medium | **Needs re-QA** on kinetic nav / staging | WS2 |
-| QA-005 | Contact / brand link same-route | Medium | **Open** — policy = scroll to top/section | WS3 |
-| QA-006 | Footer nav same-route | Medium | **Open** — policy = scroll to top/section | WS3 |
-| QA-007 | Get in Touch already at target | Low | **Open** — policy = scroll / replay to section | WS3 |
+| QA-005 | Contact / brand link same-route | Medium | **Resolved (WS3)** — same-route smooth-scroll | WS3 |
+| QA-006 | Footer nav same-route | Medium | **Resolved (WS3)** — same-route smooth-scroll | WS3 |
+| QA-007 | Get in Touch already at target | Low | **Resolved (WS3)** — in-app replay scroll; Form is external | WS3 |
 | QA-008 | Hamburger freezes | High | **Superseded** (ADR-008 kinetic nav) | — |
 | QA-009 | Scroll hint consumes first scroll | High | **Open** — bounce must not eat first intent | WS1 |
 | QA-010 | Scroll hint × inconsistent | Medium | **Open** | WS1 (+ WS2 if overlay) |
@@ -64,9 +64,9 @@ Overall assessment:
 | Initial scroll bug | Confirmed; bounce returns to top | Expanded → WS1 |
 | Header logo disappearing | Pre-kinetic prod; re-QA staging | Needs re-QA |
 | Header logo not clickable | Pre-kinetic prod; re-QA staging | Needs re-QA |
-| Contact navigation issue | Same-route no feedback | Open → WS3 (scroll) |
-| Footer navigation issue | Same-route no feedback | Open → WS3 (scroll) |
-| Get in Touch behavior | Already at target | Open → WS3 (scroll) |
+| Contact navigation issue | Same-route no feedback | **Resolved (WS3)** |
+| Footer navigation issue | Same-route no feedback | **Resolved (WS3)** |
+| Get in Touch behavior | Already at target | **Resolved (WS3)** |
 | Hamburger menu freezes | CardNav era | **Superseded** |
 | Scroll hint consumes first scroll | Bounce-back | Expanded → WS1 |
 | Scroll hint X inconsistent | Confirmed | Open → WS1 |
@@ -204,7 +204,7 @@ Medium
 
 ### Status
 
-Open → **WS3**
+**Resolved (WS3)** — `SameRouteLink` + `handleSameRouteNavClick`
 
 ### Locked behavior
 
@@ -226,7 +226,7 @@ Medium
 
 ### Status
 
-Open → **WS3**
+**Resolved (WS3)** — footer nav uses `SameRouteLink`
 
 ### Locked behavior
 
@@ -246,7 +246,7 @@ Low
 
 ### Status
 
-Open → **WS3**
+**Resolved (WS3)** — interim CTA is Google Form (external); in-app `/contact` / hash targets still same-route scroll
 
 ### Locked behavior
 
@@ -357,18 +357,13 @@ Google Form is external; do not invent same-route scroll when `href` is absolute
 
 * QA-003 / QA-004 — logo visibility & clickability on kinetic nav
 
-## Medium (WS3 + form wiring)
+## Medium
 
-* QA-005 / QA-006 — same-route scroll
-* Wire Google Form interim CTA (repo gap)
 * QA-001 — ops-only on Google Form settings
-
-## Low
-
-* QA-007 — Get in Touch replay scroll
 
 ## Closed / superseded
 
+* QA-005 / QA-006 / QA-007 — WS3 same-route + Google Form CTA
 * QA-008 — CardNav hamburger
 
 ---

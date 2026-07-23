@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 
+import { SameRouteLink } from "@/components/ui/SameRouteLink";
 import {
   SocialPlatformIcon,
   SOCIAL_PLATFORM_LABELS,
@@ -317,7 +317,7 @@ export function CinematicFooter({
           >
             <div className="flex w-full flex-wrap justify-center gap-6 md:gap-10">
               <MagneticButton
-                as={Link}
+                as={SameRouteLink}
                 href={contactCta.href}
                 className="footer-text-link text-sm font-bold md:text-base"
               >
@@ -325,7 +325,7 @@ export function CinematicFooter({
               </MagneticButton>
 
               <MagneticButton
-                as={Link}
+                as={SameRouteLink}
                 href="/portfolio"
                 className="footer-text-link text-sm font-bold md:text-base"
               >
@@ -338,7 +338,7 @@ export function CinematicFooter({
                 {navItems.map((item) => (
                   <li key={item.href}>
                     <MagneticButton
-                      as={Link}
+                      as={SameRouteLink}
                       href={item.href}
                       className="footer-text-link text-xs font-medium md:text-sm"
                     >

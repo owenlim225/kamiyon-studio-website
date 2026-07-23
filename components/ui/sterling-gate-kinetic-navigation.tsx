@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import { CustomEase } from "gsap/CustomEase";
 
+import { SameRouteLink } from "@/components/ui/SameRouteLink";
 import { gsap } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
 
@@ -327,11 +327,11 @@ export function SterlingGateKineticNavigation({
         <header className="header">
           <div className="container is--full">
             <nav className="nav-row" aria-label="Primary">
-              <Link
+              <SameRouteLink
                 href="/"
                 className="nav-logo-row"
                 aria-label={`${siteName} — Home`}
-                onClick={closeMenu}
+                onNavigate={closeMenu}
               >
                 <Image
                   src={logoSrc}
@@ -342,7 +342,7 @@ export function SterlingGateKineticNavigation({
                   priority
                 />
                 <span>{siteName}</span>
-              </Link>
+              </SameRouteLink>
               <div className="nav-row__right">
                 <button
                   type="button"
@@ -400,28 +400,28 @@ export function SterlingGateKineticNavigation({
                     className="menu-list-item"
                     data-shape={String((index % 5) + 1)}
                   >
-                    <Link
+                    <SameRouteLink
                       href={item.href}
                       className="nav-link w-inline-block"
-                      onClick={closeMenu}
+                      onNavigate={closeMenu}
                     >
                       <p className="nav-link-text" data-menu-fade={index > 2 ? "" : undefined}>
                         {item.label}
                       </p>
                       <div className="nav-link-hover-bg" aria-hidden="true" />
-                    </Link>
+                    </SameRouteLink>
                   </li>
                 ))}
               </ul>
               {contactCta ? (
-                <Link
+                <SameRouteLink
                   href={contactCta.href}
                   className="menu-cta"
                   data-menu-fade=""
-                  onClick={closeMenu}
+                  onNavigate={closeMenu}
                 >
                   {contactCta.label}
-                </Link>
+                </SameRouteLink>
               ) : null}
             </div>
           </nav>

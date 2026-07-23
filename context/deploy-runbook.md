@@ -56,18 +56,48 @@ These names are wired in [`wrangler.jsonc`](../wrangler.jsonc). Track F provisio
 
 ---
 
-## Webhook URLs (placeholders)
+## Webhook URLs
 
-Configure in Sanity → API → Webhooks after each host is live.
+Configure in Sanity → API → Webhooks (or HTTP Webhooks API). Auth must match Worker secret `SANITY_REVALIDATE_SECRET`.
 
-| Env | Revalidate endpoint | Auth |
-| --- | --- | --- |
-| Staging | `https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev/api/revalidate` | Header / query secret = `SANITY_REVALIDATE_SECRET` |
-| Production | `https://kamiyonstudio.com/api/revalidate` *(after DNS cutover)* | same |
+| Env | Revalidate endpoint | Auth | Status |
+| --- | --- | --- | --- |
+| Staging | `https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev/api/revalidate` | Custom header `Authorization: Bearer <SANITY_REVALIDATE_SECRET>` | **Live** (WS4a, 2026-07-24) |
+| Production | `https://kamiyonstudio.com/api/revalidate` *(after DNS cutover)* | same pattern | WS4b |
 
-Until custom domains are attached, use the staging/prod `*.workers.dev` host printed by Wrangler deploy.
+### Staging webhook (configured)
 
-Payload: Sanity document mutation → Track C `POST /api/revalidate` → `revalidateTag`.
+| Field | Value |
+| --- | --- |
+| Name | `Staging revalidate (Workers)` |
+| Hook id | `Dkvgfo2UV4bLXobH` |
+| Type | document |
+| Dataset | `kamiyon` |
+| URL | staging `/api/revalidate` (table above) |
+| Trigger | create / update / delete |
+| Filter | `_type != null` |
+| Projection | `{_type, slug}` |
+| Auth | **Custom header** `Authorization: Bearer …` (same value as Worker `SANITY_REVALIDATE_SECRET`) |
+
+**Do not** rely on Sanity’s webhook “Secret” signing field for this endpoint — `/api/revalidate` expects the raw shared secret via Bearer, `x-sanity-revalidate-secret`, or `?secret=` (see `app/api/revalidate/route.ts`).
+
+**Rotate note (WS4a):** Staging Worker `SANITY_REVALIDATE_SECRET` was rotated when the hook was created (old value was not readable from Wrangler). Keep Manage → Webhooks header in sync if you rotate again:
+
+```bash
+# PowerShell — put new secret on Worker, then PATCH/recreate hook Authorization header
+$secret = "<new>"
+$secret | pnpm exec wrangler secret put SANITY_REVALIDATE_SECRET --env staging
+```
+
+Payload: Sanity document mutation → `POST /api/revalidate` → `revalidateTag` (`sanity` + type/slug tags from `lib/cms/revalidate-tags.ts`).
+
+Manual create (Manage UI) if recreating:
+
+1. Sanity Manage → project `c6ej1xoj` → API → Webhooks → Create
+2. URL = staging revalidate endpoint above; method POST; dataset `kamiyon`
+3. Filter `_type != null`; projection `{_type, slug}`; on create/update/delete
+4. HTTP headers → `Authorization` = `Bearer <SANITY_REVALIDATE_SECRET>`
+5. Leave Sanity “Secret” empty (signature unused by our route)
 
 ---
 
@@ -99,6 +129,18 @@ Requires Wrangler auth (`wrangler login` or `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE
   - Runtime workaround: `NEXT_PRIVATE_MINIMAL_MODE=1` (avoids Workers `middleware-manifest` dynamic require 500s)
 - Prefer Free tier; do **not** enable Workers Paid solely for Studio size.
 
+### Content seed (`pnpm sanity:seed`)
+
+Idempotent upsert of fallbacks + partners + blog stubs into dataset `kamiyon` (ADR-011). Does not upload media.
+
+```bash
+# Requires SANITY_API_WRITE_TOKEN (Editor) in .env.local — never commit
+pnpm sanity:seed --dry-run   # plan 42 docs
+pnpm sanity:seed             # createOrReplace
+```
+
+After seed: open https://kamiyon.sanity.studio/ and upload R2 covers/logos/photos when ready. Flip `isPlaceholder` only when real approved copy replaces stubs.
+
 ### Hosted Sanity Studio
 
 ```bash
@@ -114,16 +156,28 @@ pnpm sanity:dev
 | Worker path | `/studio` → 307 redirect to hosted URL (`next.config` redirects) |
 | Sanity CORS | Add Studio origin + staging/prod site origins in [manage.sanity.io](https://www.sanity.io/manage) → API → CORS origins |
 | Upload API | Studio posts to `{SANITY_STUDIO_API_ORIGIN}/api/media/upload` (Worker CORS allowlists Studio origin) |
-| Revalidate webhook | `https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev/api/revalidate` (header/query = `SANITY_REVALIDATE_SECRET`) |
+| Revalidate webhook | Staging hook live — see **Webhook URLs** above |
 
-For hosted Studio → R2 uploads, redeploy Studio with build-time env:
+### Hosted Studio → R2 (staging bake-in)
+
+`SANITY_STUDIO_*` is inlined at `sanity deploy` time (ADR-009). Redeploy whenever origin or upload secret changes:
 
 ```bash
-# PowerShell example
+# PowerShell — values must match staging Worker
 $env:SANITY_STUDIO_API_ORIGIN = "https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev"
-$env:SANITY_STUDIO_MEDIA_UPLOAD_SECRET = "<same as MEDIA_UPLOAD_SECRET>"
-pnpm sanity:deploy -y
+$env:SANITY_STUDIO_MEDIA_UPLOAD_SECRET = "<same as Worker MEDIA_UPLOAD_SECRET>"
+$env:SANITY_STUDIO_PROJECT_ID = "c6ej1xoj"
+$env:SANITY_STUDIO_DATASET = "kamiyon"
+pnpm exec sanity deploy -y
 ```
+
+**WS4a status (2026-07-24):** Redeployed; bundle included `SANITY_STUDIO_API_ORIGIN` + `SANITY_STUDIO_MEDIA_UPLOAD_SECRET`. Studio URL: https://kamiyon.sanity.studio/
+
+**R2 upload smoke (API):** `POST` staging `/api/media/upload` with Bearer `MEDIA_UPLOAD_SECRET` → `200` + object on `https://media-staging.kamiyonstudio.com/...` (CDN GET `200`). Studio UI upload uses the same path after bake-in; hard-refresh Studio if an old chunk is cached.
+
+**CORS:** Staging Worker `OPTIONS /api/media/upload` returns `204` with `Access-Control-Allow-Origin: https://kamiyon.sanity.studio`.
+
+After Wave 4, point `SANITY_STUDIO_API_ORIGIN` at production (`https://kamiyonstudio.com`) and redeploy Studio again (or keep staging origin only if editors should upload to staging R2).
 
 ---
 
@@ -131,8 +185,9 @@ pnpm sanity:deploy -y
 
 - [x] Staging deploy on Free tier (`*.workers.dev`) — pages + `/studio` redirect + API auth smoke
 - [x] Hosted Studio live at `https://kamiyon.sanity.studio` (ADR-007/009; user confirmed 2026-07-24)
-- [ ] Point Sanity webhook at staging revalidate URL
-- [ ] Redeploy Studio with `SANITY_STUDIO_API_ORIGIN` for R2 uploads; smoke upload
+- [x] Point Sanity webhook at staging revalidate URL (hook `Dkvgfo2UV4bLXobH`; Bearer = Worker secret)
+- [x] Redeploy Studio with `SANITY_STUDIO_API_ORIGIN` for R2 uploads; API smoke upload OK
+- [ ] Optional: confirm R2 upload from Studio UI (r2Asset input) after hard-refresh
 - [ ] Prod Worker smoke on `*.workers.dev`
 - [ ] Attach `kamiyonstudio.com` + `www`
 - [ ] Point Sanity CORS + webhook URLs at production

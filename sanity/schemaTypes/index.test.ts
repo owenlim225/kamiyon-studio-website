@@ -15,6 +15,7 @@ describe("sanity schema constants", () => {
       "product",
       "caseStudy",
       "communityItem",
+      "partner",
       "mediaAsset",
       "author",
       "category",

@@ -5,6 +5,7 @@ import { useRef } from "react";
 
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
+import { DISPLAY_HEADING_CLASS } from "@/lib/ui/display-heading";
 import { cn } from "@/lib/utils";
 
 type WordPullUpTag = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p";
@@ -32,10 +33,7 @@ function WordPullUp({
 }: WordPullUpProps) {
   const containerRef = useRef<HTMLElement>(null);
 
-  const classNames = cn(
-    "font-display font-bold tracking-[-0.02em] text-[var(--text-primary)]",
-    className,
-  );
+  const classNames = cn(DISPLAY_HEADING_CLASS, className);
 
   useGSAP(
     () => {

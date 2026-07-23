@@ -11,6 +11,18 @@ describe("Button", () => {
     expect(link).toHaveAttribute("href", "/contact");
   });
 
+  it("renders external contact CTAs as new-tab anchors", () => {
+    const formUrl =
+      "https://docs.google.com/forms/d/e/1FAIpQLSeIefAWJu5FP9pwljLFz1wSUxU2ybR3--GdylUYUBsGHH0yaw/viewform";
+
+    render(<Button href={formUrl}>Get in touch</Button>);
+
+    const link = screen.getByRole("link", { name: "Get in touch" });
+    expect(link).toHaveAttribute("href", formUrl);
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
   it("renders as a native button when no href is provided", () => {
     const handleClick = vi.fn();
     render(

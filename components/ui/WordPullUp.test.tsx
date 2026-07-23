@@ -22,7 +22,7 @@ describe("WordPullUp", () => {
       <WordPullUp
         as="h2"
         words="Recent Projects"
-        className="text-2xl"
+        className="mt-3"
       />,
     );
 
@@ -31,7 +31,19 @@ describe("WordPullUp", () => {
       name: /Recent Projects/,
     });
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveClass("text-2xl");
+    expect(heading).toHaveClass("mt-3");
+  });
+
+  it("applies the cinematic display heading treatment by default", () => {
+    render(<WordPullUp as="h2" words="Recent Projects" />);
+
+    const heading = screen.getByRole("heading", { level: 2 });
+    expect(heading).toHaveClass("footer-text-glow");
+    expect(heading).toHaveClass("font-display");
+    expect(heading).toHaveClass("text-5xl");
+    expect(heading).toHaveClass("font-black");
+    expect(heading).toHaveClass("tracking-tighter");
+    expect(heading).toHaveClass("md:text-8xl");
   });
 
   it("forwards id for aria-labelledby targets", () => {

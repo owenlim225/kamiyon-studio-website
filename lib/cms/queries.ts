@@ -6,6 +6,7 @@ import {
   communityItemsQuery,
   contactPageQuery,
   homePageQuery,
+  partnersQuery,
   postBySlugQuery,
   postsQuery,
   productBySlugQuery,
@@ -23,6 +24,7 @@ import {
   mapCommunityItem,
   mapContactPage,
   mapHomePage,
+  mapPartner,
   mapPost,
   mapProduct,
   mapService,
@@ -36,6 +38,7 @@ import type {
   CommunityItem,
   ContactPage,
   HomePage,
+  Partner,
   Post,
   Product,
   Service,
@@ -128,6 +131,13 @@ export async function getCommunityItems(): Promise<CommunityItem[] | null> {
   return mapCollection(
     await safeSanityFetch(communityItemsQuery, {}, { tags: ["sanity", "communityItem"] }),
     mapCommunityItem,
+  );
+}
+
+export async function getPartners(): Promise<Partner[] | null> {
+  return mapCollection(
+    await safeSanityFetch(partnersQuery, {}, { tags: ["sanity", "partner"] }),
+    mapPartner,
   );
 }
 

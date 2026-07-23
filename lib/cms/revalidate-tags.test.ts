@@ -35,6 +35,7 @@ describe("tagsForSanityType", () => {
       "serviceCategory",
     ]);
     expect(tagsForSanityType("communityItem")).toEqual(["sanity", "communityItem"]);
+    expect(tagsForSanityType("partner")).toEqual(["sanity", "partner"]);
   });
 
   it("adds slug-scoped tags for service, product, caseStudy, and post", () => {

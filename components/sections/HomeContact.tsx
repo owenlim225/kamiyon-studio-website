@@ -41,7 +41,7 @@ export function HomeContact({
             as="h2"
             id="home-contact-heading"
             words={heading}
-            className="mt-4 text-2xl md:text-3xl lg:text-4xl"
+            className="mt-4"
           />
           <AnimatedSection as="div" delay={0.1}>
             <p className="mt-4 max-w-[36rem] text-base text-[var(--text-secondary)] md:text-lg">

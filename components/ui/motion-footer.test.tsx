@@ -4,6 +4,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { testShellProps } from "@/components/layout/test-shell-props";
 
+vi.mock("next/navigation", () => ({
+  usePathname: vi.fn(() => "/"),
+}));
+
 vi.mock("@/lib/motion/reduced-motion", () => ({
   prefersReducedMotion: vi.fn(() => false),
 }));
@@ -48,12 +52,15 @@ vi.mock("@/lib/gsap", () => {
   };
 });
 
+import { usePathname } from "next/navigation";
+
 import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
 
 import { CinematicFooter } from "./motion-footer";
 
 beforeEach(() => {
   vi.mocked(prefersReducedMotion).mockReturnValue(false);
+  vi.mocked(usePathname).mockReturnValue("/");
 });
 
 describe("CinematicFooter", () => {
@@ -237,11 +244,33 @@ describe("CinematicFooter", () => {
     const portfolio = screen.getByRole("link", { name: "View portfolio" });
 
     expect(contact).toHaveAttribute("href", testShellProps.contactCta.href);
+    expect(contact).toHaveAttribute("target", "_blank");
     expect(portfolio).toHaveAttribute("href", "/portfolio");
     expect(contact).toHaveClass("footer-text-link");
     expect(portfolio).toHaveClass("footer-text-link");
     expect(contact).not.toHaveClass("footer-glass-pill");
     expect(portfolio).not.toHaveClass("footer-glass-pill");
+  });
+
+  it("smooth-scrolls to top when a same-route footer nav link is clicked", async () => {
+    vi.mocked(usePathname).mockReturnValue("/about");
+    const user = userEvent.setup();
+    const scrollTo = vi.fn();
+    vi.stubGlobal("scrollTo", scrollTo);
+
+    render(
+      <CinematicFooter
+        siteName={testShellProps.siteName}
+        footerMotto={testShellProps.footerMotto}
+        navItems={testShellProps.navItems}
+        socialLinks={testShellProps.socialLinks}
+        contactCta={testShellProps.contactCta}
+      />,
+    );
+
+    await user.click(screen.getByRole("link", { name: "About" }));
+
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
   });
 
   it("scrolls to top when the back-to-top control is activated", async () => {

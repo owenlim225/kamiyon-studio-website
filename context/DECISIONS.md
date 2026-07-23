@@ -173,3 +173,23 @@ graphify update .
 - **T8 later:** Resend → studio inbox + visitor confirmation; confirm `CONTACT_TO_EMAIL` before prod.
 
 **Consequences:** Context files updated (`progress-tracker`, `QA-Report`, essential §10, ai-workflow, project-overview). Repo must wire the Google Form URL (currently many CTAs still point at `/contact` only). Multitask fan-out ownership is defined in `progress-tracker.md`.
+
+---
+
+## ADR-011 — Sanity content seed from fallbacks (2026-07-24)
+
+**Status:** Accepted
+
+**Context:** Dataset was empty while the site rendered typed fallbacks. Editors needed base documents in Studio folders matching real field shapes (including placeholders).
+
+**Decision:**
+
+- Idempotent `pnpm sanity:seed` upserts from `lib/cms/fallbacks/*` plus partner slots and minimal blog stubs (`scripts/sanity/seed/`)
+- Keep code fallbacks; do not remove them
+- Stable IDs use hyphen form `{type}-{slug}` (dotted IDs are path-private without a read token)
+- Preserve `isPlaceholder: true` where fallbacks mark placeholders; include sample portfolio case study
+- Add `partner` document type; wire homepage marquee via `resolveWithFallback`
+- Media left empty for Studio/R2 upload later
+- `getCmsImageUrl` only returns `next/image`-allowlisted hosts (media CDN / local paths) so non-image URLs (e.g. itch.io pages) do not crash
+
+**Consequences:** Dataset `kamiyon` seeded (42 docs, 2026-07-24). Requires `SANITY_API_WRITE_TOKEN` (Editor). Re-run safe via `createOrReplace`. See [`deploy-runbook.md`](./deploy-runbook.md) seed section.

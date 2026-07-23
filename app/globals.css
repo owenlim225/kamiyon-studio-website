@@ -380,3 +380,15 @@ body {
     0px 0px 20px color-mix(in oklch, var(--foreground) 15%, transparent)
   );
 }
+
+/* WordPullUp wraps each word — re-apply clip so the glow renders on spans. */
+.footer-text-glow .word-pull-up-word {
+  background: linear-gradient(
+    180deg,
+    var(--foreground) 0%,
+    color-mix(in oklch, var(--foreground) 40%, transparent) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

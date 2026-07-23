@@ -5,6 +5,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SiteHeader } from "./SiteHeader";
 import { testShellProps } from "./test-shell-props";
 
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+}));
+
 vi.mock("@/lib/gsap", () => {
   const timeline = {
     set: vi.fn().mockReturnThis(),

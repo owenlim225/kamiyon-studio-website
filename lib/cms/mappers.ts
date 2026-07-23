@@ -11,6 +11,7 @@ import type {
   Cta,
   HomeBlock,
   HomePage,
+  Partner,
   PortableTextBlock,
   Post,
   Product,
@@ -451,6 +452,39 @@ export function mapCommunityItem(doc: unknown): CommunityItem | null {
     isPlaceholder: asBoolean(row.isPlaceholder),
     seo: mapSeo(row.seo),
   };
+}
+
+/** Maps a partner doc to CMS shape; `id` prefers slug.current, then `_id`. */
+export function mapPartner(doc: unknown): Partner | null {
+  const row = asRecord(doc);
+  if (!row || typeof row.label !== "string" || !row.label.trim()) {
+    return null;
+  }
+
+  const slug = mapSlug(row.slug);
+  const documentId = typeof row._id === "string" ? row._id : "";
+  const id = slug.current || documentId;
+  if (!id) {
+    return null;
+  }
+
+  return {
+    _type: "partner",
+    id,
+    label: row.label,
+    slug,
+    order: asNumber(row.order),
+    logo: mapR2AssetToCmsImage(row.logo as R2AssetRef | null | undefined),
+    websiteUrl: typeof row.websiteUrl === "string" ? row.websiteUrl : undefined,
+    isPlaceholder: asBoolean(row.isPlaceholder),
+  };
+}
+
+/** Marquee slot shape used by PartnersMarquee / PARTNER_PLACEHOLDERS. */
+export function mapPartnerToMarqueeItem(
+  partner: Partner,
+): { id: string; label: string } {
+  return { id: partner.id, label: partner.label };
 }
 
 function mapAuthor(doc: unknown): Author | null {

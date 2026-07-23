@@ -278,6 +278,19 @@ export const communityItemsQuery = defineQuery(/* groq */ `
   }
 `);
 
+export const partnersQuery = defineQuery(/* groq */ `
+  *[_type == "partner"] | order(order asc) {
+    _id,
+    _type,
+    label,
+    slug,
+    order,
+    logo ${r2AssetProjection},
+    websiteUrl,
+    isPlaceholder
+  }
+`);
+
 export const postsQuery = defineQuery(/* groq */ `
   *[_type == "post" && defined(publishedAt) && publishedAt <= now()] | order(publishedAt desc) {
     _type,

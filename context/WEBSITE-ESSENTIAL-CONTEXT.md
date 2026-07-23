@@ -64,7 +64,7 @@ It intentionally **excludes** company-wide material that is not needed to build 
 | CMS | **New** Sanity project + dataset (`npm create sanity@latest`) |
 | Studio | **Hosted** at `https://kamiyon.sanity.studio` (ADR-007); `/studio` on Worker redirects |
 | Media | **All** images, videos, downloadables in **Cloudflare R2**; Sanity stores structured content + **media references** (URLs/keys) only |
-| Seed | Empty dataset; **manual** initial content entry |
+| Seed | `pnpm sanity:seed` from `lib/cms/fallbacks` (+ partners/blog stubs); Studio for R2 media refine (ADR-011) |
 | Contact | **Interim:** Google Form CTA + external links; **Target (T8):** in-app form via **Resend** |
 | Blog | Authors, categories, tags, featured image, SEO, Portable Text, reading time, published/updated dates, related posts |
 | Primary nav | Home, About, Services, **Products**, Portfolio, **Community**, Blog, Contact |
@@ -134,7 +134,7 @@ Payload **removed**. Public site uses Sanity GROQ via `lib/cms` when configured;
 ### Migration shape (do not keep both)
 
 1. Scaffold **new** Sanity project; embed Studio at `/studio`.
-2. Recreate schemas (§7); empty dataset; editors seed manually.
+2. Recreate schemas (§7); seed via `pnpm sanity:seed` (ADR-011); refine media in Studio.
 3. Swap `lib/cms` to `next-sanity` + GROQ; preserve export names.
 4. Media helper resolves **R2 URLs** from Sanity reference fields (never Sanity asset CDN as source of truth).
 5. Delete Payload tree, deps, Postgres env, Lexical adapters.

@@ -28,6 +28,7 @@ describe("CMS query functions (Sanity + fallbacks)", () => {
     await expect(queries.getCaseStudies()).resolves.toBeNull();
     await expect(queries.getCaseStudyBySlug("x")).resolves.toBeNull();
     await expect(queries.getCommunityItems()).resolves.toBeNull();
+    await expect(queries.getPartners()).resolves.toBeNull();
     await expect(queries.getContactPage()).resolves.toBeNull();
     await expect(queries.getPosts()).resolves.toBeNull();
     await expect(queries.getPostBySlug("x")).resolves.toBeNull();
@@ -61,6 +62,17 @@ describe("CMS query functions (Sanity + fallbacks)", () => {
       if (query.includes('_type == "teamMember"')) {
         return [{ name: "Ada", role: "Founder", bio: "Bio", order: 1, isPlaceholder: false }];
       }
+      if (query.includes('_type == "partner"')) {
+        return [
+          {
+            _id: "partner-1",
+            label: "Partner placeholder",
+            slug: { current: "partner-1" },
+            order: 1,
+            isPlaceholder: true,
+          },
+        ];
+      }
       return null;
     });
 
@@ -75,6 +87,13 @@ describe("CMS query functions (Sanity + fallbacks)", () => {
     });
     await expect(queries.getTeamMembers()).resolves.toEqual([
       expect.objectContaining({ name: "Ada", role: "Founder" }),
+    ]);
+    await expect(queries.getPartners()).resolves.toEqual([
+      expect.objectContaining({
+        id: "partner-1",
+        label: "Partner placeholder",
+        slug: { current: "partner-1" },
+      }),
     ]);
   });
 });
