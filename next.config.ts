@@ -6,8 +6,29 @@ import type { NextConfig } from "next";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const hostedStudioUrl = (
+  process.env.NEXT_PUBLIC_SANITY_STUDIO_URL?.trim() ||
+  "https://kamiyon.sanity.studio"
+).replace(/\/$/, "");
+
 const nextConfig: NextConfig = {
-  transpilePackages: ["sanity", "next-sanity"],
+  // Studio is hosted separately (`sanity deploy`); only next-sanity client/GROQ stay in the Worker.
+  transpilePackages: ["next-sanity"],
+  // Config-level redirect avoids SSR `redirect()` (Workers crash on /studio).
+  async redirects() {
+    return [
+      {
+        source: "/studio",
+        destination: hostedStudioUrl,
+        permanent: false,
+      },
+      {
+        source: "/studio/:path*",
+        destination: hostedStudioUrl,
+        permanent: false,
+      },
+    ];
+  },
   images: {
     localPatterns: [
       {
@@ -31,6 +52,12 @@ const nextConfig: NextConfig = {
       ".js": [".ts", ".tsx", ".js", ".jsx"],
       ".mjs": [".mts", ".mjs"],
     };
+
+    // next/og ships Geist as `*.ttf.bin`; default webpack has no loader for `.bin`.
+    webpackConfig.module.rules.push({
+      test: /\.ttf\.bin$/,
+      type: "asset/resource",
+    });
 
     return webpackConfig;
   },

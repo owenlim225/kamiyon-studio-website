@@ -96,3 +96,38 @@ graphify update .
 - Cache with `next.revalidate` + tags; webhook invalidation deferred to Phase E
 
 **Consequences:** Empty dataset or missing env still serves fallbacks. Live content appears once Studio is configured and documents are published.
+
+---
+
+## ADR-007 — Hosted Sanity Studio (Workers Free size) (2026-07-24)
+
+**Status:** Accepted
+
+**Context:** OpenNext staging upload was ~5.5 MiB gzip because embedded `/studio` (`NextStudio` + `sanity`) landed in `handler.mjs`, exceeding Workers Free **3 MiB**. Workers Paid was declined for this phase.
+
+**Decision:**
+
+- Remove embedded Studio from the Next.js Worker; keep schemas + `sanity.config.ts` for CLI
+- Host Studio via `pnpm sanity:deploy` at `https://{SANITY_STUDIO_HOSTNAME}.sanity.studio` (default `kamiyon`)
+- Worker `/studio` **redirects** to hosted Studio (`NEXT_PUBLIC_SANITY_STUDIO_URL`)
+- Studio media uploads call absolute `{SANITY_STUDIO_API_ORIGIN}/api/media/upload` with CORS allowlist for the Studio origin
+- Marketing site remains on Cloudflare Workers Free; do not enable Workers Paid solely for Studio size
+
+**Consequences:** Editors use `*.sanity.studio` (or `pnpm sanity:dev` locally). Sanity project CORS must allow the Studio host. Upload secret + API origin must be set for hosted Studio → R2. ADR-001 “embedded Studio at `/studio`” is superseded for deploy topology; `/studio` path retained as redirect.
+
+---
+
+## ADR-008 — Kinetic overlay nav replaces CardNav (2026-07-24)
+
+**Status:** Accepted
+
+**Context:** Production chrome used React Bits `CardNav`. Product direction requested a GSAP full-screen kinetic menu (sterling-gate) site-wide with Kamiyon branding.
+
+**Decision:**
+
+- Ship `SterlingGateKineticNavigation` in `components/ui/`; `SiteHeader` wraps it
+- Use shell `navItems` / `contactCta` / `siteName` (full primary IA including Products + Community)
+- Scoped CSS mapped to Kamiyon tokens — do not import demo indigo/purple globals
+- Honor `prefers-reduced-motion`, Escape-to-close, `aria-expanded`
+
+**Consequences:** CardNav remains in repo unused by the shell until cleaned up; header tests target the kinetic menu.

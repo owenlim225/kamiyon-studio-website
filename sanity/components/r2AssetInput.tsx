@@ -1,7 +1,7 @@
-"use client";
-
-import { useCallback, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { type ObjectInputProps, PatchEvent, set, unset } from "sanity";
+
+import { getMediaUploadUrl } from "../studio-url";
 
 type R2AssetValue = {
   _type?: "r2Asset";
@@ -87,7 +87,7 @@ export function R2AssetInput(props: ObjectInputProps<R2AssetValue>) {
         const body = new FormData();
         body.append("file", file);
 
-        const response = await fetch("/api/media/upload", {
+        const response = await fetch(getMediaUploadUrl(), {
           method: "POST",
           headers: { Authorization: `Bearer ${secret}` },
           body,
@@ -116,6 +116,13 @@ export function R2AssetInput(props: ObjectInputProps<R2AssetValue>) {
     },
     [onChange],
   );
+
+  let defaultFields: ReactNode = null;
+  try {
+    defaultFields = renderDefault(props);
+  } catch {
+    defaultFields = null;
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -149,7 +156,7 @@ export function R2AssetInput(props: ObjectInputProps<R2AssetValue>) {
         </div>
         {error ? <p style={{ ...errorStyle, margin: 0 }}>{error}</p> : null}
       </div>
-      {renderDefault(props)}
+      {defaultFields}
     </div>
   );
 }

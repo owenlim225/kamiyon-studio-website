@@ -32,7 +32,7 @@ Worker **runtime** secrets (`SANITY_REVALIDATE_SECRET`, `MEDIA_UPLOAD_SECRET`, `
 | Variable | Local | Staging | Production |
 | --- | --- | --- | --- |
 | `APP_ENV` | `local` | `staging` | `production` |
-| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | `https://<staging-host>` *(TBD)* | `https://kamiyonstudio.com` |
+| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | `https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev` | `https://kamiyonstudio.com` |
 | `NEXT_PUBLIC_R2_PUBLIC_BASE_URL` | optional / staging media | `https://media-staging.kamiyonstudio.com` | `https://media.kamiyonstudio.com` |
 | `MEDIA_UPLOAD_SECRET` | `.env.local` / `.dev.vars` | Worker secret | Worker secret |
 | `SANITY_REVALIDATE_SECRET` | `.env.local` / `.dev.vars` | Worker secret | Worker secret |
@@ -62,7 +62,7 @@ Configure in Sanity → API → Webhooks after each host is live.
 
 | Env | Revalidate endpoint | Auth |
 | --- | --- | --- |
-| Staging | `https://<STAGING_WORKER_HOST>/api/revalidate` | Header / query secret = `SANITY_REVALIDATE_SECRET` |
+| Staging | `https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev/api/revalidate` | Header / query secret = `SANITY_REVALIDATE_SECRET` |
 | Production | `https://kamiyonstudio.com/api/revalidate` *(after DNS cutover)* | same |
 
 Until custom domains are attached, use the staging/prod `*.workers.dev` host printed by Wrangler deploy.
@@ -90,19 +90,50 @@ Requires Wrangler auth (`wrangler login` or `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE
 ### Wave 3 staging deploy status (2026-07-24)
 
 - OpenNext **build succeeded** on Windows after junction workaround.
-- Cache populate to `kamiyon-next-cache-staging` succeeded (80 entries).
-- **Deploy blocked:** Worker upload ~**5.5 MiB gzip** (Sanity Studio in server bundle) exceeds Workers **Free 3 MiB** limit. Needs **Workers Paid** (10 MiB) — see [Workers limits](https://developers.cloudflare.com/workers/platform/limits/).
-- Staging Worker `kamiyon-studio-website-staging` was **not** created; secrets/vars/smoke deferred until Paid + redeploy.
-- After Paid: `pnpm deploy:staging`, then set secrets/vars and smoke `*.workers.dev`.
+- Cache populate to `kamiyon-next-cache-staging` succeeded.
+- **First deploy blocked:** Worker upload ~**5.5 MiB gzip** (embedded Sanity Studio) exceeded Workers **Free 3 MiB**.
+- **Mitigation (ADR-007):** Externalize Studio via `pnpm sanity:deploy`. Worker `/studio` is a **config redirect** to hosted Studio (no embedded `NextStudio`).
+- **Staging live (Free):** `https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev`
+  - Upload size after externalize: ~**2.17 MiB gzip** (under 3 MiB)
+  - Secrets present: `MEDIA_UPLOAD_SECRET`, `SANITY_REVALIDATE_SECRET`
+  - Runtime workaround: `NEXT_PRIVATE_MINIMAL_MODE=1` (avoids Workers `middleware-manifest` dynamic require 500s)
+- Prefer Free tier; do **not** enable Workers Paid solely for Studio size.
+
+### Hosted Sanity Studio
+
+```bash
+# One-time / when schemas change — requires Sanity login (`pnpm sanity login` if needed)
+pnpm sanity:deploy
+# Local Studio without the Worker:
+pnpm sanity:dev
+```
+
+| Item | Value |
+| --- | --- |
+| Hosted URL | `https://kamiyon.sanity.studio` (override with `SANITY_STUDIO_HOSTNAME` / `NEXT_PUBLIC_SANITY_STUDIO_URL`) |
+| Worker path | `/studio` → 307 redirect to hosted URL (`next.config` redirects) |
+| Sanity CORS | Add Studio origin + staging/prod site origins in [manage.sanity.io](https://www.sanity.io/manage) → API → CORS origins |
+| Upload API | Studio posts to `{SANITY_STUDIO_API_ORIGIN}/api/media/upload` (Worker CORS allowlists Studio origin) |
+| Revalidate webhook | `https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev/api/revalidate` (header/query = `SANITY_REVALIDATE_SECRET`) |
+
+For hosted Studio → R2 uploads, redeploy Studio with build-time env:
+
+```bash
+# PowerShell example
+$env:SANITY_STUDIO_API_ORIGIN = "https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev"
+$env:SANITY_STUDIO_MEDIA_UPLOAD_SECRET = "<same as MEDIA_UPLOAD_SECRET>"
+pnpm sanity:deploy -y
+```
 
 ---
 
 ## Cutover checklist (Wave 4 — fill in)
 
-- [ ] **Workers Paid** enabled on account `273c0d63b6dc29bb5f52c77212bf87d7`
-- [ ] Staging deploy + smoke on `*.workers.dev` (pages, `/studio`, media upload, webhook)
+- [x] Staging deploy on Free tier (`*.workers.dev`) — pages + `/studio` redirect + API auth smoke
+- [ ] Point Sanity webhook at staging revalidate URL
+- [ ] Redeploy Studio with `SANITY_STUDIO_API_ORIGIN` for R2 uploads; smoke upload
 - [ ] Prod Worker smoke on `*.workers.dev`
 - [ ] Attach `kamiyonstudio.com` + `www`
 - [ ] Point Sanity CORS + webhook URLs at production
-- [ ] Set prod `NEXT_PUBLIC_SITE_URL=https://kamiyonstudio.com`
+- [ ] Set prod `NEXT_PUBLIC_SITE_URL=https://kamiyonstudio.com` at **build** time (public vars are inlined)
 - [ ] Pause Vercel (do not delete yet)

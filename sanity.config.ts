@@ -16,6 +16,8 @@ export default defineConfig({
   title: "Kamiyon Studio",
   // Hosted Studio is served at the root of *.sanity.studio
   basePath: "/",
+  // projectId/dataset come from sanity/env.ts (static process.env + repo defaults).
+  // Do not use dynamic process.env[key] — Sanity Vite will not inline those.
   projectId,
   dataset,
   schema,

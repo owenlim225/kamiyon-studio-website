@@ -12,4 +12,8 @@ const studioHost =
 export default defineCliConfig({
   api: { projectId, dataset },
   studioHost,
+  deployment: {
+    // Fresh app from 2026-07-23 redeploy (old c08yt7… returned Studio not found)
+    appId: "ig6pezs5vd2h9wa9isi4io79",
+  },
 });

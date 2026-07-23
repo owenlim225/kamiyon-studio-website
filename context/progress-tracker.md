@@ -17,50 +17,41 @@ When a task/phase is marked complete:
 
 ## Current Phase
 
-**Phase E in progress (2026-07-24):** OpenNext + R2 + webhook revalidation + CF Web Analytics.
+**Phase E nearly done (2026-07-24):** Staging Worker deployed; DNS cutover (Wave 4) pending your smoke check.
 
-**Wave 3 (staging deploy):** blocked — Workers Free **3 MiB** limit; OpenNext staging bundle ~**5.5 MiB gzip** (Sanity Studio). Needs **Workers Paid**, then `pnpm deploy:staging` + secrets + smoke. See [`deploy-runbook.md`](./deploy-runbook.md).
-
-**Source of truth:** [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md) · [`DECISIONS.md`](./DECISIONS.md)
+**Staging URL:** https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev  
+**Source of truth:** [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md) · [`DECISIONS.md`](./DECISIONS.md) · [`deploy-runbook.md`](./deploy-runbook.md)
 
 ---
 
 ## Current Goal
 
-Deploy path + media + revalidation (Phase E); then Phase F surfaces (contact/Resend, blog UI, E2E).
+Smoke staging (nav, pages, `/studio` redirect, media/webhook) → Wave 4 apex DNS cutover → Phase F.
 
 ---
 
-## Recently completed (2026-07-23)
+## Recently completed (2026-07-24)
 
-- **Cinematic footer** — global curtain-reveal `CinematicFooter` replaced `SiteFooter` in `PageShell`. Done — see [`completed/2026-07-23-cinematic-footer.md`](./completed/2026-07-23-cinematic-footer.md).
-
----
-
-## Completed in Phase C (2026-07-23)
-
-Done — see [`completed/2026-07-23-phase-c-sanity-cms-swap.md`](./completed/2026-07-23-phase-c-sanity-cms-swap.md).
+- **Kinetic nav (Track G)** — `SterlingGateKineticNavigation` replaces CardNav in `SiteHeader` (Kamiyon tokens + full primary nav). ADR-008.
+- **OpenNext staging deploy** — Worker gzip ~2.2 MiB (under Free 3 MiB); R2 bindings + staging vars/secrets set.
+- **Build fixes** — `next build --webpack` + `*.ttf.bin` loader; OG routes use node runtime for OpenNext.
 
 ---
 
-## Completed in Phase B (2026-07-21)
+## Completed earlier
 
-Done — Sanity Studio `/studio` + §7 schemas. Operator still needs project ID in `.env.local` for live Studio/CMS.
-
----
-
-## Completed in repo hygiene (2026-07-21)
-
-Done — see [`DECISIONS.md`](./DECISIONS.md) ADR-005.
+- Phase C CMS swap — [`completed/2026-07-23-phase-c-sanity-cms-swap.md`](./completed/2026-07-23-phase-c-sanity-cms-swap.md)
+- Cinematic footer — [`completed/2026-07-23-cinematic-footer.md`](./completed/2026-07-23-cinematic-footer.md)
+- Phase B Studio schemas; ADR-005 hygiene; ADR-007 hosted Studio
 
 ---
 
 ## Next Up (resume here)
 
-1. **Operator:** Set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` in `.env.local`; verify `/studio` loads and CMS getters leave fallbacks when dataset is empty
-2. **Phase E:** OpenNext + R2 upload + webhook revalidation + CF Web Analytics (T4/T5/T6/T14)
-3. **Phase F surfaces:** contact+Resend (T8), blog UI (T9), expanded E2E (T15)
-4. **Manual UX check:** scroll-reveal footer on `/` and `/contact` (desktop + mobile); keyboard tab into footer only after reveal
+1. **You:** Open staging URL — Menu open/close, About/Services/Contact links, Escape; `/studio` → hosted Studio
+2. **Operator:** `pnpm sanity:deploy` if Studio host not live; Sanity CORS for `*.sanity.studio` + staging Worker origin; wire webhook to staging `/api/revalidate`
+3. **Wave 4:** Attach `kamiyonstudio.com` + `www` to prod Worker; pause Vercel
+4. **Phase F:** contact+Resend (T8), blog UI (T9), expanded E2E (T15)
 
 **Done (pointers):** see [`completed/README.md`](./completed/README.md)
 
@@ -72,7 +63,7 @@ Done — see [`DECISIONS.md`](./DECISIONS.md) ADR-005.
 - [ ] **Press Kit** — deferred
 - [ ] **Portfolio taxonomy filters** — deferred
 - [ ] **README motto conflict** — update docs README to Create. Play. Inspire.?
-- [ ] **R2 public CDN hostname** — Phase E
+- [x] **R2 public CDN hostname** — `media.kamiyonstudio.com` / `media-staging.kamiyonstudio.com` (active)
 - [ ] **Resend from-address / CONTACT_TO_EMAIL** — confirm production inbox
 
 ---

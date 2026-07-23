@@ -29,6 +29,17 @@
   "env": {
     "staging": {
       "name": "kamiyon-studio-website-staging",
+      "workers_dev": true,
+      "vars": {
+        "APP_ENV": "staging",
+        "NEXT_PUBLIC_SITE_URL": "https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev",
+        "NEXT_PUBLIC_R2_PUBLIC_BASE_URL": "https://media-staging.kamiyonstudio.com",
+        "NEXT_PUBLIC_SANITY_PROJECT_ID": "c6ej1xoj",
+        "NEXT_PUBLIC_SANITY_DATASET": "kamiyon",
+        "NEXT_PUBLIC_SANITY_STUDIO_URL": "https://kamiyon.sanity.studio",
+        // Skip Next getMiddlewareManifest() dynamic require (Workers 500s without this)
+        "NEXT_PRIVATE_MINIMAL_MODE": "1",
+      },
       "services": [
         {
           "binding": "WORKER_SELF_REFERENCE",
@@ -48,6 +59,16 @@
     },
     "production": {
       "name": "kamiyon-studio-website",
+      "workers_dev": true,
+      "vars": {
+        "APP_ENV": "production",
+        "NEXT_PUBLIC_SITE_URL": "https://kamiyonstudio.com",
+        "NEXT_PUBLIC_R2_PUBLIC_BASE_URL": "https://media.kamiyonstudio.com",
+        "NEXT_PUBLIC_SANITY_PROJECT_ID": "c6ej1xoj",
+        "NEXT_PUBLIC_SANITY_DATASET": "kamiyon",
+        "NEXT_PUBLIC_SANITY_STUDIO_URL": "https://kamiyon.sanity.studio",
+        "NEXT_PRIVATE_MINIMAL_MODE": "1",
+      },
       "services": [
         {
           "binding": "WORKER_SELF_REFERENCE",

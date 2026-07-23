@@ -41,6 +41,7 @@ describe("POST /api/media/upload", () => {
     } else {
       process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL = originalBase;
     }
+    delete process.env.NEXT_PUBLIC_SANITY_STUDIO_URL;
   });
 
   async function post(init: { headers?: HeadersInit; body?: BodyInit } = {}) {
@@ -132,5 +133,55 @@ describe("POST /api/media/upload", () => {
     expect(options).toEqual({
       httpMetadata: { contentType: "image/png" },
     });
+  });
+
+  it("adds CORS headers for hosted Studio origin", async () => {
+    process.env.NEXT_PUBLIC_SANITY_STUDIO_URL = "https://kamiyon.sanity.studio";
+    const file = new File([PNG_1X1], "pixel.png", { type: "image/png" });
+
+    const response = await post({
+      headers: {
+        Authorization: "Bearer test-media-upload-secret",
+        Origin: "https://kamiyon.sanity.studio",
+      },
+      body: formWithFile(file),
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe(
+      "https://kamiyon.sanity.studio",
+    );
+  });
+
+  it("answers OPTIONS preflight for Studio origin", async () => {
+    process.env.NEXT_PUBLIC_SANITY_STUDIO_URL = "https://kamiyon.sanity.studio";
+    const { OPTIONS } = await import("./route");
+    const response = await OPTIONS(
+      new Request("http://localhost/api/media/upload", {
+        method: "OPTIONS",
+        headers: { Origin: "https://kamiyon.sanity.studio" },
+      }),
+    );
+
+    expect(response.status).toBe(204);
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe(
+      "https://kamiyon.sanity.studio",
+    );
+    expect(response.headers.get("Access-Control-Allow-Methods")).toContain(
+      "POST",
+    );
+  });
+
+  it("rejects OPTIONS from unknown origins", async () => {
+    process.env.NEXT_PUBLIC_SANITY_STUDIO_URL = "https://kamiyon.sanity.studio";
+    const { OPTIONS } = await import("./route");
+    const response = await OPTIONS(
+      new Request("http://localhost/api/media/upload", {
+        method: "OPTIONS",
+        headers: { Origin: "https://evil.example" },
+      }),
+    );
+
+    expect(response.status).toBe(403);
   });
 });
