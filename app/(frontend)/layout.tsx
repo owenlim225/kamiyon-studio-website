@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geologica, Montserrat } from "next/font/google";
+import { CloudflareWebAnalytics } from "@/components/analytics/CloudflareWebAnalytics";
 import { PageShell } from "@/components/layout/PageShell";
 import { AnimationProviders } from "@/components/providers/AnimationProviders";
 import { DEFAULT_DESCRIPTION, SITE_NAME } from "@/lib/seo/constants";
