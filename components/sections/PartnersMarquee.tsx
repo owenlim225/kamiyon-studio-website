@@ -1,4 +1,7 @@
+import Image from "next/image";
+
 import { Container } from "@/components/ui/Container";
+import { isAllowedNextImageSrc } from "@/lib/cms/image";
 import {
   PARTNER_PLACEHOLDERS,
   type PartnerPlaceholder,
@@ -11,6 +14,31 @@ type PartnersMarqueeProps = {
   partners?: PartnerPlaceholder[];
 };
 
+function PartnerSlot({ partner }: { partner: PartnerPlaceholder }) {
+  const rawLogoUrl = partner.logoUrl?.trim() || "";
+  const logoUrl =
+    rawLogoUrl && isAllowedNextImageSrc(rawLogoUrl) ? rawLogoUrl : null;
+  const logoAlt = partner.logoAlt?.trim() || partner.label;
+
+  return (
+    <li>
+      <span className="inline-flex min-h-16 min-w-[10rem] items-center justify-center rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-4 text-sm font-medium uppercase tracking-wide text-[var(--text-muted)] shadow-[var(--shadow-sm)] md:min-w-[12rem]">
+        {logoUrl ? (
+          <Image
+            src={logoUrl}
+            alt={logoAlt}
+            width={160}
+            height={48}
+            className="h-10 w-auto max-w-[10rem] object-contain md:h-12 md:max-w-[12rem]"
+          />
+        ) : (
+          partner.label
+        )}
+      </span>
+    </li>
+  );
+}
+
 function PartnerSlotList({
   partners,
   ariaHidden = false,
@@ -18,6 +46,8 @@ function PartnerSlotList({
   partners: PartnerPlaceholder[];
   ariaHidden?: boolean;
 }) {
+  const keyPrefix = ariaHidden ? "duplicate-" : "";
+
   return (
     <ul
       role="list"
@@ -25,14 +55,7 @@ function PartnerSlotList({
       className="flex shrink-0 items-center gap-6 md:gap-10"
     >
       {partners.map((partner) => (
-        <li key={`${ariaHidden ? "duplicate-" : ""}${partner.id}`}>
-          <span
-            className="inline-flex min-h-16 min-w-[10rem] items-center justify-center rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-4 text-sm font-medium uppercase tracking-wide text-[var(--text-muted)] shadow-[var(--shadow-sm)] md:min-w-[12rem]"
-            aria-label={partner.label}
-          >
-            {partner.label}
-          </span>
-        </li>
+        <PartnerSlot key={`${keyPrefix}${partner.id}`} partner={partner} />
       ))}
     </ul>
   );

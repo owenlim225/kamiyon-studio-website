@@ -26,6 +26,29 @@ describe("PartnersMarquee", () => {
     );
   });
 
+  it("renders partner logos as images without links or click actions", () => {
+    render(
+      <PartnersMarquee
+        partners={[
+          {
+            id: "acme",
+            label: "Acme",
+            logoUrl: "https://media.kamiyonstudio.com/partners/acme.png",
+            logoAlt: "Acme logo",
+          },
+        ]}
+      />,
+    );
+
+    const images = screen.getAllByRole("img", { name: "Acme logo", hidden: true });
+    expect(images).toHaveLength(2);
+    expect(images[0]?.getAttribute("src")).toContain(
+      encodeURIComponent("https://media.kamiyonstudio.com/partners/acme.png"),
+    );
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByText("Acme")).not.toBeInTheDocument();
+  });
+
   it("renders an optional Partners eyebrow when provided", () => {
     render(<PartnersMarquee eyebrow="Partners" />);
 

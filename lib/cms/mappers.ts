@@ -1,3 +1,4 @@
+import { getCmsImageUrl } from "./image";
 import { mapR2AssetToCmsImage, type R2AssetRef } from "./media";
 import type {
   AboutPage,
@@ -475,16 +476,26 @@ export function mapPartner(doc: unknown): Partner | null {
     slug,
     order: asNumber(row.order),
     logo: mapR2AssetToCmsImage(row.logo as R2AssetRef | null | undefined),
-    websiteUrl: typeof row.websiteUrl === "string" ? row.websiteUrl : undefined,
     isPlaceholder: asBoolean(row.isPlaceholder),
   };
 }
 
 /** Marquee slot shape used by PartnersMarquee / PARTNER_PLACEHOLDERS. */
-export function mapPartnerToMarqueeItem(
-  partner: Partner,
-): { id: string; label: string } {
-  return { id: partner.id, label: partner.label };
+export function mapPartnerToMarqueeItem(partner: Partner): {
+  id: string;
+  label: string;
+  logoUrl: string | null;
+  logoAlt: string;
+} {
+  return {
+    id: partner.id,
+    label: partner.label,
+    logoUrl: getCmsImageUrl(partner.logo),
+    logoAlt:
+      typeof partner.logo?.alt === "string" && partner.logo.alt.trim()
+        ? partner.logo.alt
+        : partner.label,
+  };
 }
 
 function mapAuthor(doc: unknown): Author | null {

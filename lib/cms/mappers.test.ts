@@ -184,22 +184,30 @@ describe("mapPartner", () => {
     });
   });
 
-  it("maps optional logo and websiteUrl", () => {
+  it("maps optional logo without website links", () => {
     expect(
       mapPartner({
         _id: "p3",
         label: "Partner placeholder",
         slug: { current: "partner-3" },
         order: 3,
-        logo: { url: "https://cdn.example.com/logo.png", alt: "Logo" },
+        logo: { url: "https://media.kamiyonstudio.com/partners/logo.png", alt: "Logo" },
         websiteUrl: "https://example.com",
         isPlaceholder: false,
       }),
     ).toMatchObject({
-      logo: { url: "https://cdn.example.com/logo.png", alt: "Logo" },
-      websiteUrl: "https://example.com",
+      logo: { url: "https://media.kamiyonstudio.com/partners/logo.png", alt: "Logo" },
       isPlaceholder: false,
     });
+    expect(
+      mapPartner({
+        _id: "p3",
+        label: "Partner placeholder",
+        slug: { current: "partner-3" },
+        order: 3,
+        websiteUrl: "https://example.com",
+      }),
+    ).not.toHaveProperty("websiteUrl");
   });
 });
 
@@ -214,7 +222,34 @@ describe("mapPartnerToMarqueeItem", () => {
         order: 1,
         isPlaceholder: true,
       }),
-    ).toEqual({ id: "partner-1", label: "Partner placeholder" });
+    ).toEqual({
+      id: "partner-1",
+      label: "Partner placeholder",
+      logoUrl: null,
+      logoAlt: "Partner placeholder",
+    });
+  });
+
+  it("projects allowlisted logo URL for marquee image slots", () => {
+    expect(
+      mapPartnerToMarqueeItem({
+        _type: "partner",
+        id: "acme",
+        label: "Acme",
+        slug: { current: "acme" },
+        order: 1,
+        logo: {
+          url: "https://media.kamiyonstudio.com/partners/acme.png",
+          alt: "Acme logo",
+        },
+        isPlaceholder: false,
+      }),
+    ).toEqual({
+      id: "acme",
+      label: "Acme",
+      logoUrl: "https://media.kamiyonstudio.com/partners/acme.png",
+      logoAlt: "Acme logo",
+    });
   });
 });
 

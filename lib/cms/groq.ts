@@ -286,7 +286,6 @@ export const partnersQuery = defineQuery(/* groq */ `
     slug,
     order,
     logo ${r2AssetProjection},
-    websiteUrl,
     isPlaceholder
   }
 `);
