@@ -150,7 +150,7 @@ If requirements are ambiguous, add an open question to `progress-tracker.md` bef
 ## Handling Missing Requirements
 
 - Do not invent product behavior not defined in context or docs
-- Do not invent hex colors — Sakura `#f97695` only; others TBD
+- Do not invent hex colors — use locked website tokens in essential context §8 (`#FF7998`, `#E9C080`, `#201013`, `#F8F8F8`)
 - Do not invent social URLs or email — TBD in siteSettings
 - Resolve conflicts by doc priority (see canon.md); flag persistent conflicts for human review
 - **Known conflict:** README motto "Play. Question. Create." vs company docs "Create. Play. Inspire." — use **Create. Play. Inspire.** on website

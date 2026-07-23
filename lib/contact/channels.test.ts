@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import {
   FACEBOOK_PAGE_URL,
+  ITCH_URL,
   LINKEDIN_COMPANY_URL,
   PUBLIC_EMAIL,
+  YOUTUBE_URL,
+  X_URL,
   contactChannels,
   socialLinks,
 } from "./channels";
@@ -15,6 +18,9 @@ describe("contact channels", () => {
     expect(LINKEDIN_COMPANY_URL).toBe(
       "https://www.linkedin.com/company/105066188/"
     );
+    expect(ITCH_URL).toBe("https://kamiyon-studio.itch.io/");
+    expect(YOUTUBE_URL).toBe("https://youtube.com/@kamiyonstudio");
+    expect(X_URL).toBe("https://x.com/kamiyonstudio");
   });
 
   it("builds live contact channels (not placeholders)", () => {
@@ -24,6 +30,9 @@ describe("contact channels", () => {
     expect(contactChannels.map((channel) => channel.value)).toEqual([
       FACEBOOK_PAGE_URL,
       LINKEDIN_COMPANY_URL,
+      ITCH_URL,
+      YOUTUBE_URL,
+      X_URL,
       PUBLIC_EMAIL,
     ]);
   });
@@ -33,6 +42,9 @@ describe("contact channels", () => {
     expect(socialLinks.map((link) => link.url)).toEqual([
       FACEBOOK_PAGE_URL,
       LINKEDIN_COMPANY_URL,
+      ITCH_URL,
+      YOUTUBE_URL,
+      X_URL,
       `mailto:${PUBLIC_EMAIL}`,
     ]);
   });

@@ -1,6 +1,5 @@
 "use client";
 
-import { useLenis } from "lenis/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
@@ -24,19 +23,16 @@ const SCROLL_INTENT_KEYS = new Set([
 ]);
 
 const RETURN_SETTLE_MS = 800;
-/** How long a user gesture remains “fresh” for scroll bounce gating. */
 const USER_INTENT_MS = 500;
 
 /**
- * One-shot (configurable) scroll bounce on the home hero: after user-driven
- * scroll past `threshold`, smoothly return to y=0, then release.
- * Ignores programmatic scrolls (e.g. LineSidebar scrollIntoView).
+ * One-shot scroll bounce on the home hero: after user-driven scroll past
+ * `threshold`, smoothly return to y=0, then release.
  */
 export function useHeroScrollBounce(
   options: UseHeroScrollBounceOptions = {},
 ): UseHeroScrollBounceResult {
   const { threshold = 24, maxBounces = 1 } = options;
-  const lenis = useLenis();
   const [visible, setVisible] = useState(true);
   const bounceCountRef = useRef(0);
   const isReturningRef = useRef(false);
@@ -57,28 +53,6 @@ export function useHeroScrollBounce(
   const returnToTop = useCallback(() => {
     clearReturnCleanup();
 
-    if (lenis) {
-      lenis.stop();
-
-      const settleTimer = window.setTimeout(() => {
-        lenis.start();
-        completeReturn();
-      }, RETURN_SETTLE_MS);
-
-      returnCleanupRef.current = () => {
-        window.clearTimeout(settleTimer);
-      };
-
-      lenis.scrollTo(0, {
-        force: true,
-        onComplete: () => {
-          lenis.start();
-          completeReturn();
-        },
-      });
-      return;
-    }
-
     window.scrollTo({ top: 0, behavior: "smooth" });
 
     const onScroll = () => {
@@ -96,7 +70,7 @@ export function useHeroScrollBounce(
       window.clearTimeout(settleTimer);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [lenis, completeReturn, clearReturnCleanup]);
+  }, [completeReturn, clearReturnCleanup]);
 
   const tryBounce = useCallback(
     (scrollY: number) => {
@@ -172,18 +146,6 @@ export function useHeroScrollBounce(
   }, [markUserIntent]);
 
   useEffect(() => {
-    if (lenis) {
-      const onScroll = () => {
-        tryBounce(lenis.scroll);
-      };
-
-      lenis.on("scroll", onScroll);
-      return () => {
-        lenis.off("scroll", onScroll);
-        clearReturnCleanup();
-      };
-    }
-
     const onScroll = () => {
       tryBounce(window.scrollY);
     };
@@ -193,7 +155,7 @@ export function useHeroScrollBounce(
       window.removeEventListener("scroll", onScroll);
       clearReturnCleanup();
     };
-  }, [tryBounce, lenis, clearReturnCleanup]);
+  }, [tryBounce, clearReturnCleanup]);
 
   return { visible, dismiss };
 }

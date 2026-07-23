@@ -41,6 +41,14 @@ describe("PageShell", () => {
     expect(main).toContainElement(screen.getByText("Page content"));
   });
 
+  it("stacks main above the curtain footer reveal", async () => {
+    render(await PageShell({ children: <p>Page content</p> }));
+
+    const main = document.getElementById("main-content");
+    expect(main).toHaveClass("relative", "z-10");
+    expect(main?.className).toContain("bg-[var(--bg-primary)]");
+  });
+
   it("renders the site header and footer around the content", async () => {
     render(await PageShell({ children: <p>Page content</p> }));
 

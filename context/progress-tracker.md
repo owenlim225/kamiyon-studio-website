@@ -6,120 +6,68 @@ Update this file after every meaningful implementation change.
 
 When a task/phase is marked complete:
 
-1. Create `context/completed/YYYY-MM-DD-<slug>.md` with the finished context (goal, decisions, checklist, verification results, session notes).
+1. Create `context/completed/YYYY-MM-DD-<slug>.md` with the finished context.
 2. Add a row/link in [`completed/README.md`](./completed/README.md).
-3. Remove the bulky finished block from this file; leave at most a one-line “Done — see completed/…” pointer if needed.
+3. Remove bulky finished blocks from this file; leave at most a one-line pointer.
 4. Do not delete historical detail — relocate it.
 
 **Historical completed work:** [`completed/README.md`](./completed/README.md)
 
 ---
 
-## Canon Analysis Summary (abbreviated)
+## Current Phase
 
-Full analysis of 43 `docs/` files (July 2026). Detail in source docs and [`project-overview.md`](./project-overview.md).
+**Phase E nearly done (2026-07-24):** Staging Worker deployed; DNS cutover (Wave 4) pending your smoke check.
 
-| Area | Key facts |
-| --- | --- |
-| Identity | Kamiyon Studio — Founded 2024 — Biñan City, Laguna — Motto **Create. Play. Inspire.** — 6 team members — Mascot Kami-chan |
-| Site scope | Routes: Home, About, Services, Products, Portfolio, Community, Contact, Blog (stub) — Payload CMS + typed fallbacks — External contact only (no forms) |
-| Nav (shell) | Home, About, Services, Portfolio, Blog, Contact — Products/Community hidden from header/footer (routes preserved) |
-| Products (canon IP) | Eclipse, Vocabu Wildlife Edition, Afterschool Cleanup |
-| Services | 4 categories, 10 service areas (`docs/services/services.md`) |
-| CMS (Payload) | Globals: `site-settings`, `home-page`, `about-page`, `contact-page` — Collections: `team-members`, `service-categories`, `services`, `products`, `case-studies`, `community-items`, `media`, `users` — see `architecture.md` |
-| Design tokens | Sakura `#f97695` (confirmed); Warm Ivory/Charcoal/Soft Gold extracted Phase 9; Deep Indigo TBD — Fonts: Poppins (UI), Montserrat (headlines) |
-| Placeholder gaps | Social URLs + public email **wired 2026-07-10** (operator-provided; not yet in canon docs); no named clients or community events in canon — never fabricate |
-
-**Known conflicts:** README motto "Play. Question. Create." vs canon "Create. Play. Inspire." (website uses canon). `typography.md` / `consultation-process.md` are erroneous duplicates.
+**Staging URL:** https://kamiyon-studio-website-staging.limosnerosherwin.workers.dev  
+**Source of truth:** [`WEBSITE-ESSENTIAL-CONTEXT.md`](./WEBSITE-ESSENTIAL-CONTEXT.md) · [`DECISIONS.md`](./DECISIONS.md) · [`deploy-runbook.md`](./deploy-runbook.md)
 
 ---
 
-## Current Phase
-
-**Home hero scroll helper** — sakura tip + one-shot bounce-to-top on `/`.
-
 ## Current Goal
 
-Ship a small upper-hero “Scroll down” balloon that bounce-returns once on user scroll, then releases normal scrolling (Lenis + LineSidebar intact).
+Smoke staging (nav, pages, `/studio` redirect, media/webhook) → Wave 4 apex DNS cutover → Phase F.
 
-## In Progress
+---
 
-- Done this session: `useHeroScrollBounce` (Lenis-aware, user-gesture gated, reduced-motion skip, dismiss + cleanup) + `HeroScrollHelper` in `HeroOpening`; unit tests green
-- Done this session: Motion blur on scroll reveals (`useFadeIn` / `useReveal` / `useStagger` + `AnimatedSection`) — soft enter blur + velocity blur; `lib/motion/motion-blur` + `attach-velocity-blur`; reduced-motion / coarse-pointer safe
-- Done this session: `LineSidebar` + `HomeLineSidebar` on `/` (desktop-only fixed left rail); `lib/home/section-nav` anchors; section `id`s + `scroll-mt`; scroll-spy via `IntersectionObserver`
-- Done this session: Restored `PartnersMarquee` as its own home section (reverted brief hero-overlay experiment)
-- Done prior (committed): CardNav closed/open chrome; HeroOpening brand-first; WordPullUp / ScrollStack / CardNav / parallax stack
+## Recently completed (2026-07-24)
+
+- **Kinetic nav (Track G)** — `SterlingGateKineticNavigation` replaces CardNav in `SiteHeader` (Kamiyon tokens + full primary nav). ADR-008.
+- **OpenNext staging deploy** — Worker gzip ~2.2 MiB (under Free 3 MiB); R2 bindings + staging vars/secrets set.
+- **Build fixes** — `next build --webpack` + `*.ttf.bin` loader; OG routes use node runtime for OpenNext.
+
+---
+
+## Completed earlier
+
+- Phase C CMS swap — [`completed/2026-07-23-phase-c-sanity-cms-swap.md`](./completed/2026-07-23-phase-c-sanity-cms-swap.md)
+- Cinematic footer — [`completed/2026-07-23-cinematic-footer.md`](./completed/2026-07-23-cinematic-footer.md)
+- Phase B Studio schemas; ADR-005 hygiene; ADR-007 hosted Studio
+
+---
 
 ## Next Up (resume here)
 
-1. Visual QA: hero scroll helper on `/` (desktop + mobile; Lenis on/off; reduced motion; dismiss; LineSidebar after bounce)
-2. Visual QA: motion blur on `/` and `/motion-lab` (desktop scroll speed → soft blur; stops when idle; reduced motion / touch unchanged)
-3. Visual QA: LineSidebar on `/` (desktop rail; hidden below `lg`; click → smooth scroll; scroll-spy; reduced motion; Lenis on/off)
-4. Visual QA: partners as standalone section + full home scroll path Hero → Contact
-5. Visual QA: header closed/open + simplified hero on `/` and `/about` (desktop + mobile; reduced motion; Escape/focus)
-6. Visual QA: WordPullUp + body fade on `/`; services stack (Lenis on/off + reduced motion)
-7. Document LineSidebar in `ui-context.md` when phase closes
-8. Roll WordPullUp + fade-in standard to About / Services / Portfolio / Contact page headings
-9. Operator: set `DATABASE_URL` + `PAYLOAD_SECRET` in `.env.local`, run `npm run dev`, open `/admin`, create first user, publish content
-10. Optional: draft/preview after cutover; Payload schema sign-off; production `NEXT_PUBLIC_SITE_URL` at deploy
-11. Optional: dual-model a11y/UX polish on motion stack
-12. Optional: remove unused `lib/home/opening-items` if nothing else adopts it
+1. **You:** Open staging URL — Menu open/close, About/Services/Contact links, Escape; `/studio` → hosted Studio
+2. **Operator:** `pnpm sanity:deploy` if Studio host not live; Sanity CORS for `*.sanity.studio` + staging Worker origin; wire webhook to staging `/api/revalidate`
+3. **Wave 4:** Attach `kamiyonstudio.com` + `www` to prod Worker; pause Vercel
+4. **Phase F:** contact+Resend (T8), blog UI (T9), expanded E2E (T15)
 
-**Done (pointers only):**
-
-- GSAP close-out (About + delivery note) 2026-07-11 — [`completed/2026-07-11-gsap-animation-delivery.md`](./completed/2026-07-11-gsap-animation-delivery.md)
-- GSAP foundation + Home adoption 2026-07-11 — [`completed/2026-07-11-gsap-animation-foundation.md`](./completed/2026-07-11-gsap-animation-foundation.md)
-- Sanity → Payload Phases 0–6 — [`completed/2026-07-11-payload-migration-phases-0-6.md`](./completed/2026-07-11-payload-migration-phases-0-6.md)
-- Homepage redesign 2026-07-11 — [`completed/2026-07-11-homepage-redesign.md`](./completed/2026-07-11-homepage-redesign.md)
-- v1 website Phase 0–10 — [`completed/2026-07-09-v1-website-phases-0-10.md`](./completed/2026-07-09-v1-website-phases-0-10.md)
-- Sanity schema plan (superseded) — [`completed/2026-07-10-sanity-schema-plan-superseded.md`](./completed/2026-07-10-sanity-schema-plan-superseded.md)
+**Done (pointers):** see [`completed/README.md`](./completed/README.md)
 
 ---
 
 ## Open Questions
 
-- [x] **CMS choice** — **Payload CMS 3** (Postgres); Sanity removed Phase 4
-- [ ] **Payload schema sign-off** — Confirm globals/collections in `payload.config.ts` accepted as v1 canon
-- [x] **Facebook page URL** — **answered 2026-07-10:** `https://www.facebook.com/kamiyonstudio`
-- [x] **LinkedIn URL** — **answered 2026-07-10:** public `https://www.linkedin.com/company/105066188/`
-- [x] **Public email address** — **answered 2026-07-10:** `kamiyonstudio@gmail.com`
-- [x] **Deployment target** — **answered 2026-07-10:** Vercel; `NEXT_PUBLIC_SITE_URL` still TBD at deploy time
-- [ ] **Deep Indigo hex value** — not in `brand-kit.png`; do not invent
-- [ ] **`/news` route** — deferred/skipped for v1 (Vision item)
-- [ ] **Press Kit `/pres`** — deferred post-v1
-- [ ] **Portfolio taxonomy divergence** — canon `caseStudy` model; discipline filters need schema change
-- [ ] **Contact policy** — external links only; no lead-capture form for v1
-- [ ] **Beaufort for LoL license** — confirm before production use
-- [ ] **Product development status** — per-product status defaults to `tbd`
-- [ ] **README motto conflict** — update canon README to match Create. Play. Inspire.?
-- [ ] **Draft/preview** — deferred post-migration
+- [ ] **`/news` route** — deferred
+- [ ] **Press Kit** — deferred
+- [ ] **Portfolio taxonomy filters** — deferred
+- [ ] **README motto conflict** — update docs README to Create. Play. Inspire.?
+- [x] **R2 public CDN hostname** — `media.kamiyonstudio.com` / `media-staging.kamiyonstudio.com` (active)
+- [ ] **Resend from-address / CONTACT_TO_EMAIL** — confirm production inbox
 
 ---
 
 ## Architecture Decisions (active)
 
-| Decision | Choice | Rationale |
-| --- | --- | --- |
-| Motto | Create. Play. Inspire. | User confirmed |
-| Contact v1 | Facebook + LinkedIn + mailto only | No forms / visitor auth |
-| Content strategy | Payload CMS + typed fallbacks | Empty CMS OK |
-| CMS (current) | Payload 3 + Postgres | In-repo `/admin`; Sanity deleted |
-| Data fetching | SSG + ISR (1h `unstable_cache`) | Marketing performance |
-| Rich text | Lexical → `PortableTextBlock[]` adapter | Matches `PortableText.tsx` |
-| Images | Payload media `url` + `/assets/**` localPatterns | No Sanity CDN |
-| Access control | Public read / authenticated write; Users auth-only | Phase 6 hardening |
-| Secret validation | `PAYLOAD_SECRET` required if `DATABASE_URL` set | Fail closed when CMS enabled |
-| Unmatched public URLs | `(frontend)/[...notFound]` → branded `not-found` | Dual root layouts (frontend/payload) |
-| Shell nav | Home, About, Services, Portfolio, Blog, Contact | Products/Community routes kept, hidden from nav |
-| Home composition | HeroOpening (brand + motto) → Partners → Projects → ServicesStack → Contact | 2026-07-15: list removed; partners overlay trial reverted |
-| Home section nav | React Bits LineSidebar (`HomeLineSidebar`); desktop-only (`lg+`) fixed left rail; `HOME_SECTION_NAV` + scroll-spy | 2026-07-15 |
-| Home hero scroll tip | `HeroScrollHelper` + `useHeroScrollBounce`; user-gesture gated one-shot return-to-top; reduced-motion skips hijack | 2026-07-15 |
-| Home services UI | React Bits ScrollStack (`useWindowScroll`); reuse site Lenis, no nested root Lenis | Avoid dual smooth-scroll instances |
-| Shell header | CardNav via SiteHeader — closed: logo+burger; open: top-right vertical About/Work/Contact; transparent on `/` | 2026-07-15 restyle |
-| Contact URLs | `lib/contact/channels.ts` | Single source for fallbacks/nav/JSON-LD |
-| Motion stack | GSAP + ScrollTrigger + Lenis; Framer Motion micro only | Frontend layout providers; Payload admin excluded |
-| Motion demo | `/motion-lab` (noIndex, hidden from nav) | Architecture showcase before marketing adoption |
-| Typography motion | Headings: `WordPullUp` (scroll); body: `AnimatedSection` fade + motion blur; hero brand: `SplitText` | Differentiated entrance; reduced-motion passthrough |
-| Scroll motion blur | Enter blur → sharp; velocity blur while on-screen (`lib/motion/motion-blur`); fine pointer only | Realism on desktop scroll; opt-out via `motionBlur={false}` |
-
-Historical decisions and session notes live in [`completed/README.md`](./completed/README.md).
+See [`DECISIONS.md`](./DECISIONS.md) for locked stack and cleanup ADRs.

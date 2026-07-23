@@ -41,12 +41,14 @@ describe("buildShellNavProps", () => {
       comingSoon: false,
       platform: "facebook",
     });
-    expect(props.navItems).toHaveLength(6);
+    expect(props.navItems).toHaveLength(8);
     expect(props.navItems.map((item) => item.label)).toEqual([
       "Home",
       "About",
       "Services",
+      "Products",
       "Portfolio",
+      "Community",
       "Blog",
       "Contact",
     ]);
@@ -76,6 +78,32 @@ describe("buildShellNavProps", () => {
       href: "https://www.facebook.com/kamiyonstudio",
       comingSoon: false,
       platform: "facebook",
+    });
+  });
+
+  it("maps itch, youtube, and x platforms for the shell", () => {
+    const mapped = mapSocialLinksForShell(siteSettingsFallback.socialLinks);
+    const byPlatform = Object.fromEntries(
+      mapped.map((link) => [link.platform, link]),
+    );
+
+    expect(byPlatform.itch).toEqual({
+      label: "itch.io",
+      href: "https://kamiyon-studio.itch.io/",
+      comingSoon: false,
+      platform: "itch",
+    });
+    expect(byPlatform.youtube).toEqual({
+      label: "YouTube",
+      href: "https://youtube.com/@kamiyonstudio",
+      comingSoon: false,
+      platform: "youtube",
+    });
+    expect(byPlatform.x).toEqual({
+      label: "X",
+      href: "https://x.com/kamiyonstudio",
+      comingSoon: false,
+      platform: "x",
     });
   });
 });

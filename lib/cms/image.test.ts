@@ -1,9 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { getCmsImageUrl } from "./image";
 
 describe("getCmsImageUrl", () => {
-  it("returns null when the image has no url", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("returns null when the image has no url or key", () => {
     expect(getCmsImageUrl({ alt: "no url" })).toBeNull();
   });
 
@@ -12,9 +16,16 @@ describe("getCmsImageUrl", () => {
     expect(getCmsImageUrl(undefined)).toBeNull();
   });
 
-  it("returns the Payload media url when present", () => {
-    expect(getCmsImageUrl({ url: "/api/media/file/hero.png", alt: "Hero" })).toBe(
-      "/api/media/file/hero.png"
+  it("returns the public R2 url when present", () => {
+    expect(getCmsImageUrl({ url: "https://cdn.example.com/hero.png", alt: "Hero" })).toBe(
+      "https://cdn.example.com/hero.png",
+    );
+  });
+
+  it("resolves key via NEXT_PUBLIC_R2_PUBLIC_BASE_URL", () => {
+    vi.stubEnv("NEXT_PUBLIC_R2_PUBLIC_BASE_URL", "https://cdn.example.com");
+    expect(getCmsImageUrl({ key: "media/hero.png", alt: "Hero" })).toBe(
+      "https://cdn.example.com/media/hero.png",
     );
   });
 });

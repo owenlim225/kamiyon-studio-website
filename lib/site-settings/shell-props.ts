@@ -18,6 +18,9 @@ export type ShellNavProps = {
 const PLATFORM_LABELS: Record<SocialLink["platform"], string> = {
   facebook: "Facebook",
   linkedin: "LinkedIn",
+  itch: "itch.io",
+  youtube: "YouTube",
+  x: "X",
   email: "Email",
 };
 

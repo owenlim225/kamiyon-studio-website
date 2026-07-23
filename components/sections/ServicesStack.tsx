@@ -60,7 +60,6 @@ export function ServicesStack({ slides }: ServicesStackProps) {
           scaleEndPosition="8%"
           baseScale={0.86}
           rotationAmount={0}
-          blurAmount={0}
         >
           {slides.map((slide) => (
             <ScrollStackItem key={slide.id} itemClassName={cardClassName}>

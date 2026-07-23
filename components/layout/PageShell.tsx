@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
+import { CinematicFooter } from "@/components/ui/motion-footer";
 import { getSiteSettingsContent } from "@/lib/cms/site-settings-content";
 import { buildShellNavProps } from "@/lib/site-settings/shell-props";
 
-import { SiteFooter } from "./SiteFooter";
 import { SiteHeader } from "./SiteHeader";
 
 type PageShellProps = {
@@ -27,14 +27,19 @@ export async function PageShell({ children }: PageShellProps) {
         siteName={shellProps.siteName}
         socialLinks={shellProps.socialLinks}
       />
-      <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="relative z-10 flex-1 bg-[var(--bg-primary)] outline-none"
+      >
         {children}
       </main>
-      <SiteFooter
+      <CinematicFooter
         navItems={shellProps.navItems}
         socialLinks={shellProps.socialLinks}
         siteName={shellProps.siteName}
         footerMotto={shellProps.footerMotto}
+        contactCta={shellProps.contactCta}
       />
     </>
   );
