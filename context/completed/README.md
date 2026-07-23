@@ -17,6 +17,7 @@ When a task/phase is marked complete:
 
 | Date | Milestone | File |
 | --- | --- | --- |
+| 2026-07-23 | Cinematic curtain-reveal site footer (replaces SiteFooter) | [`2026-07-23-cinematic-footer.md`](./2026-07-23-cinematic-footer.md) |
 | 2026-07-23 | Phase C — `lib/cms` Sanity + GROQ + R2 media swap | [`2026-07-23-phase-c-sanity-cms-swap.md`](./2026-07-23-phase-c-sanity-cms-swap.md) |
 | 2026-07-21 | Repo hygiene — Payload removed, GSAP/fonts/nav cleanup | [`../DECISIONS.md`](../DECISIONS.md) ADR-005 |
 | 2026-07-11 | Neon Payload setup runbook (superseded) | [`2026-07-11-neon-payload-setup-superseded.md`](./2026-07-11-neon-payload-setup-superseded.md) |

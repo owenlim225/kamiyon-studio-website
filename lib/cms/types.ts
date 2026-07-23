@@ -52,8 +52,16 @@ export type Cta = {
   variant?: CtaVariant;
 };
 
+export type SocialPlatform =
+  | "facebook"
+  | "linkedin"
+  | "email"
+  | "itch"
+  | "youtube"
+  | "x";
+
 export type SocialLink = {
-  platform: "facebook" | "linkedin" | "email";
+  platform: SocialPlatform;
   url: string;
   label: string;
   isPlaceholder?: boolean;
@@ -161,7 +169,7 @@ export type AboutPage = {
 /** Spec 03 — contactPage embedded objects */
 
 export type ContactChannel = {
-  type: "facebook" | "linkedin" | "email";
+  type: SocialPlatform;
   label: string;
   value: string;
   isPlaceholder?: boolean;

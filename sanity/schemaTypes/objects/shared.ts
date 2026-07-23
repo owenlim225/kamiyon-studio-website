@@ -38,6 +38,9 @@ export const contactChannel = defineType({
         list: [
           { title: "Facebook", value: "facebook" },
           { title: "LinkedIn", value: "linkedin" },
+          { title: "itch.io", value: "itch" },
+          { title: "YouTube", value: "youtube" },
+          { title: "X", value: "x" },
           { title: "Email", value: "email" },
         ],
       },

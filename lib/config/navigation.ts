@@ -1,7 +1,11 @@
+import type { SocialPlatform } from "@/lib/cms/types";
 import {
   FACEBOOK_PAGE_URL,
+  ITCH_URL,
   LINKEDIN_COMPANY_URL,
   PUBLIC_EMAIL,
+  X_URL,
+  YOUTUBE_URL,
 } from "@/lib/contact/channels";
 
 export type NavItem = {
@@ -30,12 +34,15 @@ export type NavSocialLink = {
   label: string;
   href: string;
   comingSoon?: boolean;
-  platform?: "facebook" | "linkedin" | "email";
+  platform?: SocialPlatform;
 };
 
 /** Static social links (shell prefers CMS `siteSettings.socialLinks`). */
 export const SOCIAL_LINKS: readonly NavSocialLink[] = [
   { label: "Facebook", href: FACEBOOK_PAGE_URL, platform: "facebook" },
   { label: "LinkedIn", href: LINKEDIN_COMPANY_URL, platform: "linkedin" },
+  { label: "itch.io", href: ITCH_URL, platform: "itch" },
+  { label: "YouTube", href: YOUTUBE_URL, platform: "youtube" },
+  { label: "X", href: X_URL, platform: "x" },
   { label: "Email", href: `mailto:${PUBLIC_EMAIL}`, platform: "email" },
 ] as const;

@@ -29,6 +29,12 @@ Deploy path + media + revalidation (Phase E); then Phase F surfaces (contact/Res
 
 ---
 
+## Recently completed (2026-07-23)
+
+- **Cinematic footer** — global curtain-reveal `CinematicFooter` replaced `SiteFooter` in `PageShell`. Done — see [`completed/2026-07-23-cinematic-footer.md`](./completed/2026-07-23-cinematic-footer.md).
+
+---
+
 ## Completed in Phase C (2026-07-23)
 
 Done — see [`completed/2026-07-23-phase-c-sanity-cms-swap.md`](./completed/2026-07-23-phase-c-sanity-cms-swap.md).
@@ -52,6 +58,7 @@ Done — see [`DECISIONS.md`](./DECISIONS.md) ADR-005.
 1. **Operator:** Set `NEXT_PUBLIC_SANITY_PROJECT_ID` + `NEXT_PUBLIC_SANITY_DATASET` in `.env.local`; verify `/studio` loads and CMS getters leave fallbacks when dataset is empty
 2. **Phase E:** OpenNext + R2 upload + webhook revalidation + CF Web Analytics (T4/T5/T6/T14)
 3. **Phase F surfaces:** contact+Resend (T8), blog UI (T9), expanded E2E (T15)
+4. **Manual UX check:** scroll-reveal footer on `/` and `/contact` (desktop + mobile); keyboard tab into footer only after reveal
 
 **Done (pointers):** see [`completed/README.md`](./completed/README.md)
 
