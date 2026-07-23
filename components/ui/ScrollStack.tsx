@@ -1,7 +1,5 @@
 "use client";
 
-import Lenis from "lenis";
-import { useLenis } from "lenis/react";
 import {
   useCallback,
   useLayoutEffect,
@@ -74,8 +72,8 @@ export function getTransformInvariantOffsetTop(
 
 /**
  * React Bits ScrollStack (TS + CSS), adapted for Kamiyon:
- * - When `useWindowScroll`, reuses the document scroll (and site-wide Lenis)
- *   instead of creating a second root Lenis instance.
+ * - When `useWindowScroll`, uses document scroll + native listeners.
+ * - Otherwise uses the scroller element's native overflow scroll.
  * - Card queries stay scoped to this component instance.
  * - Layout offsets are cached from transform-invariant measurements so pin math
  *   stays stable while cards are translated.
@@ -99,7 +97,6 @@ export default function ScrollStack({
   const stackCompletedRef = useRef(false);
   const animationFrameRef = useRef<number | null>(null);
   const scrollRafRef = useRef<number | null>(null);
-  const lenisRef = useRef<Lenis | null>(null);
   const cardsRef = useRef<HTMLElement[]>([]);
   const cardTopsRef = useRef<number[]>([]);
   const endTopRef = useRef(0);
@@ -271,49 +268,6 @@ export default function ScrollStack({
     updateCardTransforms();
   }, [measureLayoutPositions, updateCardTransforms]);
 
-  // Keep transforms in sync with site-wide ReactLenis (SmoothScrollProvider).
-  useLenis(
-    () => {
-      if (useWindowScroll) {
-        handleScroll();
-      }
-    },
-    [useWindowScroll, handleScroll]
-  );
-
-  const setupContainerLenis = useCallback(() => {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-
-    const content = scroller.querySelector(".scroll-stack-inner");
-    if (!(content instanceof HTMLElement)) return;
-
-    const lenis = new Lenis({
-      wrapper: scroller,
-      content,
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      touchMultiplier: 2,
-      infinite: false,
-      gestureOrientation: "vertical",
-      wheelMultiplier: 1,
-      lerp: 0.1,
-      syncTouch: true,
-      syncTouchLerp: 0.075,
-    });
-
-    lenis.on("scroll", handleScroll);
-
-    const raf = (time: number) => {
-      lenis.raf(time);
-      animationFrameRef.current = requestAnimationFrame(raf);
-    };
-    animationFrameRef.current = requestAnimationFrame(raf);
-
-    lenisRef.current = lenis;
-  }, [handleScroll]);
-
   useLayoutEffect(() => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
@@ -353,7 +307,6 @@ export default function ScrollStack({
     }
 
     if (useWindowScroll) {
-      // Site already runs document Lenis via SmoothScrollProvider — only listen.
       window.addEventListener("scroll", handleScroll, { passive: true });
       window.addEventListener("resize", handleResize);
       updateCardTransforms();
@@ -373,11 +326,12 @@ export default function ScrollStack({
       };
     }
 
-    setupContainerLenis();
+    scroller.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleResize);
     updateCardTransforms();
 
     return () => {
+      scroller.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleResize);
       if (scrollRafRef.current !== null) {
         cancelAnimationFrame(scrollRafRef.current);
@@ -385,10 +339,6 @@ export default function ScrollStack({
       }
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
-      }
-      if (lenisRef.current) {
-        lenisRef.current.destroy();
-        lenisRef.current = null;
       }
       stackCompletedRef.current = false;
       cardsRef.current = [];
@@ -402,7 +352,6 @@ export default function ScrollStack({
     handleScroll,
     handleResize,
     measureLayoutPositions,
-    setupContainerLenis,
     updateCardTransforms,
   ]);
 

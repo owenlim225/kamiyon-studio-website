@@ -8,8 +8,10 @@ export type Slug = {
 
 export type CmsImage = {
   _key?: string;
-  /** Payload media URL when populated by the CMS adapter. */
+  /** Public CDN URL when resolved from Sanity `r2Asset`. */
   url?: string;
+  /** R2 object key used with `getMediaUrl` when `url` is absent. */
+  key?: string;
   alt?: string | null;
   caption?: string | null;
 };
@@ -290,4 +292,42 @@ export type CommunityItem = {
   externalUrl?: string;
   isPlaceholder: boolean;
   seo: SeoMetadata;
+};
+
+/** Spec 07 — blog */
+
+export type Author = {
+  _type: "author";
+  name: string;
+  slug: Slug;
+  bio?: string;
+  avatar?: CmsImage;
+};
+
+export type BlogCategory = {
+  _type: "category";
+  title: string;
+  slug: Slug;
+};
+
+export type BlogTag = {
+  _type: "tag";
+  title: string;
+  slug: Slug;
+};
+
+export type Post = {
+  _type: "post";
+  title: string;
+  slug: Slug;
+  authors: Author[];
+  categories: BlogCategory[];
+  tags: BlogTag[];
+  featuredImage?: CmsImage;
+  body: PortableTextBlock[];
+  seo: SeoMetadata;
+  readingTimeMinutes?: number;
+  publishedAt: string;
+  updatedAt?: string;
+  relatedPostSlugs: string[];
 };

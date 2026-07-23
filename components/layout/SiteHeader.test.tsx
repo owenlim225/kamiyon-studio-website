@@ -148,12 +148,17 @@ describe("SiteHeader", () => {
     await user.click(screen.getByRole("button", { name: "Open menu" }));
 
     const nav = screen.getByRole("navigation", { name: "Primary" });
-    for (const label of ["Home", "Studio", "Services", "Portfolio", "Blog"]) {
+    for (const label of [
+      "Home",
+      "Studio",
+      "Services",
+      "Products",
+      "Portfolio",
+      "Community",
+      "Blog",
+    ]) {
       expect(within(nav).getByRole("link", { name: label })).toBeInTheDocument();
     }
-
-    expect(screen.queryByRole("link", { name: "Products" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Community" })).not.toBeInTheDocument();
   });
 
   it("hides the Contact CTA in closed chrome and reveals it when open", async () => {

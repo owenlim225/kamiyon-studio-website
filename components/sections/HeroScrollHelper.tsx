@@ -1,28 +1,27 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-
 import { useHeroScrollBounce } from "@/hooks/useHeroScrollBounce";
+import { prefersReducedMotion } from "@/lib/motion/reduced-motion";
 
 export function HeroScrollHelper() {
   const { visible, dismiss } = useHeroScrollBounce({
     threshold: 24,
     maxBounces: 1,
   });
-  const reduceMotion = useReducedMotion();
 
   if (!visible) {
     return null;
   }
 
+  const enterClass = prefersReducedMotion()
+    ? ""
+    : "animate-[hero-scroll-helper-in_0.3s_ease-out_both]";
+
   return (
-    <motion.div
+    <div
       role="status"
       aria-live="polite"
-      className="absolute left-1/2 top-24 z-20 -translate-x-1/2"
-      initial={reduceMotion ? false : { opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      className={`absolute left-1/2 top-24 z-20 -translate-x-1/2 ${enterClass}`}
     >
       <div className="relative rounded-2xl bg-[var(--color-sakura)] px-4 py-2 font-sans text-[var(--text-on-accent)] shadow-sm">
         <span
@@ -41,6 +40,6 @@ export function HeroScrollHelper() {
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

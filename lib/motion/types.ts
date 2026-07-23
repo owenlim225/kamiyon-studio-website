@@ -2,7 +2,7 @@ import type { RefObject } from "react";
 
 export type MotionElementRef = RefObject<HTMLElement | null>;
 
-export type BaseMotionOptions = {
+type BaseMotionOptions = {
   delay?: number;
   duration?: number;
   disabled?: boolean;

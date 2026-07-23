@@ -1,17 +1,14 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["sanity", "next-sanity"],
   images: {
     localPatterns: [
-      {
-        pathname: "/api/media/file/**",
-      },
       {
         pathname: "/assets/**",
       },
@@ -31,4 +28,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPayload(nextConfig, { devBundleServerPackages: false });
+export default nextConfig;

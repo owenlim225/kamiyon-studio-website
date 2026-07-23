@@ -200,5 +200,3 @@ export function SplitText({
     </Tag>
   );
 }
-
-export default SplitText;

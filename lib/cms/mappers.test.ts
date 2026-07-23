@@ -1,0 +1,142 @@
+import { describe, expect, it } from "vitest";
+
+import {
+  mapCaseStudy,
+  mapCollection,
+  mapHomePage,
+  mapPost,
+  mapService,
+  mapSiteSettings,
+} from "./mappers";
+
+describe("mapSiteSettings", () => {
+  it("returns null without a site name", () => {
+    expect(mapSiteSettings({})).toBeNull();
+  });
+
+  it("maps core fields", () => {
+    expect(
+      mapSiteSettings({
+        siteName: "Kamiyon Studio",
+        tagline: "Create. Play. Inspire.",
+        socialLinks: [{ platform: "email", url: "mailto:hi@example.com", label: "Email" }],
+        defaultSeo: { title: "SEO", description: "Desc" },
+        globalCtas: [{ label: "Contact", href: "/contact", variant: "primary" }],
+      }),
+    ).toMatchObject({
+      _type: "siteSettings",
+      siteName: "Kamiyon Studio",
+      tagline: "Create. Play. Inspire.",
+      socialLinks: [{ platform: "email", url: "mailto:hi@example.com", label: "Email" }],
+      globalCtas: [{ label: "Contact", href: "/contact", variant: "primary" }],
+    });
+  });
+});
+
+describe("mapHomePage", () => {
+  it("projects featured work refs into slug arrays", () => {
+    const page = mapHomePage({
+      title: "Home",
+      blocks: [
+        {
+          _type: "featuredWork",
+          title: "Featured",
+          body: "Body",
+          featuredProductSlugs: ["eclipse"],
+          featuredCaseStudySlugs: ["case-a"],
+        },
+      ],
+      seo: { title: "Home", description: "Desc" },
+    });
+
+    expect(page?.blocks[0]).toEqual({
+      _type: "featuredWork",
+      title: "Featured",
+      body: "Body",
+      featuredProductSlugs: ["eclipse"],
+      featuredCaseStudySlugs: ["case-a"],
+    });
+  });
+});
+
+describe("mapService", () => {
+  it("keeps categorySlug from GROQ projection", () => {
+    expect(
+      mapService({
+        title: "Game Dev",
+        slug: { current: "game-dev" },
+        categorySlug: "games",
+        summary: "Summary",
+        body: [],
+        outcomes: ["Ship"],
+        relatedIndustries: ["Education"],
+        order: 1,
+        isPlaceholder: true,
+        seo: { title: "Game Dev", description: "Desc" },
+      }),
+    ).toMatchObject({
+      categorySlug: "games",
+      outcomes: ["Ship"],
+      relatedIndustries: ["Education"],
+    });
+  });
+});
+
+describe("mapCaseStudy", () => {
+  it("maps r2 cover and gallery assets", () => {
+    const study = mapCaseStudy({
+      title: "Case",
+      slug: { current: "case" },
+      clientName: "Client",
+      industry: "Edu",
+      challenge: "C",
+      solution: "S",
+      impact: "I",
+      coverImage: { url: "https://cdn.example.com/cover.png", alt: "Cover" },
+      gallery: [{ url: "https://cdn.example.com/g1.png", alt: "G1", _key: "g1" }],
+      featured: true,
+      isPlaceholder: false,
+      seo: { title: "Case", description: "Desc" },
+    });
+
+    expect(study?.coverImage?.url).toBe("https://cdn.example.com/cover.png");
+    expect(study?.gallery).toHaveLength(1);
+    expect(study?.gallery[0]?.url).toBe("https://cdn.example.com/g1.png");
+  });
+});
+
+describe("mapPost", () => {
+  it("requires publishedAt", () => {
+    expect(mapPost({ title: "Draft", slug: { current: "draft" } })).toBeNull();
+  });
+
+  it("maps authors and related slugs", () => {
+    const post = mapPost({
+      title: "Hello",
+      slug: { current: "hello" },
+      publishedAt: "2026-07-21T00:00:00.000Z",
+      authors: [{ name: "Ada", slug: { current: "ada" } }],
+      categories: [{ title: "News", slug: { current: "news" } }],
+      tags: [{ title: "Launch", slug: { current: "launch" } }],
+      body: [],
+      seo: { title: "Hello", description: "Desc" },
+      relatedPostSlugs: ["other"],
+    });
+
+    expect(post).toMatchObject({
+      _type: "post",
+      authors: [{ _type: "author", name: "Ada", slug: { current: "ada" } }],
+      relatedPostSlugs: ["other"],
+    });
+  });
+});
+
+describe("mapCollection", () => {
+  it("returns null for empty arrays", () => {
+    expect(mapCollection([], (row) => row)).toBeNull();
+  });
+
+  it("maps non-empty collections", () => {
+    expect(mapCollection([{ id: 1 }], (row) => row as { id: number })).toEqual([{ id: 1 }]);
+  });
+});

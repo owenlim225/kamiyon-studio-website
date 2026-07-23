@@ -125,9 +125,9 @@ Contact form ──► API route / Worker ──► Resend ──► studio inbo
 
 ## 5. Sanity + R2 — how it works with the current repo
 
-### Current repo reality
+### Current repo reality (2026-07-21)
 
-The site **already migrated Sanity → Payload** (2026-07-11). Payload is deeply wired (`payload.config.ts`, `collections/`, `globals/`, `app/(payload)/`, Local API in `lib/cms`, `withPayload` in Next config). Sanity packages were deleted.
+Payload **removed**. Public site uses **typed fallbacks** via `lib/cms/queries` (returns `null`) + `resolveWithFallback()`. Sanity Studio scaffold exists at `/studio` (env-gated); full GROQ swap is Phase C.
 
 ### Migration shape (do not keep both)
 
@@ -202,7 +202,7 @@ Do **not** rely on “redeploy on every content change.”
 7. Blog  
 8. Contact  
 
-*(Repo currently hides Products/Community — update `lib/config/navigation.ts` + tests as T16.)*
+*(Repo nav updated 2026-07-21 — Products + Community visible.)*
 
 ### Sanity document map
 
@@ -425,16 +425,16 @@ Decisions in §3 locked.
 | T4 | R2 media model + Studio upload + `getMediaUrl` | P0 |
 | T5 | OpenNext Cloudflare deploy + env docs (free tier) | P0 |
 | T6 | Sanity webhook → `revalidateTag` / path revalidation | P0 |
-| T7 | Delete Payload runtime and deps | P0 |
+| T7 | Delete Payload runtime and deps | P0 — **done** (2026-07-21 cleanup) |
 | T8 | Contact form API + Resend + external links UI | P1 |
 | T9 | Blog listing/detail UI (reading time, related, SEO) | P1 |
-| T10 | Remove Framer Motion + Lenis from main site | P1 |
-| T11 | Apply Geologica + Montserrat; remove Beaufort/Poppins | P1 |
-| T12 | Apply locked brand hex tokens (`#FF7998`, etc.) | P1 |
-| T13 | `/motion-lab` + `/studio` `noindex` | P1 |
+| T10 | Remove Framer Motion + Lenis from main site | P1 — **done** (2026-07-21 cleanup) |
+| T11 | Apply Geologica + Montserrat; remove Beaufort/Poppins | P1 — **done** (2026-07-21 cleanup) |
+| T12 | Apply locked brand hex tokens (`#FF7998`, etc.) | P1 — **done** (2026-07-21 cleanup) |
+| T13 | `/motion-lab` + `/studio` `noindex` | P1 — motion-lab done; studio verify at deploy |
 | T14 | Cloudflare Web Analytics snippet | P1 |
 | T15 | Expand E2E (nav, blog, contact form) | P2 |
-| T16 | Primary nav: include Products + Community; update tests | P1 |
+| T16 | Primary nav: include Products + Community; update tests | P1 — **done** (2026-07-21 cleanup) |
 | T17 | Editor Studio training / desk polish | P2 |
 | T18 | Free-tier usage monitoring (Workers/R2/builds) | P2 |
 
@@ -485,9 +485,9 @@ Never commit secrets. Document in `.env.example` during Phase D/E.
 ## 17. Immediate next step
 
 1. ~~Record decisions~~ ✅ (§3)
-2. Rewrite `architecture.md` + refresh `progress-tracker.md` to Sanity + OpenNext (mark Payload deprecated).
-3. Start **Phase B**: `npm create sanity@latest` → embed `/studio` → schemas from §7 (Payload still present until Phase D).
+2. ~~Repo hygiene cleanup~~ ✅ (2026-07-21 — Payload removed, GSAP-only, tokens/nav)
+3. **Phase B:** wire Sanity env + finish `/studio` schemas per §7; Phase C: `lib/cms` GROQ swap
 
 ---
 
-*Last updated: 2026-07-21 — all operator decisions locked; Payload still in repo until phases B–D.*
+*Last updated: 2026-07-21 — Payload removed; fallbacks-first; Sanity scaffold at `/studio`.*

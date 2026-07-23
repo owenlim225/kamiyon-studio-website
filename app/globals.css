@@ -12,27 +12,21 @@
    Only confirmed hex values are set. TBD brand colors have comments only.
    ----------------------------------------------------------------------- */
 @theme {
-  --color-sakura: #f97695;
+  --color-primary: #ff7998;
+  --color-secondary: #e9c080;
+  --color-black: #201013;
+  --color-white: #f8f8f8;
 
-  /* Phase 9: extracted directly from the color swatches in
-     docs/assets/brand-kit.png (do not invent — see ui-context.md §Colors). */
-  --color-ivory: #f8f8f8;
-  --color-charcoal: #201013;
-  --color-gold: #e9c080;
+  /* Alias — legacy sakura token name maps to locked primary */
+  --color-sakura: var(--color-primary);
 
-  /* TODO(TBD): Deep Indigo — brand-kit.png's swatch grid only contains 4
-     color chips (ivory/charcoal/pink/gold above) and none reads as a
-     blue-violet "indigo" (the darkest chip, #201013, is a near-neutral
-     dark charcoal, not indigo — assigned to --color-charcoal instead).
-     Still not documented anywhere in docs/. Do not invent; assign to
-     --color-indigo and --accent-dark once a real swatch is confirmed. */
+  --color-ivory: var(--color-white);
+  --color-charcoal: var(--color-black);
+  --color-gold: var(--color-secondary);
 
-  /* Phase 9 (WCAG AA): --color-sakura (#f97695) is ~2.6:1 against white/ivory —
-     fails AA for both text (4.5:1) and non-text UI (3:1). --color-sakura-ink is
-     the same hue/saturation darkened to ~5.2:1, for use as text/icon foreground
-     on light surfaces. Raw --color-sakura stays reserved for fills/backgrounds
-     (paired with --text-on-accent) and large brand marks. */
-  --color-sakura-ink: #c23a5e;
+  /* WCAG AA ink for text/icons on light backgrounds (~5:1 vs white) */
+  --color-sakura-ink: #c24a66;
+  --color-primary-ink: var(--color-sakura-ink);
 
   /* ---- Shadow scale — 3 levels, max 15% opacity (Part 6) -------------- */
   --shadow-sm: 0 1px 4px rgba(26, 26, 26, 0.08);
@@ -52,12 +46,12 @@
 }
 
 /* -----------------------------------------------------------------------
-   FONTS — @theme inline references next/font CSS vars injected on <html>
-   by app/layout.tsx.  font-sans → Poppins, font-display → Montserrat.
+   FONTS — Geologica (display/UI) + Montserrat (body)
    ----------------------------------------------------------------------- */
 @theme inline {
-  --font-sans:    var(--font-poppins);
-  --font-display: var(--font-montserrat);
+  --font-sans:    var(--font-geologica);
+  --font-display: var(--font-geologica);
+  --font-body:    var(--font-montserrat);
 }
 
 /* -----------------------------------------------------------------------
@@ -139,6 +133,17 @@ body {
   from {
     opacity: 0;
     transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-scroll-helper-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;

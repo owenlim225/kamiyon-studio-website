@@ -13,21 +13,6 @@ vi.mock("@/hooks/useHeroScrollBounce", () => ({
   useHeroScrollBounce: (...args: unknown[]) => mockUseHeroScrollBounce(...args),
 }));
 
-vi.mock("framer-motion", () => ({
-  motion: {
-    div: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      className?: string;
-      role?: string;
-      "aria-live"?: string;
-    }) => <div {...props}>{children}</div>,
-  },
-  useReducedMotion: () => false,
-}));
-
 import { HeroScrollHelper } from "./HeroScrollHelper";
 
 describe("HeroScrollHelper", () => {

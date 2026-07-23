@@ -61,3 +61,6 @@ sanity-static/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# graphify (regenerate: graphify update .)
+/graphify-out/

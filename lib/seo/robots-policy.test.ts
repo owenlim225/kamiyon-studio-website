@@ -10,7 +10,7 @@ describe("buildRobotsPolicy", () => {
       rules: {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/admin/", "/api/"],
+        disallow: ["/admin", "/admin/", "/api/", "/studio", "/studio/"],
       },
       sitemap: "https://kamiyonstudio.com/sitemap.xml",
       host: "kamiyonstudio.com",
@@ -24,7 +24,7 @@ describe("buildRobotsPolicy", () => {
       rules: {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/admin/", "/api/"],
+        disallow: ["/admin", "/admin/", "/api/", "/studio", "/studio/"],
       },
       sitemap: "https://kamiyonstudio.com/sitemap.xml",
       host: "kamiyonstudio.com",

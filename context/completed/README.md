@@ -17,7 +17,8 @@ When a task/phase is marked complete:
 
 | Date | Milestone | File |
 | --- | --- | --- |
-| 2026-07-11 | GSAP animation delivery note + About adoption | [`2026-07-11-gsap-animation-delivery.md`](./2026-07-11-gsap-animation-delivery.md) |
+| 2026-07-21 | Repo hygiene — Payload removed, GSAP/fonts/nav cleanup | [`../DECISIONS.md`](../DECISIONS.md) ADR-005 |
+| 2026-07-11 | Neon Payload setup runbook (superseded) | [`2026-07-11-neon-payload-setup-superseded.md`](./2026-07-11-neon-payload-setup-superseded.md) |
 | 2026-07-11 | GSAP animation foundation + Home adoption | [`2026-07-11-gsap-animation-foundation.md`](./2026-07-11-gsap-animation-foundation.md) |
 | 2026-07-11 | Sanity → Payload migration (Phases 0–6) | [`2026-07-11-payload-migration-phases-0-6.md`](./2026-07-11-payload-migration-phases-0-6.md) |
 | 2026-07-11 | Homepage redesign (nav + home composition) | [`2026-07-11-homepage-redesign.md`](./2026-07-11-homepage-redesign.md) |

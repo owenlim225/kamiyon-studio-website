@@ -18,9 +18,9 @@ describe("SiteFooter", () => {
     const nav = screen.getByRole("navigation", { name: "Footer" });
     expect(nav).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Services" })).toHaveAttribute("href", "/services");
+    expect(screen.getByRole("link", { name: "Products" })).toHaveAttribute("href", "/products");
+    expect(screen.getByRole("link", { name: "Community" })).toHaveAttribute("href", "/community");
     expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute("href", "/blog");
-    expect(screen.queryByRole("link", { name: "Products" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Community" })).not.toBeInTheDocument();
   });
 
   it("renders live social links as external anchors", () => {
